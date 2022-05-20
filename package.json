@@ -2,7 +2,16 @@
 	"name": "command-launcher",
 	"displayName": "Command Launcher",
 	"description": "A launcher extension that manages commands for the command palette.",
+	"publisher": "Angelmaneuver",
 	"version": "0.0.1",
+	"homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Angelmaneuver/command-launcher.git"
+	},
+	"bugs": {
+		"url": "https://github.com/Angelmaneuver/command-launcher/issues"
+	},
 	"engines": {
 		"vscode": "^1.67.0"
 	},
