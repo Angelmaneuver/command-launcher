@@ -1,13 +1,12 @@
 import { ExtensionContext, QuickPickItem } from 'vscode';
-import { InputStep, MultiStepInput }       from '../utils/multiStepInput';
-import { Guide }                           from './base/abc';
-import { State }                           from './base/base';
-import { AbstractQuickPickSelectGuide }    from './base/pick';
-import { BaseValidator }                   from './validator/base';
-import { SELECTION_ITEM }                  from './label';
-import { Optional }                        from '../utils/base/optional';
-import { VSCodePreset }                    from '../utils/base/vscodePreset';
-import * as Constant                       from '../constant';
+import { InputStep, MultiStepInput }       from '../../utils/multiStepInput';
+import { Guide }                           from '../base/abc';
+import { State }                           from '../base/base';
+import { AbstractMenuGuide }               from './abc';
+import { BaseValidator }                   from '../validator/base';
+import { Optional }                        from '../../utils/base/optional';
+import { VSCodePreset }                    from '../../utils/base/vscodePreset';
+import * as Constant                       from '../../constant';
 
 const items = {
 	add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',             'Add a command.'),
@@ -26,100 +25,6 @@ const items = {
 	delimiter:   { label: '-'.repeat(35) + ' Registered commands ' + '-'.repeat(35) } as QuickPickItem,
 };
 
-const match = /^\$\(.+\)/;
-
-type Command = {
-	type:        number,
-	label:       string,
-	description: string,
-	command:     string,
-};
-
-type Folder = {
-	type:        number,
-	label:       string,
-	description: string,
-};
-
-export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
-	protected root: boolean;
-
-	constructor(state: State, root?: boolean, context?: ExtensionContext) {
-		super(state, context);
-
-		this.root = root ? true : false;
-	}
-
-	public init(): void {
-		super.init();
-
-		this.placeholder = 'Select the item you want to do.';
-	}
-
-	protected get commandItems(): QuickPickItem[] {
-		return Object.keys(this.currentCommands).map(
-			(key) => {
-				const item = this.currentCommands[key] as Record<string, unknown>;
-
-				return ({
-					label:       `${item.label} ${key}`,
-					description: `${item.description}`,
-				});
-			}
-		);
-	}
-
-	protected getCommand(name: string): Command | Folder {
-		const error   = ReferenceError('Command item not found...');
-		const command = Optional.ofNullable(this.currentCommands[name]).orElseThrow(error) as Record<string, unknown>;
-
-		if (Constant.DATA_TYPE.command === Optional.ofNullable(command['type']).orElseThrow(error)) {
-			return command as Command;
-		} else {
-			return command as Folder;
-		}
-	}
-}
-
-export class MenuGuide extends AbstractMenuGuide {
-	public init(): void {
-		super.init();
-
-		this.items = this.items.concat(
-			this.commandItems,
-			this.root ? [items.exit] : [items.back]
-		);
-	}
-
-	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
-		switch (label) {
-			case items.back.label:
-				this.prev();
-			case items.exit.label:
-				return undefined;
-			default:
-				return this.command();
-		}
-	}
-
-	private command(): (() => Promise<void>) | undefined {
-		const command = this.getCommand(this.getLabelStringByItem);
-
-		if (Constant.DATA_TYPE.command === command['type']) {
-			this.state.command = (command as Command)['command'];
-			return undefined;
-		} else {
-			const name           = this.getLabelStringByItem;
-
-			this.state.title     = `${this.title}/${name}`;
-			this.state.hierarchy = this.hierarchy.concat(name);
-			return async () => {
-				this.setNextSteps([{ key: 'MenuGuide', state: this.state }]);
-			};
-		}
-	}
-}
-
 export class MenuGuideWithEdit extends AbstractMenuGuide {
 	private type: Constant.DataType;
 
@@ -131,42 +36,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
-		this.items         = [];
-		const settingItems = (
-			[
-				items.name,
-				items.label,
-				items.description,
-			].concat(
-				Constant.DATA_TYPE.command === this.type
-					? [items.command]
-					: []
-			).concat(
-				[items.delete]
-			).concat(
-				Object.keys(this.guideGroupResultSet).length > 0
-					? [items.save]
-					: []
-			)
-		);
-		const commandItems = this.commandItems;
-
-		if (Constant.DATA_TYPE.folder === this.type) {
-			this.items = this.items.concat(
-				[items.add, items.create],
-				this.root               ? [items.uninstall] : settingItems,
-				[items.launcher],
-				this.root               ? [items.exit]      : (Object.keys(this.guideGroupResultSet).length > 0 ? [items.return] : [items.back]),
-				commandItems.length > 0 ? [items.delimiter] : [],
-				commandItems
-			);
-		} else {
-			this.items = this.items.concat(
-				settingItems.concat(
-					Object.keys(this.guideGroupResultSet).length > 0 ? [items.return] : [items.back],
-				)
-			);
-		}
+		this.setMenuItems();
 
 		do {
 			await super.show(input);
@@ -182,31 +52,26 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
+		let title:        string;
 		let guideGroupId: string;
+		let totalStep:    number;
+		let type:         number;
 
 		this.state.hierarchy = this.hierarchy;
 
 		switch (label) {
 			case items.add.label:
+				title        = 'Command';
 				guideGroupId = 'add';
-				this.state.resultSet[guideGroupId] = undefined;
-				return async () => {
-					this.setNextSteps([{
-						key:   'SelectLabelGuide4Guidance',
-						state: this.createBaseState(" - Add command", guideGroupId, 4),
-						args:  [SELECTION_ITEM.base, Constant.DATA_TYPE.command]
-					}]);
-				};
+				totalStep    = 4;
+				type         = Constant.DATA_TYPE.command;
+				break;
 			case items.create.label:
+				title        = 'Folder';
 				guideGroupId = 'create';
-				this.state.resultSet[guideGroupId] = undefined;
-				return async () => {
-					this.setNextSteps([{
-						key:   'SelectLabelGuide4Guidance',
-						state: this.createBaseState(" - Add Folder", guideGroupId, 3),
-						args:  [SELECTION_ITEM.base, Constant.DATA_TYPE.folder]
-					}]);
-				};
+				totalStep    = 3;
+				type         = Constant.DATA_TYPE.folder;
+				break;
 			case items.name.label:
 			case items.label.label:
 			case items.description.label:
@@ -228,11 +93,48 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 			default:
 				return this.command();
 		}
+
+		this.state.resultSet[guideGroupId] = undefined;
+
+		return async () => {
+			this.setNextSteps([{
+				key:   'SelectLabelGuide4Guidance',
+				state: this.createBaseState(` - Add ${title}`, guideGroupId, totalStep),
+				args:  [Constant.SELECTION_ITEM.base, type]
+			}]);
+		};
+	}
+
+	private setMenuItems(): void {
+		this.items         = [];
+		const commandItems = this.commandItems;
+		const returnOrBack = Object.keys(this.guideGroupResultSet).length > 0 ? [items.return] : [items.back];
+		const settingItems = [items.name, items.label, items.description].concat(
+			Constant.DATA_TYPE.command === this.type         ? [items.command] : []
+		).concat(
+			[items.delete]
+		).concat(
+			Object.keys(this.guideGroupResultSet).length > 0 ? [items.save]    : []
+		);
+
+		if (Constant.DATA_TYPE.folder === this.type) {
+			this.items = [items.add, items.create].concat(
+				this.root               ? [items.uninstall]                  : settingItems
+			).concat(
+				[items.launcher]
+			).concat(
+				this.root               ? [items.exit]                       : returnOrBack,
+			).concat(
+				commandItems.length > 0 ? [items.delimiter, ...commandItems] : [],
+			);
+		} else {
+			this.items = settingItems.concat(returnOrBack);
+		}
 	}
 
 	private command(): (() => Promise<void>) | undefined {
 		const name = this.getLabelStringByItem;
-		const type = (this.getCommand(name))['type'];
+		const type = (this.getCommand(name))[this.settings.itemId.type];
 
 		this.state.hierarchy = this.hierarchy.concat(name);
 		this.state.resultSet[name]  = undefined;
@@ -285,7 +187,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 						if (this.guideGroupResultSet[this.settings.itemId.lable]) {
 							overwrite[this.settings.itemId.lable] = (
 								Optional
-									.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(match))
+									.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
 									.orElseThrow(ReferenceError('Label value not found...'))
 							)[0];
 						}
@@ -349,7 +251,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 				break;
 			case items.label.label:
 				key                         = 'SelectLabelGuide4Guidance';
-				args                        = [SELECTION_ITEM.base, this.type];
+				args                        = [Constant.SELECTION_ITEM.base, this.type];
 				break;
 			case items.description.label:
 				itemId                      = this.settings.itemId.description;
@@ -361,7 +263,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 				optionState['prompt']       = 'Please enter the command you want to run.';
 				optionState['validate']     = BaseValidator.validateRequired;
 				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.command];
-			break;
+				break;
 		}
 
 		guide = {

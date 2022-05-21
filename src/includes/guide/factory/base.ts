@@ -1,10 +1,8 @@
 import { AbstractGuide  }        from '../base/abc';
 import { BaseInputGuide }        from '../base/input';
 import { BaseConfirmGuide }      from '../confirm';
-import {
-	MenuGuide,
-	MenuGuideWithEdit,
-}                                from '../menu';
+import { MenuGuide }             from '../menu/base';
+import { MenuGuideWithEdit }     from '../menu/edit';
 import {
 	BaseSelectLabelGuide,
 	SelectLabelGuide4Guidance, } from '../label';

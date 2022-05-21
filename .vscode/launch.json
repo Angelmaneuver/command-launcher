@@ -10,6 +10,7 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"args": [
+				"--disable-extension=angelmaneuver.command-launcher",
 				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
 			"outFiles": [
