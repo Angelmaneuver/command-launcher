@@ -18,7 +18,7 @@ export class NameInputGuide extends BaseInputGuide {
 	}
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
-		NameInputGuide.keys = Object.keys(this.currentCommands);
+		NameInputGuide.keys = this.totalSteps > 0 ? Object.keys(this.currentCommands) : Object.keys(this.parentCommands);
 
 		await super.show(input);
 	}

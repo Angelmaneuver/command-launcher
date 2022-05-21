@@ -72,20 +72,16 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		return this.state.settings;
 	}
 
+	protected get parentCommands(): Record<string, unknown> {
+		const temporary = [...this.hierarchy];
+
+		temporary.pop();
+
+		return this.getCommands(temporary);
+	}
+
 	protected get currentCommands(): Record<string, unknown> {
-		const temporary                         = this.settings.lookup(this.hierarchy, this.settings.lookupMode.read);
-		const itemIds:  Array<string>           = Object.values(this.settings.itemId);
-		const commands: Record<string, unknown> = {};
-
-		Object.keys(temporary).forEach(
-			(key) => {
-				if (!itemIds.includes(key)) {
-					commands[key] = temporary[key];
-				}
-			}
-		);
-
-		return commands;
+		return this.getCommands(this.hierarchy);
 	}
 
 	protected get currentCommandInfo(): Record<string, unknown> {
@@ -113,4 +109,20 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 	}
 
 	protected async lastInputStepExecute(): Promise<void> {}
+
+	private getCommands(hierarchy: Array<string>): Record<string, unknown> {
+		const temporary                         = this.settings.lookup(hierarchy, this.settings.lookupMode.read);
+		const itemIds:  Array<string>           = Object.values(this.settings.itemId);
+		const commands: Record<string, unknown> = {};
+
+		Object.keys(temporary).forEach(
+			(key) => {
+				if (!itemIds.includes(key)) {
+					commands[key] = temporary[key];
+				}
+			}
+		);
+
+		return commands;
+	}
 }
