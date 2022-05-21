@@ -244,11 +244,9 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	private setSettingGuide(label: string): () => Promise<void> {
-		let key                         = 'BaseInputGuide';
-		let itemId                      = '';
-		let additionalTitle             = '';
-		let optionState: Partial<State> = {};
-		let args: Array<unknown>        = [];
+		let [key, itemId, additionalTitle] = ['BaseInputGuide', '', ''];
+		let optionState: Partial<State>    = {};
+		let args: Array<unknown>           = [];
 		let guide: Guide;
 
 		switch (label) {
