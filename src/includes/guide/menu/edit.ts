@@ -52,26 +52,12 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
-		let title:        string;
-		let guideGroupId: string;
-		let totalStep:    number;
-		let type:         number;
-
 		this.state.hierarchy = this.hierarchy;
 
 		switch (label) {
 			case items.add.label:
-				title        = 'Command';
-				guideGroupId = 'add';
-				totalStep    = 4;
-				type         = Constant.DATA_TYPE.command;
-				break;
 			case items.create.label:
-				title        = 'Folder';
-				guideGroupId = 'create';
-				totalStep    = 3;
-				type         = Constant.DATA_TYPE.folder;
-				break;
+				return this.setGuidance(label);
 			case items.name.label:
 			case items.label.label:
 			case items.description.label:
@@ -93,16 +79,6 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 			default:
 				return this.command();
 		}
-
-		this.state.resultSet[guideGroupId] = undefined;
-
-		return async () => {
-			this.setNextSteps([{
-				key:   'SelectLabelGuide4Guidance',
-				state: this.createBaseState(` - Add ${title}`, guideGroupId, totalStep),
-				args:  [Constant.SELECTION_ITEM.base, type]
-			}]);
-		};
 	}
 
 	private setMenuItems(): void {
@@ -231,6 +207,35 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 						this.settings.uninstall();
 					} )
 				]
+			}]);
+		};
+	}
+
+	private setGuidance(label: string): () => Promise<void> {
+		let title        = '';
+		let guideGroupId = '';
+		let totalStep    = 0;
+		let type         = 0;
+
+		if (items.add.label === label) {
+			title        = 'Command';
+			guideGroupId = 'add';
+			totalStep    = 4;
+			type         = Constant.DATA_TYPE.command;
+		} else {
+			title        = 'Folder';
+			guideGroupId = 'create';
+			totalStep    = 3;
+			type         = Constant.DATA_TYPE.folder;
+		}
+
+		this.state.resultSet[guideGroupId] = undefined;
+
+		return async () => {
+			this.setNextSteps([{
+				key:   'SelectLabelGuide4Guidance',
+				state: this.createBaseState(` - Add ${title}`, guideGroupId, totalStep),
+				args:  [Constant.SELECTION_ITEM.base, type]
 			}]);
 		};
 	}
