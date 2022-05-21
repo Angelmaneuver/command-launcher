@@ -32,8 +32,8 @@ export class MenuGuide extends AbstractMenuGuide {
 	private command(): (() => Promise<void>) | undefined {
 		const command = this.getCommand(this.getLabelStringByItem);
 
-		if (Constant.DATA_TYPE.command === command['type']) {
-			this.state.command = (command as Command)['command'];
+		if (Constant.DATA_TYPE.command === command[this.settings.itemId.type]) {
+			this.state.command = (command as Command)[this.settings.itemId.command];
 			return undefined;
 		} else {
 			const name           = this.getLabelStringByItem;

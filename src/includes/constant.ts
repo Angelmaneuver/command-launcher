@@ -12,4 +12,5 @@ export const SELECTION_ITEM          = {
 
 export type SelectionItem            = typeof SELECTION_ITEM[keyof typeof SELECTION_ITEM];
 
-export const LABEL_STRING_ONLY_MATCH = /^\$\(.+\)/;
+export const LABEL_STRING_MATCH      = /^\$\(.+?\) /;
+export const LABEL_STRING_ONLY_MATCH = /^\$\(.+?\)/;

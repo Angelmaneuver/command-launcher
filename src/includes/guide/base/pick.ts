@@ -1,9 +1,8 @@
 import { QuickPickItem }             from 'vscode';
 import { InputStep, MultiStepInput } from '../../utils/multiStepInput';
 import { AbstractBaseGuide, State }  from './base';
+import * as Constant                 from '../../constant';
 import { Optional }                  from '../../utils/base/optional';
-
-const match = /^\$\(.+\) /;
 
 export abstract class AbstractQuickPickGuide extends AbstractBaseGuide {
 	protected placeholder                           = '';
@@ -45,8 +44,8 @@ export abstract class AbstractQuickPickGuide extends AbstractBaseGuide {
 		let label = this.inputValue;
 
 		if (typeof(label) === 'string') {
-			label = label.replace(match, '');
-			return this.items.find((item) => { return item.label.replace(match, '') === label; });
+			label = label.replace(Constant.LABEL_STRING_MATCH, '');
+			return this.items.find((item) => { return item.label.replace(Constant.LABEL_STRING_MATCH, '') === label; });
 		} else {
 			return this.activeItem;
 		}
@@ -57,15 +56,15 @@ export abstract class AbstractQuickPickGuide extends AbstractBaseGuide {
 	}
 
 	protected get getLabelStringByItem(): string {
-		return (Optional.ofNullable(this.activeItem?.label).orElseNonNullable('')).replace(match, '');
+		return (Optional.ofNullable(this.activeItem?.label).orElseNonNullable('')).replace(Constant.LABEL_STRING_MATCH, '');
 	}
 
 	protected get getInputValueLabelString(): string {
-		return typeof(this.inputValue) === 'string' ? this.inputValue.replace(match, '') : '';
+		return typeof(this.inputValue) === 'string' ? this.inputValue.replace(Constant.LABEL_STRING_MATCH, '') : '';
 	}
 
 	protected getItemByLabelString(items: Array<QuickPickItem>, label: string): QuickPickItem | undefined {
-		return items.find((item) => { return item.label.replace(match, '') === label; });
+		return items.find((item) => { return item.label.replace(Constant.LABEL_STRING_MATCH, '') === label; });
 	}
 
 	protected createBaseState(additionalTitle: string, guideGroupId: string, totalStep?: number, itemId?: string): Partial<State> {
