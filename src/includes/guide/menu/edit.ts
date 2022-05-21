@@ -83,37 +83,44 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 
 	private setMenuItems(): void {
 		this.items         = [];
-		const commandItems = this.commandItems;
-		const returnOrBack = Object.keys(this.guideGroupResultSet).length > 0 ? [items.return] : [items.back];
-		const settingItems = [items.name, items.label, items.description].concat(
-			Constant.DATA_TYPE.command === this.type         ? [items.command] : []
-		).concat(
-			[items.delete]
-		).concat(
-			Object.keys(this.guideGroupResultSet).length > 0 ? [items.save]    : []
-		);
+		const settingItems = [items.name, items.label, items.description];
+		const save         = [];
+		const returnOrBack = [];
+
+		if (Object.keys(this.guideGroupResultSet).length > 0) {
+			save.push(items.save);
+			returnOrBack.push(items.return);
+		} else {
+			returnOrBack.push(items.back);
+		}
 
 		if (Constant.DATA_TYPE.folder === this.type) {
-			this.items = [items.add, items.create].concat(
-				this.root               ? [items.uninstall]                  : settingItems
-			).concat(
-				[items.launcher]
-			).concat(
-				this.root               ? [items.exit]                       : returnOrBack,
-			).concat(
-				commandItems.length > 0 ? [items.delimiter, ...commandItems] : [],
-			);
+			this.setFolderCommands([...settingItems, items.delete, ...save], returnOrBack);
 		} else {
-			this.items = settingItems.concat(returnOrBack);
+			this.items = [...settingItems, items.command, items.delete, ...save, ...returnOrBack];
 		}
+	}
+
+	private setFolderCommands(settingItems: Array<QuickPickItem>, returnOrBack: Array<QuickPickItem>): void {
+		const commandItems = this.commandItems;
+
+		this.items         = [items.add, items.create].concat(
+			this.root               ? [items.uninstall]                  : settingItems
+		).concat(
+			[items.launcher]
+		).concat(
+			this.root               ? [items.exit]                       : returnOrBack,
+		).concat(
+			commandItems.length > 0 ? [items.delimiter, ...commandItems] : [],
+		);
 	}
 
 	private command(): (() => Promise<void>) | undefined {
 		const name = this.getLabelStringByItem;
 		const type = (this.getCommand(name))[this.settings.itemId.type];
 
-		this.state.hierarchy = this.hierarchy.concat(name);
-		this.state.resultSet[name]  = undefined;
+		this.state.hierarchy       = this.hierarchy.concat(name);
+		this.state.resultSet[name] = undefined;
 
 		return async () => {
 			this.setNextSteps([{
@@ -212,10 +219,8 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	private setGuidance(label: string): () => Promise<void> {
-		let title        = '';
-		let guideGroupId = '';
-		let totalStep    = 0;
-		let type         = 0;
+		let [title, guideGroupId, totalStep, type] = ['', '', 0, 0];
+		this.state.resultSet[guideGroupId]         = undefined;
 
 		if (items.add.label === label) {
 			title        = 'Command';
@@ -228,8 +233,6 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 			totalStep    = 3;
 			type         = Constant.DATA_TYPE.folder;
 		}
-
-		this.state.resultSet[guideGroupId] = undefined;
 
 		return async () => {
 			this.setNextSteps([{
