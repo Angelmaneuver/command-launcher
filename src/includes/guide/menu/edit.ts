@@ -167,21 +167,20 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 						const original                           = this.settings.cloneDeep(this.hierarchy);
 						const overwrite: Record<string, unknown> = {};
 
-						if (this.guideGroupResultSet[this.settings.itemId.lable]) {
-							overwrite[this.settings.itemId.lable] = (
-								Optional
-									.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
-									.orElseThrow(ReferenceError('Label value not found...'))
-							)[0];
-						}
+						Object.keys(this.guideGroupResultSet).forEach(
+							(key) => {
+								let value = this.guideGroupResultSet[key];
 
-						if (this.guideGroupResultSet[this.settings.itemId.description]) {
-							overwrite[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
-						}
+								if (this.settings.itemId.lable === key) {
+									value = (
+										Optional.ofNullable((this.guideGroupResultSet[key] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
+												.orElseThrow(ReferenceError('Label value not found...'))
+									)[0];
+								}
 
-						if (this.guideGroupResultSet[this.settings.itemId.command]) {
-							overwrite[this.settings.itemId.command] = this.guideGroupResultSet[this.settings.itemId.command];
-						}
+								overwrite[key] = value;
+							}
+						);
 
 						Object.assign(original, overwrite);
 
