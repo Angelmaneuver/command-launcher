@@ -1,6 +1,6 @@
 # Change Log
 
-## 0.0.2 (Preview)
+## 0.0.2
  - Existence check does not work when in rename
  - Fixed bug in which using single byte brackets in the name that does not work correctly
 
