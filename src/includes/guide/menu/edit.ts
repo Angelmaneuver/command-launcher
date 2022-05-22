@@ -122,16 +122,13 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 		const name = this.getLabelStringByItem;
 		const type = (this.getCommand(name))[this.settings.itemId.type];
 
-		this.state.hierarchy           = this.hierarchy.concat(name);
-
-		const fullName                 = `/${[...this.state.hierarchy].join('/')}`;
-
-		this.state.resultSet[fullName] = undefined;
+		this.state.hierarchy       = this.hierarchy.concat(name);
+		this.state.resultSet[name] = undefined;
 
 		return async () => {
 			this.setNextSteps([{
 				key:   'MenuGuideWithEdit',
-				state: this.createBaseState(`/${name}`, fullName),
+				state: this.createBaseState(`/${name}`, name),
 				args:  [type]
 			}]);
 		};
