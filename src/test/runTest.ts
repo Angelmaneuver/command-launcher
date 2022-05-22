@@ -1,5 +1,4 @@
-import * as path from 'path';
-
+import * as path    from 'path';
 import { runTests } from '@vscode/test-electron';
 
 async function main() {
@@ -11,6 +10,9 @@ async function main() {
 		// The path to test runner
 		// Passed to --extensionTestsPath
 		const extensionTestsPath = path.resolve(__dirname, './suite/index');
+
+		// signal that the coverage data should be gathered
+		process.env['COVERAGE'] = process.argv.indexOf('--coverage') >= 0 ? '1' : '0';
 
 		// Download VS Code, unzip it and run the integration test
 		await runTests({ extensionDevelopmentPath, extensionTestsPath });

@@ -59,25 +59,6 @@ export abstract class AbstractSelectLabelGuide extends AbstractQuickPickSelectGu
 	}
 }
 
-export class BaseSelectLabelGuide extends AbstractSelectLabelGuide {
-	constructor(state: State, selection: Constant.SelectionItem) {
-		super(state, selection, 'BaseSelectLabelGuide');
-	}
-
-	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
-		const next = this.reCall(label);
-
-		if (undefined === next) {
-			this.state.back = true;
-			this.prev();
-		} else {
-			return async () => {
-				this.setNextSteps([next]);
-			};
-		}
-	}
-}
-
 export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 	constructor(state: State, selection: Constant.SelectionItem, type: Constant.DataType) {
 		super(state, selection, 'SelectLabelGuide4Guidance', type);

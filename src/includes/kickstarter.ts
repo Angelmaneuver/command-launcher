@@ -6,11 +6,9 @@ import {
 import { MultiStepInput }   from './utils/multiStepInput';
 import { State }            from './guide/base/base';
 import { GuideFactory }     from './guide/factory/base';
-import { ExtensionSetting } from './settings/extension';
 import * as Constant        from './constant';
 
 export async function start(
-	context:   ExtensionContext,
 	className: string,
 	state:     Partial<State>,
 	args:      Array<unknown>
@@ -58,12 +56,12 @@ export async function edit(context: ExtensionContext): Promise<void> {
 	const state = getBaseState(' - Edit mode ');
 	const args  = [state, Constant.DATA_TYPE.folder, true, context];
 
-	start(context, 'MenuGuideWithEdit', state, args);
+	start('MenuGuideWithEdit', state, args);
 }
 
 export async function launcher(context: ExtensionContext): Promise<void> {
 	const state = getBaseState(' ');
 	const args  = [state, true, context];
 
-	start(context, 'MenuGuide', state, args);
+	start('MenuGuide', state, args);
 }

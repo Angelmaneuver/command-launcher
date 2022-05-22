@@ -65,7 +65,7 @@ export class ExtensionSetting extends SettingBase {
 
 				record = (
 					Optional.ofNullable(record[key])
-							.orElseThrow(ReferenceError(`${searched.join('/')} is not found...`))
+							.orElseThrow(ReferenceError(`/${searched.join('/')} is not found...`))
 				) as Record<string, unknown>;
 			}
 		);

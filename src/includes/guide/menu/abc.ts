@@ -20,6 +20,16 @@ export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
 		this.placeholder = 'Select the item you want to do.';
 	}
 
+	protected prev(): void {
+		const hierarchy = [...this.hierarchy];
+
+		hierarchy.pop();
+
+		this.state.hierarchy = hierarchy;
+
+		super.prev();
+	}
+
 	protected get commandItems(): QuickPickItem[] {
 		return Object.keys(this.currentCommands).map(
 			(key) => {
@@ -34,7 +44,7 @@ export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
 	}
 
 	protected getCommand(name: string): Command | Folder {
-		const error   = ReferenceError('Command item not found...');
+		const error   = ReferenceError(`Command item '${name}' not found...`);
 		const command = Optional.ofNullable(this.currentCommands[name]).orElseThrow(error) as Record<string, unknown>;
 
 		if (Constant.DATA_TYPE.command === Optional.ofNullable(command['type']).orElseThrow(error)) {

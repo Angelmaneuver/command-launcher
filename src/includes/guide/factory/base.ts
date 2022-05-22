@@ -1,16 +1,14 @@
-import { AbstractGuide  }        from '../base/abc';
-import { BaseInputGuide }        from '../base/input';
-import { BaseConfirmGuide }      from '../confirm';
-import { MenuGuide }             from '../menu/base';
-import { MenuGuideWithEdit }     from '../menu/edit';
-import {
-	BaseSelectLabelGuide,
-	SelectLabelGuide4Guidance, } from '../label';
-import { NameInputGuide }        from '../name';
+import { AbstractGuide  }            from '../base/abc';
+import { BaseInputGuide }            from '../base/input';
+import { BaseConfirmGuide }          from '../confirm';
+import { MenuGuide }                 from '../menu/base';
+import { MenuGuideWithEdit }         from '../menu/edit';
+import { SelectLabelGuide4Guidance } from '../label';
+import { NameInputGuide }            from '../name';
 import {
 	CommandLastInputGuide,
 	FolderLastInputGuide,
-}                                from '../last';
+}                                    from '../last';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Constructable<T> extends Function { new (...args: Array<any>): T; }
@@ -40,7 +38,6 @@ export abstract class GuideFactory {
 			MenuGuideWithEdit:         MenuGuideWithEdit,
 			BaseInputGuide:            BaseInputGuide,
 			BaseConfirmGuide:          BaseConfirmGuide,
-			BaseSelectLabelGuide:      BaseSelectLabelGuide,
 			SelectLabelGuide4Guidance: SelectLabelGuide4Guidance,
 			NameInputGuide:            NameInputGuide,
 			CommandLastInputGuide:     CommandLastInputGuide,

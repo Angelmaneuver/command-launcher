@@ -25,7 +25,7 @@ export class BaseLastInputGuide extends BaseInputGuide {
 		registeredAt[this.registName] = this.registData;
 
 		this.settings.sort(this.hierarchy);
-		this.settings.commit();
+		await this.settings.commit();
 
 		this.state.back = true;
 		this.prev();

@@ -11,7 +11,7 @@ import * as Constant                       from '../../constant';
 const items = {
 	add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',             'Add a command.'),
 	create:      VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',          'Create a folder.'),
-	delete:      VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',          'delte this item.'),
+	delete:      VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',          'delete this item.'),
 	uninstall:   VSCodePreset.create(VSCodePreset.icons.trashcan,            'Uninstall',       'Remove all parameters for this extension.'),
 	launcher:    VSCodePreset.create(VSCodePreset.icons.reply,               'Return Launcher', 'Activate Launcher mode.'),
 	back:        VSCodePreset.create(VSCodePreset.icons.reply,               'Return',          'Back to previous.'),
@@ -44,10 +44,13 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	}
 
 	protected back(): void {
-		if (!this.guideGroupResultSet['deleted'] && !this.guideGroupResultSet['updated']) {
-			this.state.back = false;
-		} else {
+		if (this.guideGroupResultSet['deleted'] || this.guideGroupResultSet['updated']) {
+			delete this.guideGroupResultSet['deleted'];
+			delete this.guideGroupResultSet['updated'];
+
 			super.back();
+		} else {
+			this.state.back = false;
 		}
 	}
 
@@ -119,13 +122,16 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 		const name = this.getLabelStringByItem;
 		const type = (this.getCommand(name))[this.settings.itemId.type];
 
-		this.state.hierarchy       = this.hierarchy.concat(name);
-		this.state.resultSet[name] = undefined;
+		this.state.hierarchy           = this.hierarchy.concat(name);
+
+		const fullName                 = `/${[...this.state.hierarchy].join('/')}`;
+
+		this.state.resultSet[fullName] = undefined;
 
 		return async () => {
 			this.setNextSteps([{
 				key:   'MenuGuideWithEdit',
-				state: this.createBaseState(`/${name}`, name),
+				state: this.createBaseState(`/${name}`, fullName),
 				args:  [type]
 			}]);
 		};
@@ -178,7 +184,9 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 									)[0];
 								}
 
-								overwrite[key] = value;
+								if (!(this.settings.itemId.name === key)) {
+									overwrite[key] = value;
+								}
 							}
 						);
 
@@ -210,7 +218,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 				args:  [
 					{ yes: 'Uninstall.', no: 'Back to previous.' },
 					( async () => {
-						this.settings.uninstall();
+						await this.settings.uninstall();
 					} )
 				]
 			}]);
