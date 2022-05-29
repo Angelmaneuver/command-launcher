@@ -65,7 +65,7 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 	}
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
-		const steps: Array<Guide> = [];
+		let   steps: Array<Guide> = [];
 		const again               = this.reCall(label);
 
 		if (again) {
@@ -73,38 +73,7 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 		}
 
 		if (this.totalSteps > 0) {
-			steps.push(
-				{
-					key:   'NameInputGuide',
-					state: {
-						step:     this.step,
-					} as Partial<State>,
-					args: [Constant.DATA_TYPE.command]
-				},
-			);
-
-			if (Constant.DATA_TYPE.command === this.type) {
-				steps.push(
-					{
-						key:   'BaseInputGuide',
-						state: {
-							itemId: this.settings.itemId.description,
-							prompt: `Please enter the description of command.`
-						} as Partial<State>
-					},
-						{
-						key:   'CommandLastInputGuide',
-						state: {}
-					},
-				);
-			} else {
-				steps.push(
-					{
-						key:   'FolderLastInputGuide',
-						state: {}
-					},
-				);
-			}
+			steps = steps.concat(this.getGuidanceSteps());
 		}
 
 		if (steps.length > 0) {
@@ -115,5 +84,38 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 			this.state.back = true;
 			this.prev();
 		}
+	}
+
+	private getGuidanceSteps(): Array<Guide> {
+		const steps:Array<Guide> = [{
+			key:   'NameInputGuide',
+			state: { step: this.step } as Partial<State>,
+			args:  [Constant.DATA_TYPE.command]
+		}];
+
+		if (Constant.DATA_TYPE.command === this.type) {
+			steps.push(
+				{
+					key:   'BaseInputGuide',
+					state: {
+						itemId: this.settings.itemId.description,
+						prompt: `Please enter the description of command.`
+					} as Partial<State>
+				},
+				{
+					key:   'CommandLastInputGuide',
+					state: {}
+				},
+			);
+		} else {
+			steps.push(
+				{
+					key:   'FolderLastInputGuide',
+					state: {}
+				},
+			);
+		}
+
+		return steps;
 	}
 }
