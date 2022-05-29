@@ -3,15 +3,18 @@ import * as _                  from 'lodash';
 import { SettingBase }         from './base';
 import { Optional }            from '../utils/base/optional';
 
-const ITEM_ID     = {
+const ITEM_ID            = {
 	name:        'name',
 	type:        'type',
 	lable:       'label',
 	description: 'description',
-	command:     'command'
+	command:     'command',
+	orderNo:     'orderNo',
 } as const;
 
-const LOOKUP_MODE = {
+const ITEM_ID_VALUE_LIST = Object.values(ITEM_ID) as Array<string>;
+
+const LOOKUP_MODE        = {
 	read:  'r',
 	write: 'w',
 } as const;
@@ -29,6 +32,10 @@ export class ExtensionSetting extends SettingBase {
 
 	public get itemId() {
 		return ITEM_ID;
+	}
+
+	public get itemIdValues() {
+		return ITEM_ID_VALUE_LIST;
 	}
 
 	public get lookupMode() {
@@ -84,12 +91,52 @@ export class ExtensionSetting extends SettingBase {
 	}
 
 	public sort(hierarchy: Array<string>): void {
-		const registerd = this.cloneDeep(hierarchy);
-		const target    = this.lookup(hierarchy, this.lookupMode.read);
+		const registerd                         = this.cloneDeep(hierarchy);
+		const ordered:  Record<string, unknown> = {};
+		const target                            = this.lookup(hierarchy, this.lookupMode.read);
 
 		Object.keys(registerd).forEach(
 			(key) => {
 				delete target[key];
+
+				const record = registerd[key] as Record<string, unknown>;
+
+				if (this.itemIdValues.includes(key)) {
+					target[key] = _.cloneDeep(registerd[key]);
+
+					delete registerd[key];
+				} else if ('object' === typeof record && this.itemId.orderNo in record) {
+					ordered[key] = _.cloneDeep(registerd[key]);
+
+					delete registerd[key];
+				}
+			}
+		);
+
+		const sortedByOrderNo = Object.keys(ordered).map(
+			(key) => {
+				const record: Record<string, unknown> = {};
+
+				record[key] = ordered[key];
+
+				return record;
+			}
+		).sort(
+			(a, b) => {
+				const compareA = (a[Object.keys(a)[0]] as Record<string, string>)[this.itemId.orderNo];
+				const compareB = (b[Object.keys(b)[0]] as Record<string, string>)[this.itemId.orderNo];
+
+				return (compareA < compareB) ? -1 : 1;
+			}
+		);
+
+		sortedByOrderNo.forEach(
+			(value) => {
+				Object.keys(value as Record<string, unknown>).forEach(
+					(key) => {
+						target[key] = (value as Record<string, unknown>)[key];
+					}
+				);
 			}
 		);
 

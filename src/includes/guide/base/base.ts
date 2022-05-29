@@ -7,6 +7,7 @@ import {
 	AbstractGuide
 }                           from './abc';
 import { ExtensionSetting } from '../../settings/extension';
+import { Optional }         from '../../utils/base/optional';
 import * as Constant        from '../../constant';
 
 export interface State extends AbstractState {
@@ -88,10 +89,10 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		const commands                        = this.settings.lookup(this.hierarchy, this.settings.lookupMode.read);
 		const result: Record<string ,unknown> = {};
 
-		result[this.settings.itemId.name]        = commands[this.settings.itemId.name];
 		result[this.settings.itemId.lable]       = commands[this.settings.itemId.lable];
 		result[this.settings.itemId.type]        = commands[this.settings.itemId.type];
 		result[this.settings.itemId.description] = commands[this.settings.itemId.description];
+		result[this.settings.itemId.orderNo]     = Optional.ofNullable(commands[this.settings.itemId.orderNo]).orElseNonNullable('');
 
 		if (Constant.DATA_TYPE.command === result[this.settings.itemId.type]) {
 			result[this.settings.itemId.command] = commands[this.settings.itemId.command];
@@ -112,12 +113,11 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 
 	private getCommands(hierarchy: Array<string>): Record<string, unknown> {
 		const temporary                         = this.settings.lookup(hierarchy, this.settings.lookupMode.read);
-		const itemIds:  Array<string>           = Object.values(this.settings.itemId);
 		const commands: Record<string, unknown> = {};
 
 		Object.keys(temporary).forEach(
 			(key) => {
-				if (!itemIds.includes(key)) {
+				if (!this.settings.itemIdValues.includes(key)) {
 					commands[key] = temporary[key];
 				}
 			}

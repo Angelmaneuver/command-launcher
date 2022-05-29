@@ -1,6 +1,7 @@
 import { ExtensionContext, QuickPickItem } from 'vscode';
 import { State }                           from '../base/base';
 import { AbstractQuickPickSelectGuide }    from '../base/pick';
+import { ExtensionSetting }                from '../../settings/extension';
 import { Optional }                        from '../../utils/base/optional';
 import { Command, Folder }                 from '../../utils/base/type';
 import * as Constant                       from '../../constant';
@@ -12,6 +13,10 @@ export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
 		super(state, context);
 
 		this.root = root ? true : false;
+
+		if (this.root) {
+			this.state.settings = new ExtensionSetting();
+		}
 	}
 
 	public init(): void {

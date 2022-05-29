@@ -20,6 +20,7 @@ const items = {
 	label:       VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',           'Set the item label.'),
 	description: VSCodePreset.create(VSCodePreset.icons.note,                'Description',     'Set the command description.'),
 	command:     VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',         'Set the execute command.'),
+	order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',           'Set the sort order.'),
 	save:        VSCodePreset.create(VSCodePreset.icons.save,                'Save',            'Save changes.'),
 	return:      VSCodePreset.create(VSCodePreset.icons.reply,               'Return',          'Return without saving any changes.'),
 	delimiter:   { label: '-'.repeat(35) + ' Registered commands ' + '-'.repeat(35) } as QuickPickItem,
@@ -65,6 +66,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 			case items.label.label:
 			case items.description.label:
 			case items.command.label:
+			case items.order.label:
 				return this.setSettingGuide(label);
 			case items.delete.label:
 				return this.delete();
@@ -98,9 +100,9 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 		}
 
 		if (Constant.DATA_TYPE.folder === this.type) {
-			this.setFolderCommands([...settingItems, items.delete, ...save], returnOrBack);
+			this.setFolderCommands([...settingItems, items.order, items.delete, ...save], returnOrBack);
 		} else {
-			this.items = [...settingItems, items.command, items.delete, ...save, ...returnOrBack];
+			this.items = [...settingItems, items.command, items.order, items.delete, ...save, ...returnOrBack];
 		}
 	}
 
@@ -172,16 +174,28 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 
 						Object.keys(this.guideGroupResultSet).forEach(
 							(key) => {
-								let value = this.guideGroupResultSet[key];
+								let regist = true;
+								let value  = this.guideGroupResultSet[key];
 
-								if (this.settings.itemId.lable === key) {
-									value = (
-										Optional.ofNullable((this.guideGroupResultSet[key] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
-												.orElseThrow(ReferenceError('Label value not found...'))
-									)[0];
+								switch (key) {
+									case this.settings.itemId.name:
+										regist = false;
+										break;
+									case this.settings.itemId.lable:
+										value = (
+											Optional.ofNullable((this.guideGroupResultSet[key] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
+													.orElseThrow(ReferenceError('Label value not found...'))
+										)[0];
+										break;
+									case this.settings.itemId.orderNo:
+										if (0 === (this.guideGroupResultSet[key] as string).length) {
+											delete original[key];
+											regist = false;
+										}
+										break;
 								}
 
-								if (!(this.settings.itemId.name === key)) {
+								if (regist) {
 									overwrite[key] = value;
 								}
 							}
@@ -274,7 +288,12 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 				optionState['validate']     = BaseValidator.validateRequired;
 				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.command];
 				break;
-		}
+			case items.order.label:
+				itemId                      = this.settings.itemId.orderNo;
+				optionState['prompt']       = 'Please enter the number you want to sort order.';
+				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.orderNo];
+				break;
+			}
 
 		guide = {
 			key:   key,

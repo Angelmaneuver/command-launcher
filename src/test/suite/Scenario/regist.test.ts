@@ -148,6 +148,32 @@ suite('Scenario - Command Regist', async () => {
 		},
 	};
 
+	const result3 = {
+		"新しいノートを作成する。": {
+			"type": 1,
+			"command": "vsnotes.newNote",
+			"label": "$(notebook)",
+			"description": "VSNotesで新しいノートを作成します。",
+			"orderNo": "0"
+		},
+		"VSNotes": {
+			"description": "VSNotes関連のコマンドセットです。",
+			"label": "$(notebook-template)",
+			"type": 2,
+			"作成": {
+				"description": "VSNotesのノート作成関連のコマンドセットです。",
+				"label": "$(edit)",
+				"type": 2,
+				"ワークスペースに新しいノートを作成する。": {
+					"type": 1,
+					"command": "vsnotes.newNoteInWorkspace",
+					"label": "$(notebook)",
+					"description": "VSNotesでワークスペースに新しいノートを作成します。"
+				},
+			}
+		},
+	};
+
 	const stateCreater = () => ({ title: "Test Suite", resultSet: {} } as State);
 	const context      = {} as ExtensionContext;
 	const items        = {
@@ -162,6 +188,7 @@ suite('Scenario - Command Regist', async () => {
 		label:       VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',                                  'Set the item label.'),
 		description: VSCodePreset.create(VSCodePreset.icons.note,                'Description',                            'Set the command description.'),
 		command:     VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',                                'Set the execute command.'),
+		order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
 		save:        VSCodePreset.create(VSCodePreset.icons.save,                'Save',                                   'Save changes.'),
 		return:      VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Return without saving any changes.'),
 		other:       VSCodePreset.create(VSCodePreset.icons.inbox,               'Other icons',                            'Select from other icons.'),
@@ -286,7 +313,41 @@ suite('Scenario - Command Regist', async () => {
 
 		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
 
-		const settings = new ExtensionSetting();
+		let settings = new ExtensionSetting();
+
+		assert.deepStrictEqual(result2, settings.commands);
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items['新しいノートを作成する。']);
+		pickStub.onCall(1).resolves(items.order);
+		inputStub.onCall(0).resolves('0');
+		pickStub.onCall(2).resolves(items.save);
+		pickStub.onCall(3).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(4).resolves(items.back);
+		pickStub.onCall(5).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		settings = new ExtensionSetting();
+
+		assert.deepStrictEqual(result3, settings.commands);
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items['新しいノートを作成する。']);
+		pickStub.onCall(1).resolves(items.order);
+		inputStub.onCall(0).resolves('');
+		pickStub.onCall(2).resolves(items.save);
+		pickStub.onCall(3).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(4).resolves(items.back);
+		pickStub.onCall(5).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		settings = new ExtensionSetting();
 
 		assert.deepStrictEqual(result2, settings.commands);
 
