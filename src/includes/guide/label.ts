@@ -102,17 +102,11 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 						prompt: `Please enter the description of command.`
 					} as Partial<State>
 				},
-				{
-					key:   'CommandLastInputGuide',
-					state: {}
-				},
+				{   key:   'CommandLastInputGuide', state: {} },
 			);
 		} else {
 			steps.push(
-				{
-					key:   'FolderLastInputGuide',
-					state: {}
-				},
+				{   key:   'FolderLastInputGuide', state: {} },
 			);
 		}
 
