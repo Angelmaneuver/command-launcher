@@ -13,6 +13,7 @@ export class BaseLastInputGuide extends BaseInputGuide {
 	protected async lastInputStepExecute(): Promise<void> {
 		this.registName                                   = this.guideGroupResultSet[this.settings.itemId.name] as string;
 
+		this.registData[this.settings.itemId.type]        = this.guideGroupResultSet[this.settings.itemId.type];
 		this.registData[this.settings.itemId.lable]       = (
 			Optional
 				.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(match))
@@ -42,7 +43,6 @@ export class CommandLastInputGuide extends BaseLastInputGuide {
 	}
 
 	protected async lastInputStepExecute(): Promise<void> {
-		this.registData[this.settings.itemId.type]    = Constant.DATA_TYPE.command;
 		this.registData[this.settings.itemId.command] = this.guideGroupResultSet[this.settings.itemId.command];
 
 		await super.lastInputStepExecute();
@@ -55,11 +55,5 @@ export class FolderLastInputGuide extends BaseLastInputGuide {
 
 		this.itemId   = this.settings.itemId.description;
 		this.prompt   = 'Please enter the description of folder.';
-	}
-
-	protected async lastInputStepExecute(): Promise<void> {
-		this.registData[this.settings.itemId.type] = Constant.DATA_TYPE.folder;
-
-		await super.lastInputStepExecute();
 	}
 }

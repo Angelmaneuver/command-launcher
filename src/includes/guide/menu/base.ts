@@ -34,7 +34,8 @@ export class MenuGuide extends AbstractMenuGuide {
 
 		if (Constant.DATA_TYPE.command === command[this.settings.itemId.type]) {
 			this.state.command = (command as Command)[this.settings.itemId.command];
-			return undefined;
+		} else if (Constant.DATA_TYPE.terminalCommand === command[this.settings.itemId.type]) {
+			this.state.terminalCommand = (command as Command)[this.settings.itemId.command];
 		} else {
 			const name           = this.getLabelStringByItem;
 
@@ -44,5 +45,7 @@ export class MenuGuide extends AbstractMenuGuide {
 				this.setNextSteps([{ key: 'MenuGuide', state: this.state }]);
 			};
 		}
+
+		return undefined;
 	}
 }

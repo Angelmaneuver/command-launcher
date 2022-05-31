@@ -13,7 +13,7 @@ export class NameInputGuide extends BaseInputGuide {
 
 		this.type     = type;
 		this.itemId   = this.settings.itemId.name;
-		this.prompt   = `Please enter the name of ${Constant.DATA_TYPE.command === this.type ? 'command' : 'folder' }.`;
+		this.prompt   = `Please enter the name of ${Constant.DATA_TYPE.folder === this.type ? 'folder' : 'command' }.`;
 		this.validate = this.validateName;
 	}
 

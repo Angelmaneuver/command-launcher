@@ -2,7 +2,7 @@
 
 ![GitHub package.json dynamic](https://img.shields.io/github/package-json/categories/angelmaneuver/command-launcher?color=green) ![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/angelmaneuver.command-launcher) ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Angelmaneuver.command-launcher) ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/angelmaneuver/command-launcher/Command%20Launcher%20CI) [![Maintainability](https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/maintainability)](https://codeclimate.com/github/Angelmaneuver/command-launcher/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/test_coverage)](https://codeclimate.com/github/Angelmaneuver/command-launcher/test_coverage) [![License](https://img.shields.io/github/license/Angelmaneuver/command-launcher)](LICENSE)
 
-A launcher extension that manages commands for the command palette.
+A launcher extension that manages commands for the command palette and terminal command.
 
 ## Usage
 ### Step1.
@@ -45,6 +45,11 @@ First, "`Command Pallete`" -> "`Gear`" in that order.
 The value entered in the filter is the value of the command you wish to call.
 
 ![Checkout2-2 image](resource/readme/demo4.png)
+
+### Command - Execute Terminal's command
+You can execute terminal commands from the menu.
+
+![Execute terminal command image](resource/readme/demo7.gif)
 
 ### Folder
 You can create folders to manage commands.

@@ -133,7 +133,7 @@ suite('Scenario - Command Regist', async () => {
 				"label": "$(edit)",
 				"type": 2,
 				"ワークスペースに新しいノートを作成する。": {
-					"type": 1,
+					"type": 3,
 					"command": "vsnotes.newNoteInWorkspace",
 					"label": "$(notebook)",
 					"description": "VSNotesでワークスペースに新しいノートを作成します。"
@@ -165,7 +165,7 @@ suite('Scenario - Command Regist', async () => {
 				"label": "$(edit)",
 				"type": 2,
 				"ワークスペースに新しいノートを作成する。": {
-					"type": 1,
+					"type": 3,
 					"command": "vsnotes.newNoteInWorkspace",
 					"label": "$(notebook)",
 					"description": "VSNotesでワークスペースに新しいノートを作成します。"
@@ -178,6 +178,7 @@ suite('Scenario - Command Regist', async () => {
 	const context      = {} as ExtensionContext;
 	const items        = {
 		add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',                                    'Add a command.'),
+		terminal:    VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',                               'Add a terminal command.'),
 		create:      VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',                                 'Create a folder.'),
 		delete:      VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',                                 'delete this item.'),
 		uninstall:   VSCodePreset.create(VSCodePreset.icons.trashcan,            'Uninstall',                              'Remove all parameters for this extension.'),
@@ -283,7 +284,7 @@ suite('Scenario - Command Regist', async () => {
 		inputStub.onCall(10).resolves(data.VSNotes.作成.description);
 
 		pickStub.onCall(20).resolves({ label: `${data.VSNotes.作成.label} 作成`, description: '' });
-		pickStub.onCall(21).resolves(items.add);
+		pickStub.onCall(21).resolves(items.terminal);
 		pickStub.onCall(22).resolves(items.other);
 		pickStub.onCall(23).resolves(items.n);
 		inputStub.onCall(11).resolves('ワークスペースに新しいノートを作成する。');

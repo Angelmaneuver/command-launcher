@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.4
+ - Added the function to also manage commands to be executed in the terminal
+
 ## 0.0.3
  - Added the function to set the order of commands or folders
 

@@ -1,6 +1,7 @@
 import {
 	window,
 	commands,
+	Terminal,
 	ExtensionContext
 }                           from 'vscode';
 import { MultiStepInput }   from './utils/multiStepInput';
@@ -19,6 +20,8 @@ export async function start(
 
 		if (present(state.command)) {
 			commands.executeCommand(state.command as string);
+		} else if (present(state.terminalCommand)) {
+			executeTerminalCommand(state.terminalCommand as string);
 		}
 	} catch (e) {
 		errorHandling(e);
@@ -35,6 +38,13 @@ export async function start(
 
 function present(value?: string): boolean {
 	return (value && value.length > 0) ? true : false;
+}
+
+function executeTerminalCommand(command: string): void {
+	const terminal = window.activeTerminal ? window.activeTerminal : window.createTerminal();
+
+	terminal.show();
+	terminal.sendText(command, true);
 }
 
 function errorHandling(e: unknown) {

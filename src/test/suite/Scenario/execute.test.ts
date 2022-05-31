@@ -52,6 +52,12 @@ suite('Scenario - Command Execute', async () => {
 				}
 			}
 		},
+		"WordPress開発環境を起動する。": {
+			"command": "wp-env start",
+			"type": 3,
+			"label": "$(run)",
+			"description": "wp-env start を実行します。"
+		},
 		"履歴": {
 			"description": "VSCodeの履歴に関するコマンドセットです。",
 			"label": "$(history)",
@@ -117,11 +123,12 @@ suite('Scenario - Command Execute', async () => {
 	const items        = {
 		back: VSCodePreset.create(VSCodePreset.icons.reply,   'Return', 'Back to previous.'),
 		exit: VSCodePreset.create(VSCodePreset.icons.signOut, 'Exit',   'Exit this extenion.'),
-		"新しいノートを作成する。": { label: "$(notebook) 新しいノートを作成する。", description: "VSNotesで新しいノートを作成します。" } as QuickPickItem,
-		"VSNotes":              { label: "$(notebook-template) VSNotes",     description: "VSNotes関連のコマンドセットです。" } as QuickPickItem,
-		"作成":                  { label: "$(edit) 作成",                     description: "VSNotesのノート作成関連のコマンドセットです。" } as QuickPickItem,
-		"設定":                  { label: "$(settings) 設定",                 description: "VSCodeの設定を行うコマンドセットです。" } as QuickPickItem, 
-		"設定 (JSON) を開く。":   { label: "$(json) 設定 (JSON) を開く。",       description: "設定 (JSON) を開きます。" } as QuickPickItem,
+		"新しいノートを作成する。":       { label: "$(notebook) 新しいノートを作成する。", description: "VSNotesで新しいノートを作成します。" } as QuickPickItem,
+		"VSNotes":                    { label: "$(notebook-template) VSNotes",     description: "VSNotes関連のコマンドセットです。" } as QuickPickItem,
+		"WordPress開発環境を起動する。": { label: "$(run) WordPress開発環境を起動する。", description: "wp-env start を実行します。" } as QuickPickItem,
+		"作成":                        { label: "$(edit) 作成",                     description: "VSNotesのノート作成関連のコマンドセットです。" } as QuickPickItem,
+		"設定":                        { label: "$(settings) 設定",                 description: "VSCodeの設定を行うコマンドセットです。" } as QuickPickItem, 
+		"設定 (JSON) を開く。":         { label: "$(json) 設定 (JSON) を開く。",       description: "設定 (JSON) を開きます。" } as QuickPickItem,
 	};
 
 	test('Menu -> Command', async () => {
@@ -129,7 +136,7 @@ suite('Scenario - Command Execute', async () => {
 		setup.commands = data;
 		await setup.commit();
 
-		const state    = stateCreater();
+		let   state    = stateCreater();
 		const pickStub = sinon.stub(MultiStepInput.prototype, "showQuickPick");
 
 		pickStub.resolves(items['新しいノートを作成する。']);
@@ -137,6 +144,16 @@ suite('Scenario - Command Execute', async () => {
 		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
 
 		assert.strictEqual(data['新しいノートを作成する。']['command'], state.command);
+
+		pickStub.reset();
+
+		state          = stateCreater();
+
+		pickStub.resolves(items['WordPress開発環境を起動する。']);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+
+		assert.strictEqual(data['WordPress開発環境を起動する。'].command, state.terminalCommand);
 
 		pickStub.restore();
 

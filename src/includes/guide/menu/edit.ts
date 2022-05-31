@@ -10,6 +10,7 @@ import * as Constant                       from '../../constant';
 
 const items = {
 	add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',             'Add a command.'),
+	terminal:    VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',        'Add a terminal command.'),
 	create:      VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',          'Create a folder.'),
 	delete:      VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',          'delete this item.'),
 	uninstall:   VSCodePreset.create(VSCodePreset.icons.trashcan,            'Uninstall',       'Remove all parameters for this extension.'),
@@ -60,6 +61,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 
 		switch (label) {
 			case items.add.label:
+			case items.terminal.label:
 			case items.create.label:
 				return this.setGuidance(label);
 			case items.name.label:
@@ -109,7 +111,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 	private setFolderCommands(settingItems: Array<QuickPickItem>, returnOrBack: Array<QuickPickItem>): void {
 		const commandItems = this.commandItems;
 
-		this.items         = [items.add, items.create].concat(
+		this.items         = [items.add, items.terminal, items.create].concat(
 			this.root               ? [items.uninstall]                  : settingItems
 		).concat(
 			[items.launcher]
@@ -245,12 +247,21 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 			guideGroupId = 'add';
 			totalStep    = 4;
 			type         = Constant.DATA_TYPE.command;
+		} else if (items.terminal.label === label) {
+			title        = 'Terminal';
+			guideGroupId = 'addTerminal';
+			totalStep    = 4;
+			type         = Constant.DATA_TYPE.terminalCommand;
 		} else {
 			title        = 'Folder';
 			guideGroupId = 'create';
 			totalStep    = 3;
 			type         = Constant.DATA_TYPE.folder;
 		}
+
+		const temporary: Record<string, unknown> = {};
+		temporary[this.settings.itemId.type]     = type;
+		this.state.resultSet[guideGroupId]       = temporary;
 
 		return async () => {
 			this.setNextSteps([{
@@ -279,7 +290,7 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 				break;
 			case items.description.label:
 				itemId                      = this.settings.itemId.description;
-				optionState['prompt']       = `Please enter the description of ${Constant.DATA_TYPE.command === this.type ? 'command' : 'folder'}.`;
+				optionState['prompt']       = `Please enter the description of ${Constant.DATA_TYPE.folder === this.type ? 'folder' : 'command' }.`;
 				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.description];
 				break;
 			case items.command.label:

@@ -90,10 +90,14 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 		const steps:Array<Guide> = [{
 			key:   'NameInputGuide',
 			state: { step: this.step } as Partial<State>,
-			args:  [Constant.DATA_TYPE.command]
+			args:  [this.type]
 		}];
 
-		if (Constant.DATA_TYPE.command === this.type) {
+		if (Constant.DATA_TYPE.folder === this.type) {
+			steps.push(
+				{   key:   'FolderLastInputGuide', state: {} },
+			);
+		} else {
 			steps.push(
 				{
 					key:   'BaseInputGuide',
@@ -103,10 +107,6 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 					} as Partial<State>
 				},
 				{   key:   'CommandLastInputGuide', state: {} },
-			);
-		} else {
-			steps.push(
-				{   key:   'FolderLastInputGuide', state: {} },
 			);
 		}
 
