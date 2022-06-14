@@ -94,6 +94,9 @@ export class ExtensionSetting extends SettingBase {
 		const registerd                         = this.cloneDeep(hierarchy);
 		const ordered:  Record<string, unknown> = {};
 		const target                            = this.lookup(hierarchy, this.lookupMode.read);
+		const fetch                             = (record: Record<string, unknown>) => {
+			return ((record[Object.keys(record)[0]] as Record<string, unknown>)[this.itemId.orderNo]) as string;
+		};
 
 		Object.keys(registerd).forEach(
 			(key) => {
@@ -123,8 +126,8 @@ export class ExtensionSetting extends SettingBase {
 			}
 		).sort(
 			(a, b) => {
-				const compareA = (a[Object.keys(a)[0]] as Record<string, string>)[this.itemId.orderNo];
-				const compareB = (b[Object.keys(b)[0]] as Record<string, string>)[this.itemId.orderNo];
+				const compareA = fetch(a);
+				const compareB = fetch(b);
 
 				return (compareA < compareB) ? -1 : 1;
 			}
