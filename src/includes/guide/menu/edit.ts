@@ -242,21 +242,16 @@ export class MenuGuideWithEdit extends AbstractMenuGuide {
 		let [title, guideGroupId, totalStep, type] = ['', '', 0, 0];
 		this.state.resultSet[guideGroupId]         = undefined;
 
-		if (items.add.label === label) {
-			title        = 'Command';
-			guideGroupId = 'add';
-			totalStep    = 4;
-			type         = Constant.DATA_TYPE.command;
-		} else if (items.terminal.label === label) {
-			title        = 'Terminal';
-			guideGroupId = 'addTerminal';
-			totalStep    = 4;
-			type         = Constant.DATA_TYPE.terminalCommand;
-		} else {
-			title        = 'Folder';
-			guideGroupId = 'create';
-			totalStep    = 3;
-			type         = Constant.DATA_TYPE.folder;
+		switch(label) {
+			case items.add.label:
+				[title, guideGroupId, totalStep, type] = ['Command',  'add',         4, Constant.DATA_TYPE.command];
+				break;
+			case items.terminal.label:
+				[title, guideGroupId, totalStep, type] = ['Terminal', 'addTerminal', 4, Constant.DATA_TYPE.terminalCommand];
+				break;
+			default:
+				[title, guideGroupId, totalStep, type] = ['Folder',   'create',      3, Constant.DATA_TYPE.folder];
+				break;
 		}
 
 		const temporary: Record<string, unknown> = {};
