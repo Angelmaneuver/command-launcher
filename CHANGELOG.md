@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.0.5
+ - Fixed typo (Reflects from issue [#1](https://github.com/Angelmaneuver/command-launcher/issues/1))
+ - Code Review (No additional functions or fixes)
+
 ## 0.0.4
  - Added the function to also manage commands to be executed in the terminal
 
