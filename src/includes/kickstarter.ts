@@ -56,7 +56,7 @@ function errorHandling(e: unknown) {
 
 export function getBaseState(additionalTitle: string): Partial<State> {
 	return {
-		title:            `Command Lanucher${additionalTitle}`,
+		title:            `Command Launcher${additionalTitle}`,
 		workingDirectory: [],
 		resultSet:        {},
 	} as Partial<State>;
