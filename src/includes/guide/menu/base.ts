@@ -1,6 +1,9 @@
 import { AbstractMenuGuide } from './abc';
 import { VSCodePreset }      from '../../utils/base/vscodePreset';
-import { Command }           from '../../utils/base/type';
+import {
+	Command,
+	TerminalCommand
+}                            from '../../utils/base/type';
 import * as Constant         from '../../constant';
 
 const items = {
@@ -30,12 +33,15 @@ export class MenuGuide extends AbstractMenuGuide {
 	}
 
 	private command(): (() => Promise<void>) | undefined {
-		const command = this.getCommand(this.getLabelStringByItem);
+		const data = this.getCommand(this.getLabelStringByItem);
 
-		if (Constant.DATA_TYPE.command === command[this.settings.itemId.type]) {
-			this.state.command = (command as Command)[this.settings.itemId.command];
-		} else if (Constant.DATA_TYPE.terminalCommand === command[this.settings.itemId.type]) {
-			this.state.terminalCommand = (command as Command)[this.settings.itemId.command];
+		if (Constant.DATA_TYPE.command === data[this.settings.itemId.type]) {
+			const command = data as Command;
+			this.state.command = command[this.settings.itemId.command];
+		} else if (Constant.DATA_TYPE.terminalCommand === data[this.settings.itemId.type]) {
+			const command = data as TerminalCommand;
+			this.state.terminalCommand = command[this.settings.itemId.command];
+			this.state.autoRun         = command[this.settings.itemId.autoRun];
 		} else {
 			const name           = this.getLabelStringByItem;
 

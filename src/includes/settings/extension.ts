@@ -10,6 +10,7 @@ const ITEM_ID            = {
 	description: 'description',
 	command:     'command',
 	orderNo:     'orderNo',
+	autoRun:     'autoRun',
 } as const;
 
 const ITEM_ID_VALUE_LIST = Object.values(ITEM_ID) as Array<string>;

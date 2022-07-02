@@ -21,7 +21,7 @@ export async function start(
 		if (present(state.command)) {
 			commands.executeCommand(state.command as string);
 		} else if (present(state.terminalCommand)) {
-			executeTerminalCommand(state.terminalCommand as string);
+			executeTerminalCommand(state.terminalCommand as string, state.autoRun as boolean);
 		}
 	} catch (e) {
 		errorHandling(e);
@@ -40,11 +40,11 @@ function present(value?: string): boolean {
 	return (value && value.length > 0) ? true : false;
 }
 
-function executeTerminalCommand(command: string): void {
+function executeTerminalCommand(command: string, autoRun: boolean): void {
 	const terminal = window.activeTerminal ? window.activeTerminal : window.createTerminal();
 
 	terminal.show();
-	terminal.sendText(command, true);
+	terminal.sendText(command, autoRun);
 }
 
 function errorHandling(e: unknown) {

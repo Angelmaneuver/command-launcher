@@ -5,6 +5,7 @@ import { MenuGuide }                 from '../menu/base';
 import { MenuGuideWithEdit }         from '../menu/edit';
 import { SelectLabelGuide4Guidance } from '../label';
 import { NameInputGuide }            from '../name';
+import { AutoRunSettingGuide }       from '../autoRun';
 import {
 	CommandLastInputGuide,
 	FolderLastInputGuide,
@@ -40,6 +41,7 @@ export abstract class GuideFactory {
 			BaseConfirmGuide:          BaseConfirmGuide,
 			SelectLabelGuide4Guidance: SelectLabelGuide4Guidance,
 			NameInputGuide:            NameInputGuide,
+			AutoRunSettingGuide:       AutoRunSettingGuide,
 			CommandLastInputGuide:     CommandLastInputGuide,
 			FolderLastInputGuide:      FolderLastInputGuide,
 		};

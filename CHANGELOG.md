@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.6
+ - Added the function to configure whether terminal commands should be executed automaticaly or just paste
+
 ## 0.0.5
  - Fixed typo (Reflects from issue [#1](https://github.com/Angelmaneuver/command-launcher/issues/1))
  - Code Review (No additional functions or fixes)

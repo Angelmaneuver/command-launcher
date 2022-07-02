@@ -14,6 +14,17 @@ import * as Constant        from '../../../includes/constant';
 
 suite('Scenario - Command Regist', async () => {
 	const data = {
+		"Python": {
+			"type": 2,
+			"label": "$(tools)",
+			"description": "Python 関連のコマンドセットです。",
+			"ライブラリをアップデートする。": {
+				"command": "pipenv update",
+				"type": 3,
+				"label": "$(sync)",
+				"description": "ライブラリをアップデートします。"
+			}
+		},
 		"VSNotes": {
 			"description": "VSNotes関連のコマンドセットです。",
 			"label": "$(notebook-template)",
@@ -174,6 +185,79 @@ suite('Scenario - Command Regist', async () => {
 		},
 	};
 
+	const result4 = {
+		"Python": {
+			"type": 2,
+			"label": "$(tools)",
+			"description": "Python 関連のコマンドセットです。",
+			"ライブラリをアップデートする。": {
+				"command": "pipenv update",
+				"type": 3,
+				"label": "$(sync)",
+				"description": "ライブラリをアップデートします。"
+			}
+		},
+		"VSNotes": {
+			"description": "VSNotes関連のコマンドセットです。",
+			"label": "$(notebook-template)",
+			"type": 2,
+			"作成": {
+				"description": "VSNotesのノート作成関連のコマンドセットです。",
+				"label": "$(edit)",
+				"type": 2,
+				"ワークスペースに新しいノートを作成する。": {
+					"type": 3,
+					"command": "vsnotes.newNoteInWorkspace",
+					"label": "$(notebook)",
+					"description": "VSNotesでワークスペースに新しいノートを作成します。"
+				},
+			}
+		},
+		"新しいノートを作成する。": {
+			"type": 1,
+			"command": "vsnotes.newNote",
+			"label": "$(notebook)",
+			"description": "VSNotesで新しいノートを作成します。"
+		},
+	};
+
+	const result5 = {
+		"Python": {
+			"type": 2,
+			"label": "$(tools)",
+			"description": "Python 関連のコマンドセットです。",
+			"ライブラリをアップデートする。": {
+				"command": "pipenv update",
+				"type": 3,
+				"label": "$(sync)",
+				"description": "ライブラリをアップデートします。",
+				"autoRun": false
+			}
+		},
+		"VSNotes": {
+			"description": "VSNotes関連のコマンドセットです。",
+			"label": "$(notebook-template)",
+			"type": 2,
+			"作成": {
+				"description": "VSNotesのノート作成関連のコマンドセットです。",
+				"label": "$(edit)",
+				"type": 2,
+				"ワークスペースに新しいノートを作成する。": {
+					"type": 3,
+					"command": "vsnotes.newNoteInWorkspace",
+					"label": "$(notebook)",
+					"description": "VSNotesでワークスペースに新しいノートを作成します。"
+				},
+			}
+		},
+		"新しいノートを作成する。": {
+			"type": 1,
+			"command": "vsnotes.newNote",
+			"label": "$(notebook)",
+			"description": "VSNotesで新しいノートを作成します。"
+		},
+	};
+
 	const stateCreater = () => ({ title: "Test Suite", resultSet: {} } as State);
 	const context      = {} as ExtensionContext;
 	const items        = {
@@ -190,6 +274,7 @@ suite('Scenario - Command Regist', async () => {
 		description: VSCodePreset.create(VSCodePreset.icons.note,                'Description',                            'Set the command description.'),
 		command:     VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',                                'Set the execute command.'),
 		order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
+		autoRun:     VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',                               'Set the run automaticaly or not.'),
 		save:        VSCodePreset.create(VSCodePreset.icons.save,                'Save',                                   'Save changes.'),
 		return:      VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Return without saving any changes.'),
 		other:       VSCodePreset.create(VSCodePreset.icons.inbox,               'Other icons',                            'Select from other icons.'),
@@ -197,11 +282,15 @@ suite('Scenario - Command Regist', async () => {
 		d:           VSCodePreset.create(VSCodePreset.icons.folder,              VSCodePreset.icons.folder.name,           ''),
 		n:           VSCodePreset.create(VSCodePreset.icons.notebook,            VSCodePreset.icons.notebook.name,         ''),
 		nt:          VSCodePreset.create(VSCodePreset.icons.notebookTemplate,    VSCodePreset.icons.notebookTemplate.name, ''),
-		"新しいノートを作成する。": { label: "$(notebook) 新しいノートを作成する。", description: "VSNotesで新しいノートを作成します。" } as QuickPickItem,
-		"VSNotes":              { label: "$(notebook-template) VSNotes",     description: "VSNotes関連のコマンドセットです。" } as QuickPickItem,
-		"作成":                  { label: "$(edit) 作成",                     description: "VSNotesのノート作成関連のコマンドセットです。" } as QuickPickItem,
-		"設定":                  { label: "$(settings) 設定",                 description: "VSCodeの設定を行うコマンドセットです。" } as QuickPickItem, 
-		"設定 (JSON) を開く。":   { label: "$(json) 設定 (JSON) を開く。",       description: "設定 (JSON) を開きます。" } as QuickPickItem,
+		t:           VSCodePreset.create(VSCodePreset.icons.tools,               VSCodePreset.icons.tools.name,            ''),
+		s:           VSCodePreset.create(VSCodePreset.icons.sync,                VSCodePreset.icons.sync.name,             ''),
+		"新しいノートを作成する。":      { label: "$(notebook) 新しいノートを作成する。",  description: "VSNotesで新しいノートを作成します。" } as QuickPickItem,
+		"VSNotes":                   { label: "$(notebook-template) VSNotes",      description: "VSNotes関連のコマンドセットです。" } as QuickPickItem,
+		"作成":                       { label: "$(edit) 作成",                      description: "VSNotesのノート作成関連のコマンドセットです。" } as QuickPickItem,
+		"設定":                       { label: "$(settings) 設定",                  description: "VSCodeの設定を行うコマンドセットです。" } as QuickPickItem, 
+		"設定 (JSON) を開く。":        { label: "$(json) 設定 (JSON) を開く。",        description: "設定 (JSON) を開きます。" } as QuickPickItem,
+		"Python":                    { label: "$(tools) Python",                   description: "Python 関連のコマンドセットです。" } as QuickPickItem,
+		"ライブラリをアップデートする。": { label: "$(sync) ライブラリをアップデートする。", description: "ライブラリをアップデートします。" } as QuickPickItem,
 	};
 
 	test('EditMenu -> Command Regist', async () => {
@@ -351,6 +440,66 @@ suite('Scenario - Command Regist', async () => {
 		settings = new ExtensionSetting();
 
 		assert.deepStrictEqual(result2, settings.commands);
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items.create);
+		pickStub.onCall(1).resolves(items.other);
+		pickStub.onCall(2).resolves(items.t);
+		inputStub.onCall(0).resolves('Python');
+		inputStub.onCall(1).resolves(data.Python.description);
+
+		pickStub.onCall(3).resolves(items.Python);
+		pickStub.onCall(4).resolves(items.terminal);
+		pickStub.onCall(5).resolves(items.other);
+		pickStub.onCall(6).resolves(items.s);
+		inputStub.onCall(2).resolves('ライブラリをアップデートする。');
+		inputStub.onCall(3).resolves(data.Python['ライブラリをアップデートする。'].description);
+		inputStub.onCall(4).resolves(data.Python['ライブラリをアップデートする。'].command);
+
+		pickStub.onCall(7).resolves(items.back);
+		pickStub.onCall(8).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items.Python);
+		pickStub.onCall(1).resolves(items['ライブラリをアップデートする。']);
+		pickStub.onCall(2).resolves(items.autoRun);
+		pickStub.onCall(3).resolves({ label: '$(x) No', description: '' });
+		pickStub.onCall(4).resolves(items.save);
+		pickStub.onCall(5).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(6).resolves(items.back);
+		pickStub.onCall(7).resolves(items.back);
+		pickStub.onCall(8).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		settings = new ExtensionSetting();
+
+		assert.deepStrictEqual(result5, settings.commands);
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items.Python);
+		pickStub.onCall(1).resolves(items['ライブラリをアップデートする。']);
+		pickStub.onCall(2).resolves(items.autoRun);
+		pickStub.onCall(3).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(4).resolves(items.save);
+		pickStub.onCall(5).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(6).resolves(items.back);
+		pickStub.onCall(7).resolves(items.back);
+		pickStub.onCall(8).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuideWithEdit(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		settings = new ExtensionSetting();
+
+		assert.deepStrictEqual(result4, settings.commands);
 
 		await settings.uninstall();
 

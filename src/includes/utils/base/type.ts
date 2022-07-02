@@ -1,14 +1,19 @@
 export type Nullable<T> = T | null | undefined;
 
-export type Command     = {
+type BaseCommandType = {
+	name:        string,
 	type:        number,
 	label:       string,
 	description: string,
+	orderNo:     string,
+};
+
+export type Command         = BaseCommandType & {
 	command:     string,
 };
 
-export type Folder      = {
-	type:        number,
-	label:       string,
-	description: string,
+export type TerminalCommand = Command & {
+	autoRun:     boolean,
 };
+
+export type Folder          = BaseCommandType;

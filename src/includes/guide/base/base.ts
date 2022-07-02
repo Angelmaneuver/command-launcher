@@ -18,6 +18,7 @@ export interface State extends AbstractState {
 	reload?:          boolean,
 	command?:         string,
 	terminalCommand?: string,
+	autoRun?:         boolean,
 	prompt?:          string,
 	placeholder?:     string,
 	items?:           Array<QuickPickItem>,
@@ -97,6 +98,10 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 
 		if (Constant.DATA_TYPE.folder !== result[this.settings.itemId.type]) {
 			result[this.settings.itemId.command] = commands[this.settings.itemId.command];
+		}
+
+		if (Constant.DATA_TYPE.terminalCommand === result[this.settings.itemId.type]) {
+			result[this.settings.itemId.autoRun] = Optional.ofNullable(commands[this.settings.itemId.autoRun]).orElseNonNullable(true);
 		}
 
 		return result;

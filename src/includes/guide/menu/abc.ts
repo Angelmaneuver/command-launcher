@@ -1,10 +1,10 @@
-import { ExtensionContext, QuickPickItem } from 'vscode';
-import { State }                           from '../base/base';
-import { AbstractQuickPickSelectGuide }    from '../base/pick';
-import { ExtensionSetting }                from '../../settings/extension';
-import { Optional }                        from '../../utils/base/optional';
-import { Command, Folder }                 from '../../utils/base/type';
-import * as Constant                       from '../../constant';
+import { ExtensionContext, QuickPickItem }  from 'vscode';
+import { State }                            from '../base/base';
+import { AbstractQuickPickSelectGuide }     from '../base/pick';
+import { ExtensionSetting }                 from '../../settings/extension';
+import { Optional }                         from '../../utils/base/optional';
+import { Command, TerminalCommand ,Folder } from '../../utils/base/type';
+import * as Constant                        from '../../constant';
 
 export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
 	protected root: boolean;
@@ -48,14 +48,17 @@ export abstract class AbstractMenuGuide extends AbstractQuickPickSelectGuide {
 		);
 	}
 
-	protected getCommand(name: string): Command | Folder {
-		const error   = ReferenceError(`Command item '${name}' not found...`);
-		const command = Optional.ofNullable(this.currentCommands[name]).orElseThrow(error) as Record<string, unknown>;
+	protected getCommand(name: string): Command | TerminalCommand | Folder {
+		const error = ReferenceError(`Command item '${name}' not found...`);
+		const data  = Optional.ofNullable(this.currentCommands[name]).orElseThrow(error) as Record<string, unknown>;
+		const type  = Optional.ofNullable(data[this.settings.itemId.type]).orElseThrow(error);
 
-		if (Constant.DATA_TYPE.command === Optional.ofNullable(command['type']).orElseThrow(error)) {
-			return command as Command;
+		if (Constant.DATA_TYPE.command === type) {
+			return data as Command;
+		} else if (Constant.DATA_TYPE.terminalCommand === type) {
+			return data as TerminalCommand;
 		} else {
-			return command as Folder;
+			return data as Folder;
 		}
 	}
 }

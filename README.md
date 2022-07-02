@@ -72,3 +72,6 @@ It won't pollute your environment.
 This extension will make changes to the following file.
 
 1. settings.json
+
+## Support
+<a href="https://www.buymeacoffee.com/Angelmaneuver"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="Angelmaneuver" /></a>
