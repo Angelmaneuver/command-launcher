@@ -4,6 +4,7 @@ import {
 	Command,
 	TerminalCommand
 }                            from '../../utils/base/type';
+import { Optional }          from '../../utils/base/optional';
 import * as Constant         from '../../constant';
 
 const items = {
@@ -41,7 +42,7 @@ export class MenuGuide extends AbstractMenuGuide {
 		} else if (Constant.DATA_TYPE.terminalCommand === data[this.settings.itemId.type]) {
 			const command = data as TerminalCommand;
 			this.state.terminalCommand = command[this.settings.itemId.command];
-			this.state.autoRun         = command[this.settings.itemId.autoRun];
+			this.state.autoRun         = Optional.ofNullable(command[this.settings.itemId.autoRun]).orElseNonNullable(true);
 		} else {
 			const name           = this.getLabelStringByItem;
 
