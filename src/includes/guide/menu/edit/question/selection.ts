@@ -112,8 +112,6 @@ export class SelectionItemEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private get selectionItem(): SelectionItem {
-		return this.settings.lookup(this.hierarchy, this.settings.lookupMode.read) as SelectionItem;
+		return super.currentHierarchy as SelectionItem;
 	}
-
-
 }

@@ -270,10 +270,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		) as Record<string, Question>;
 	}
 
-	private get question(): Question {
-		return this.settings.lookup(
-			this.hierarchy,
-			this.settings.lookupMode.read
-		) as Question;
+	protected get question(): Question {
+		return super.currentHierarchy as Question;
 	}
 }

@@ -56,4 +56,11 @@ export abstract class AbstractQuestionEditMenuGuide extends AbstractEditMenuGuid
 
 		this.updateEnd(this.processType.updated);
 	}
+
+	protected get currentHierarchy(): unknown {
+		return this.settings.lookup(
+			this.hierarchy,
+			this.settings.lookupMode.read
+		);
+	}
 }
