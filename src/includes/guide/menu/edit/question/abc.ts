@@ -24,15 +24,13 @@ export abstract class AbstractQuestionEditMenuGuide extends AbstractEditMenuGuid
 		const pre    = Optional.ofNullable(parent.pop()).orElseThrow(ReferenceError('Edit target not found...'));
 		const name   = this.guideGroupResultSet[this.settings.itemId.name] as string;
 
-		Object.keys(this.guideGroupResultSet).forEach(
-			(key) => {
-				if (this.settings.itemId.name === key) {
-					return;
-				}
-
-				target[key] = this.guideGroupResultSet[key];
+		Object.keys(this.guideGroupResultSet).forEach(key => {
+			if (this.settings.itemId.name === key) {
+				return;
 			}
-		);
+
+			target[key] = this.guideGroupResultSet[key];
+		});
 
 		if (this.settings.itemId.name in this.guideGroupResultSet) {
 			const original = this.settings.cloneDeep(parent);
@@ -41,11 +39,9 @@ export abstract class AbstractQuestionEditMenuGuide extends AbstractEditMenuGuid
 
 			const target   = this.settings.lookup(parent, this.settings.lookupMode.write);
 
-			Object.keys(original).forEach(
-				(key) => {
-					target[pre === key ? name : key] = original[key];
-				}
-			);
+			Object.keys(original).forEach(key => {
+				target[pre === key ? name : key] = original[key];
+			});
 		}
 
 		if (this.settings.itemId.orderNo in this.guideGroupResultSet) {
