@@ -59,46 +59,56 @@ export class SelectionItemEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private setSettingGuide(label: string): () => Promise<void> {
-		const selectionItem                = this.selectionItem;
-		let [key, itemId, additionalTitle] = ['BaseInputGuide', '', ''];
-		let optionState: Partial<State>    = {};
-		let args: Array<unknown>           = [];
-		let guide: Guide;
+		let [key, itemId]               = ['BaseInputGuide', ''];
+		let optionState: Partial<State> = {};
+		let args:        Array<unknown> = [];
 
 		switch (label) {
 			case items.name.label:
-				key                         = 'NameInputGuide';
-				optionState['prompt']       = `Please enter the name of item.`;
-				optionState['initialValue'] = this.guideGroupId;
-				args                        = [this.type];
+				[key, optionState.prompt, optionState.initialValue, args] = this.getNameSetting();
 				break;
 			case items.parameter.label:
-				itemId                      = this.settings.itemId.parameter;
-				optionState['prompt']       = 'Please enter the parameter value of item.';
-				optionState['initialValue'] = selectionItem.parameter;
+				[itemId, optionState.prompt, optionState.initialValue]    = this.getParameterSetting();
 				break;
 			case items.order.label:
-				itemId                      = this.settings.itemId.orderNo;
-				optionState['prompt']       = 'Please enter the number you want to sort order.';
-				optionState['initialValue'] = Optional.ofNullable(selectionItem.orderNo).orElseNonNullable('');
+				[itemId, optionState.prompt, optionState.initialValue]    = this.getOrderSetting();
 				break;
 		}
 
-		guide = {
+		const guide: Guide = {
 			key:   key,
-			state: Object.assign(
-				this.createBaseState(additionalTitle, this.guideGroupId, 0, itemId),
-				optionState
-			),
+			state: Object.assign(this.createBaseState('', this.guideGroupId, 0, itemId), optionState),
+			args:  args,
 		};
-
-		if (args.length > 0) {
-			guide['args'] = args;
-		}
 
 		return async () => {
 			this.setNextSteps([guide]);
 		};
+	}
+
+	private getNameSetting(): [string, string, string, Array<number>] {
+		return [
+			'NameInputGuide',
+			`Please enter the name of item.`,
+			this.guideGroupId,
+			[this.type]
+		];
+	}
+
+	private getParameterSetting(): [string, string, string] {
+		return [
+			this.settings.itemId.parameter,
+			'Please enter the parameter value of item.',
+			this.selectionItem.parameter
+		];
+	}
+
+	private getOrderSetting(): [string, string, string] {
+		return [
+			this.settings.itemId.orderNo,
+			'Please enter the number you want to sort order.',
+			Optional.ofNullable(this.selectionItem.orderNo).orElseNonNullable('')
+		];
 	}
 
 	private get selectionItem(): SelectionItem {
