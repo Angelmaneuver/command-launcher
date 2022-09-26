@@ -171,50 +171,66 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private setSettingGuide(label: string): () => Promise<void> {
-		const question                     = this.question;
-		let [key, itemId, additionalTitle] = ['BaseInputGuide', '', ''];
-		let optionState: Partial<State>    = {};
-		let args: Array<unknown>           = [];
-		let guide: Guide;
+		let [key, itemId]               = ['BaseInputGuide', ''];
+		let optionState: Partial<State> = {};
+		let args:        Array<unknown> = [];
 
 		switch (label) {
 			case items.name.label:
-				key                         = 'NameInputGuide';
-				optionState['prompt']       = `Please enter the name of variable.`;
-				optionState['initialValue'] = this.guideGroupId;
-				args                        = [this.type];
+				[key, optionState.prompt, optionState.initialValue, args] = this.getNameSetting();
 				break;
 			case items.description.label:
-				itemId                      = this.settings.itemId.description;
-				optionState['prompt']       = 'Please enter the description of question.';
-				optionState['initialValue'] = question.description;
+				[itemId, optionState.prompt, optionState.initialValue]    = this.getDescriptionSetting();
 				break;
 			case items.default.label:
-				itemId                      = this.settings.itemId.default;
-				({ key, optionState }       = QUESTION_TYPE.text === question.type ? this.defaultSettingByInput : this.defaultSettingBySelection);
+				[itemId, { key, optionState }]                            = this.getDefaultSetting();
 				break;
 			case items.order.label:
-				itemId                      = this.settings.itemId.orderNo;
-				optionState['prompt']       = 'Please enter the number you want to sort order.';
-				optionState['initialValue'] = Optional.ofNullable(question.orderNo).orElseNonNullable('');
+				[itemId, optionState.prompt, optionState.initialValue]    = this.getOrderSetting();
 				break;
 			}
 
-		guide = {
+		const guide: Guide = {
 			key:   key,
-			state: Object.assign(
-				this.createBaseState(additionalTitle, this.guideGroupId, 0, itemId),
-				optionState
-			),
+			state: Object.assign(this.createBaseState('', this.guideGroupId, 0, itemId), optionState),
+			args:  args,
 		};
-
-		if (args.length > 0) {
-			guide['args'] = args;
-		}
 
 		return async () => {
 			this.setNextSteps([guide]);
 		};
+	}
+
+	private getNameSetting(): [string, string, string, Array<number>] {
+		return [
+			'NameInputGuide',
+			`Please enter the name of variable.`,
+			this.guideGroupId,
+			[this.type],
+		];
+	}
+
+	private getDescriptionSetting(): [string, string, string] {
+		return [
+			this.settings.itemId.description,
+			'Please enter the description of question.',
+			this.question.description,
+		];
+	}
+
+	private getDefaultSetting(): [string, { key: string, optionState: Partial<State> }] {
+		return [
+			this.settings.itemId.default,
+			QUESTION_TYPE.text === this.question.type ? this.defaultSettingByInput : this.defaultSettingBySelection
+		];
+	}
+
+	private getOrderSetting(): [string, string, string] {
+		return [
+			this.settings.itemId.orderNo,
+			'Please enter the number you want to sort order.',
+			Optional.ofNullable(this.question.orderNo).orElseNonNullable(''),
+		];
 	}
 
 	private get defaultSettingByInput() {
