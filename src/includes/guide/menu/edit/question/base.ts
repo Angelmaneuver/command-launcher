@@ -130,15 +130,13 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private setGuidance(label: string): () => Promise<void> {
-		let [title, guideGroupId, totalStep, type] = ['Question', 'addQuestion', items.input.label === label ? 2 : 3, this.type];
-		let optionState: Partial<State>            = {};
-		let guides                                 = [
-			{
-				key:   'NameInputGuide',
-				state: Object.assign(this.createBaseState(` - Add ${title}`, guideGroupId, totalStep), { prompt: `Please enter the name of variable.` }),
-				args:  [type],
-			}
-		] as Array<Guide>;
+		let   [title, guideGroupId, totalStep, type] = ['Question', 'addQuestion', items.input.label === label ? 2 : 3, this.type];
+		let   optionState: Partial<State>            = {};
+		const guides                                 = [{
+			key:   'NameInputGuide',
+			state: Object.assign(this.createBaseState(` - Add ${title}`, guideGroupId, totalStep), { prompt: `Please enter the name of variable.` }),
+			args:  [type],
+		}] as Array<Guide>;
 
 		switch (label) {
 			case items.input.label:
