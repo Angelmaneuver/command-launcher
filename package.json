@@ -13,7 +13,7 @@
 		"url": "https://github.com/Angelmaneuver/command-launcher/issues"
 	},
 	"engines": {
-		"vscode": "^1.67.0"
+		"vscode": "^1.71.0"
 	},
 	"icon": "resource/AppIcon.png",
 	"categories": [
