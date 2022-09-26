@@ -130,15 +130,12 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private setGuidance(label: string): () => Promise<void> {
-		let   [title, guideGroupId, totalStep, type] = ['Question', 'addQuestion', items.input.label === label ? 2 : 3, this.type];
-		let   optionState: Partial<State>            = {};
-		let   guides                                 = [
+		let [title, guideGroupId, totalStep, type] = ['Question', 'addQuestion', items.input.label === label ? 2 : 3, this.type];
+		let optionState: Partial<State>            = {};
+		let guides                                 = [
 			{
 				key:   'NameInputGuide',
-				state: Object.assign(
-					this.createBaseState(` - Add ${title}`, guideGroupId, totalStep),
-					{ prompt: `Please enter the name of variable.` }
-				),
+				state: Object.assign(this.createBaseState(` - Add ${title}`, guideGroupId, totalStep), { prompt: `Please enter the name of variable.` }),
 				args:  [type],
 			}
 		] as Array<Guide>;
@@ -148,8 +145,8 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 				guides.push({ key: 'TextQuestionLastInputGuide' });
 				break;
 			case items.selection.label:
-				optionState['itemId'] = this.settings.itemId.description;
-				optionState['prompt'] = 'Please enter the description of question.';
+				optionState.itemId = this.settings.itemId.description;
+				optionState.prompt = 'Please enter the description of question.';
 
 				guides.push(
 					{ key: 'BaseInputGuide',                 state: optionState },
@@ -158,11 +155,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 				break;
 		}
 
-		this.state.hierarchy                       = [...this.hierarchy];
-		this.state.hierarchy.push(
-			this.settings.itemId.questions
-		);
-
+		this.state.hierarchy                       = [...this.hierarchy].concat(this.settings.itemId.questions);
 		this.state.resultSet[guideGroupId]         = {};
 
 		return async () => {
