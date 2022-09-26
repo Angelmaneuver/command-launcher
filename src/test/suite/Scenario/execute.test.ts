@@ -9,9 +9,67 @@ import { MultiStepInput }   from '../../../includes/utils/multiStepInput';
 import { State }            from '../../../includes/guide/base/base';
 import { ExtensionSetting } from '../../../includes/settings/extension';
 import { VSCodePreset }     from '../../../includes/utils/base/vscodePreset';
+import { direct }           from '../../../includes/guide/question';
 
 suite('Scenario - Command Execute', async () => {
 	const data = {
+		"Python": {
+			"description": "Python 関連のコマンドセットです。",
+			"label": "$(tools)",
+			"pip1": {
+				"command": "pip $command $option",
+				"description": "pip コマンドを実行します。",
+				"label": "$(terminal)",
+				"questions": {
+					"$command": {
+						"default": "install",
+						"description": "Command.",
+						"type": 2,
+						"selection": {
+							"install": {
+								"parameter": "install"
+							},
+							"show": {
+								"parameter": "show"
+							}
+						}
+					},
+					"$option": {
+						"default": "pip",
+						"description": "Command options.",
+						"type": 1
+					},
+				},
+				"type": 3
+			},
+			"pip2": {
+				"command": "pip $command $option",
+				"description": "pip コマンドを実行します。",
+				"label": "$(terminal)",
+				"questions": {
+					"$option": {
+						"default": "pip",
+						"description": "Command options.",
+						"type": 1
+					},
+					"$command": {
+						"default": "install",
+						"description": "Command.",
+						"type": 2,
+						"selection": {
+							"install": {
+								"parameter": "install"
+							},
+							"show": {
+								"parameter": "show"
+							}
+						}
+					}
+				},
+				"type": 3
+			},
+			"type": 2
+		},
 		"VSNotes": {
 			"description": "VSNotes関連のコマンドセットです。",
 			"label": "$(notebook-template)",
@@ -192,6 +250,73 @@ suite('Scenario - Command Execute', async () => {
 
 		assert.strictEqual(data.設定['設定 (JSON) を開く。'].command, state.command);
 
+		pickStub.restore();
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Menu -> Folder -> TerminalCommand', async () => {
+		const setup    = new ExtensionSetting();
+		setup.commands = data;
+		await setup.commit();
+
+		let   state     = stateCreater();
+		const pickStub  = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+		const inputStub = sinon.stub(MultiStepInput.prototype, "showInputBox");
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip1.label} pip1`, description: data.Python.pip1.description });
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip1.questions.$command.selection.install.parameter}`});
+		inputStub.onCall(0).resolves('');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+
+		assert.strictEqual('pip install pip', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip1.label} pip1`, description: data.Python.pip1.description });
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} show`, description: `${data.Python.pip1.questions.$command.selection.show.parameter}`});
+		inputStub.onCall(0).resolves('module');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+
+		assert.strictEqual('pip show module', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip2.label} pip2`, description: data.Python.pip2.description });
+		inputStub.onCall(0).resolves('');
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip2.questions.$command.selection.install.parameter}`});
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+
+		assert.strictEqual('pip install pip', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip2.label} pip2`, description: data.Python.pip2.description });
+		inputStub.onCall(0).resolves('module');
+		pickStub.onCall(2).resolves(direct);
+		inputStub.onCall(1).resolves('command');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+
+		assert.strictEqual('pip command module', state.terminalCommand);
+
+		inputStub.restore();
 		pickStub.restore();
 
 		await setup.uninstall();

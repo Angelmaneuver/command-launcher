@@ -1,10 +1,16 @@
+import {
+	InputStep,
+	MultiStepInput
+}                           from '../utils/multiStepInput';
 import { State }            from './base/base';
 import { BaseInputGuide }   from './base/input';
 import { BaseValidator }    from './validator/base';
+import { NameInputGuide }   from './name';
+import { DATA_TYPE }        from '../constant';
+import { QUESTION_TYPE }    from '../utils/base/type';
 import * as Constant        from '../constant';
 import { Optional }         from '../utils/base/optional';
-
-const match = /^\$\(.+\)/;
+import { VSCodePreset }     from '../utils/base/vscodePreset';
 
 export class BaseLastInputGuide extends BaseInputGuide {
 	protected registName: string                  = '';
@@ -16,7 +22,7 @@ export class BaseLastInputGuide extends BaseInputGuide {
 		this.registData[this.settings.itemId.type]        = this.guideGroupResultSet[this.settings.itemId.type];
 		this.registData[this.settings.itemId.lable]       = (
 			Optional
-				.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(match))
+				.ofNullable((this.guideGroupResultSet[this.settings.itemId.lable] as string).match(Constant.LABEL_STRING_ONLY_MATCH))
 				.orElseThrow(ReferenceError('Label value not found...'))
 		)[0];
 		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
@@ -55,5 +61,113 @@ export class FolderLastInputGuide extends BaseLastInputGuide {
 
 		this.itemId   = this.settings.itemId.description;
 		this.prompt   = 'Please enter the description of folder.';
+	}
+}
+
+export class TextQuestionLastInputGuide extends BaseLastInputGuide {
+	constructor(state: State) {
+		super(state);
+
+		this.itemId = this.settings.itemId.description;
+		this.prompt = 'Please enter the description of question.';
+	}
+
+	protected async lastInputStepExecute(): Promise<void> {
+		this.registName                                   = this.guideGroupResultSet[this.settings.itemId.name] as string;
+		this.registData[this.settings.itemId.type]        = QUESTION_TYPE.text;
+		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
+
+		const registeredAt = this.settings.lookup(this.hierarchy, this.settings.lookupMode.write);
+
+		registeredAt[this.registName] = this.registData;
+
+		await this.settings.commit();
+
+		this.state.back = true;
+		this.prev();
+	}
+}
+
+export const items = [
+	VSCodePreset.create(VSCodePreset.icons.check, 'Yes', 'Continue to register.'),
+	VSCodePreset.create(VSCodePreset.icons.x,     'No',  'Stop registering a selection items and register a question.'),
+];
+
+export class SelectionQuestionLastInputGuide extends BaseLastInputGuide {
+	private nameInputGuide: NameInputGuide;
+
+	constructor(state: State) {
+		super(state);
+
+		this.itemId         = this.settings.itemId.selection;
+		this.nameInputGuide = new NameInputGuide(this.state, DATA_TYPE.terminalCommand);
+	}
+
+	public async show(input: MultiStepInput):Promise<void | InputStep> {
+		const store: Record<string, unknown> = Optional.ofNullable(this.guideGroupResultSet[this.itemId]).orElseNonNullable({});
+
+		do {
+			const commandSet: Record<string, string>   = {};
+			const name                                 = await this.inputName(input);
+			const parameter                            = await this.inputParameter(input);
+	
+			commandSet[this.settings.itemId.parameter] = parameter;
+			store[name]                                = commandSet;
+		} while (await this.continue(input));
+
+		this.guideGroupResultSet[this.itemId] = store;
+	}
+
+	protected setResultSet(value: unknown): void {}
+
+	private async inputName(input: MultiStepInput): Promise<string> {
+		const defaultValidator = this.validate;
+
+		this.prompt   = 'Please enter the name of selection item.';
+		this.validate = this.nameInputGuide.validateName;
+
+		await super.show(input);
+
+		this.validate = defaultValidator;
+
+		return this._inputValue as string;
+	}
+
+	private async inputParameter(input: MultiStepInput): Promise<string> {
+		this.prompt   = 'Please enter the command parameter of selection item.';
+
+		await super.show(input);
+
+		return this._inputValue as string;
+	}
+
+	private async continue(input: MultiStepInput):Promise<boolean> {
+		return items[0] === await input.showQuickPick(
+			{
+				title:        this.title,
+				step:         this.step,
+				totalSteps:   this.totalSteps,
+				placeholder:  'Would you like to continue registering selection item?',
+				items:        items,
+				activeItem:   items[0],
+				shouldResume: this.shouldResume,
+			}
+		);
+	}
+
+	protected async lastInputStepExecute(): Promise<void> {
+		this.registName                                   = this.guideGroupResultSet[this.settings.itemId.name] as string;
+		this.registData[this.settings.itemId.type]        = QUESTION_TYPE.selection;
+		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
+		this.registData[this.settings.itemId.selection]   = this.guideGroupResultSet[this.settings.itemId.selection];
+
+		const registeredAt = this.settings.lookup(this.hierarchy, this.settings.lookupMode.write);
+
+		registeredAt[this.registName] = this.registData;
+
+		await this.settings.commit();
+
+		this.state.back = true;
+		this.prev();
 	}
 }

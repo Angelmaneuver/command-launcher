@@ -1,7 +1,6 @@
 import {
 	window,
 	commands,
-	Terminal,
 	ExtensionContext
 }                           from 'vscode';
 import { MultiStepInput }   from './utils/multiStepInput';
@@ -66,7 +65,7 @@ export async function edit(context: ExtensionContext): Promise<void> {
 	const state = getBaseState(' - Edit mode ');
 	const args  = [state, Constant.DATA_TYPE.folder, true, context];
 
-	start('MenuGuideWithEdit', state, args);
+	start('EditMenuGuide', state, args);
 }
 
 export async function launcher(context: ExtensionContext): Promise<void> {

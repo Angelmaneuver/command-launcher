@@ -1,4 +1,7 @@
-import { InputStep, MultiStepInput }       from '../utils/multiStepInput';
+import {
+	InputStep,
+	MultiStepInput,
+}                         from '../utils/multiStepInput';
 import { State }          from './base/base';
 import { BaseInputGuide } from './base/input';
 import * as Constant      from '../constant';
@@ -18,7 +21,7 @@ export class NameInputGuide extends BaseInputGuide {
 	}
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
-		NameInputGuide.keys = this.totalSteps > 0 ? Object.keys(this.currentCommands) : Object.keys(this.parentCommands);
+		NameInputGuide.keys = this.totalSteps > 0 ? Object.keys(this.currentCommandsWithAllowEmpty) : Object.keys(this.parentCommands);
 
 		await super.show(input);
 	}

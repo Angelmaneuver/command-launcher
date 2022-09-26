@@ -11,6 +11,10 @@ const ITEM_ID            = {
 	command:     'command',
 	orderNo:     'orderNo',
 	autoRun:     'autoRun',
+	questions:   'questions',
+	selection:   'selection',
+	parameter:   'parameter',
+	default:     'default',
 } as const;
 
 const ITEM_ID_VALUE_LIST = Object.values(ITEM_ID) as Array<string>;
@@ -59,24 +63,26 @@ export class ExtensionSetting extends SettingBase {
 		return this.remove('commands');
 	}
 
-	public lookup(hierarchy: Array<string>, mode: LookupMode): Record<string, unknown> {
+	public lookup(hierarchy: Array<string>, mode: LookupMode, allowEmpty: boolean = false): Record<string, unknown> {
 		const searched: Array<string>           = [];
 		let   record:   Record<string, unknown> = this._commands;
 
-		hierarchy.forEach(
-			(key) => {
-				searched.push(key);
+		for (const key of hierarchy) {
+			searched.push(key);
 
-				if (LOOKUP_MODE.write === mode && !(key in record)) {
-					record[key] = {};
-				}
+			const exist = key in record;
 
-				record = (
-					Optional.ofNullable(record[key])
-							.orElseThrow(ReferenceError(`/${searched.join('/')} is not found...`))
-				) as Record<string, unknown>;
+			if (LOOKUP_MODE.read === mode && allowEmpty && !exist) {
+				return {};
+			} else if (LOOKUP_MODE.write === mode && !(key in record)) {
+				record[key] = {};
 			}
-		);
+
+			record = (
+				Optional.ofNullable(record[key])
+						.orElseThrow(ReferenceError(`/${searched.join('/')} is not found...`))
+			) as Record<string, unknown>;
+		};
 
 		return record;
 	}
@@ -85,13 +91,14 @@ export class ExtensionSetting extends SettingBase {
 		return _.cloneDeep(this.lookup(hierarchy, this.lookupMode.read));
 	}
 
-	public delete(hierarchy: Array<string>): void {
-		const target = Optional.ofNullable(hierarchy.pop()).orElseThrow(ReferenceError('Deletion target not specified...'));
+	public delete(_hierarchy: Array<string>): void {
+		const hierarchy = [..._hierarchy];
+		const target    = Optional.ofNullable(hierarchy.pop()).orElseThrow(ReferenceError('Deletion target not specified...'));
 
 		delete this.lookup(hierarchy, this.lookupMode.read)[target];
 	}
 
-	public sort(hierarchy: Array<string>): void {
+	public sort(hierarchy: Array<string>, sortWithName: boolean = true): void {
 		const registerd                         = this.cloneDeep(hierarchy);
 		const ordered:  Record<string, unknown> = {};
 		const target                            = this.lookup(hierarchy, this.lookupMode.read);
@@ -144,7 +151,9 @@ export class ExtensionSetting extends SettingBase {
 			}
 		);
 
-		Object.keys(registerd).sort().forEach(
+		const keys = sortWithName ? Object.keys(registerd).sort() : Object.keys(registerd);
+
+		keys.forEach(
 			(key) => {
 				target[key] = registerd[key];
 			}

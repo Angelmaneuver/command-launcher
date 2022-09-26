@@ -88,7 +88,7 @@ export abstract class AbstractGuide {
 	}
 
 	protected get inputValue(): unknown {
-		return Optional.ofNullable(this.guideGroupResultSet[this.itemId]).orElseNonNullable(this.initialValue);
+		return Optional.ofNullable(this.guideGroupResultSet[this.itemId]).orElseNullable(this.initialValue);
 	}
 
 	protected get inputValueAsString(): string {

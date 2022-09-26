@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.7
+ - Added the "Question" function to assemble terminal commands interactively (Reflects from part of issue [#2](https://github.com/Angelmaneuver/command-launcher/issues/2))
+
 ## 0.0.6
  - Added the function to configure whether terminal commands should be executed automaticaly or just paste
 

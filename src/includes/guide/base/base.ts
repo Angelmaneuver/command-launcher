@@ -4,7 +4,8 @@ import {
 }                           from 'vscode';
 import { 
 	AbstractState,
-	AbstractGuide
+	AbstractGuide,
+	Guide
 }                           from './abc';
 import { ExtensionSetting } from '../../settings/extension';
 import { Optional }         from '../../utils/base/optional';
@@ -14,6 +15,7 @@ export interface State extends AbstractState {
 	context:          ExtensionContext,
 	settings:         ExtensionSetting,
 	hierarchy:        Array<string>,
+	guides?:          Array<Guide>,
 	message?:         string                  | undefined,
 	reload?:          boolean,
 	command?:         string,
@@ -27,6 +29,7 @@ export interface State extends AbstractState {
 
 export abstract class AbstractBaseGuide extends AbstractGuide {
 	protected hierarchy: Array<string> = [];
+	protected guides:    Array<Guide>  = [];
 
 	constructor(
 		state:    State,
@@ -87,6 +90,10 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		return this.getCommands(this.hierarchy);
 	}
 
+	protected get currentCommandsWithAllowEmpty(): Record<string, unknown> {
+		return this.getCommands(this.hierarchy, true);
+	}
+
 	protected get currentCommandInfo(): Record<string, unknown> {
 		const commands                        = this.settings.lookup(this.hierarchy, this.settings.lookupMode.read);
 		const result: Record<string ,unknown> = {};
@@ -101,7 +108,8 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		}
 
 		if (Constant.DATA_TYPE.terminalCommand === result[this.settings.itemId.type]) {
-			result[this.settings.itemId.autoRun] = Optional.ofNullable(commands[this.settings.itemId.autoRun]).orElseNonNullable(true);
+			result[this.settings.itemId.questions] = Optional.ofNullable(commands[this.settings.itemId.questions]).orElseNonNullable({});
+			result[this.settings.itemId.autoRun]   = Optional.ofNullable(commands[this.settings.itemId.autoRun]).orElseNonNullable(true);
 		}
 
 		return result;
@@ -110,6 +118,11 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 	protected async inputStepAfter(): Promise<void> {
 		if (this.totalSteps === 0) {
 			this.prev();
+		} else if (0 < this.guides.length) {
+			const guide       = this.guides.shift() as Guide;
+			this.state.guides = this.guides;
+
+			this.setNextSteps([guide]);
 		} else if (this.step === this.totalSteps) {
 			return this.lastInputStepExecute();
 		}
@@ -117,8 +130,8 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 
 	protected async lastInputStepExecute(): Promise<void> {}
 
-	private getCommands(hierarchy: Array<string>): Record<string, unknown> {
-		const temporary                         = this.settings.lookup(hierarchy, this.settings.lookupMode.read);
+	private getCommands(hierarchy: Array<string>, allowEmpty: boolean = false): Record<string, unknown> {
+		const temporary                         = this.settings.lookup(hierarchy, this.settings.lookupMode.read, allowEmpty);
 		const commands: Record<string, unknown> = {};
 
 		Object.keys(temporary).forEach(

@@ -1,20 +1,20 @@
-import * as sinon            from 'sinon';
-import * as vscode           from 'vscode';
-import * as testTarget       from '../../../includes/kickstarter';
-import { MultiStepInput }    from '../../../includes/utils/multiStepInput';
-import { State }             from '../../../includes/guide/base/base';
-import { GuideFactory }      from '../../../includes/guide/factory/base';
-import { MenuGuide }         from '../../../includes/guide/menu/base';
-import { MenuGuideWithEdit } from '../../../includes/guide/menu/edit';
+import * as sinon         from 'sinon';
+import * as vscode        from 'vscode';
+import * as testTarget    from '../../../includes/kickstarter';
+import { MultiStepInput } from '../../../includes/utils/multiStepInput';
+import { State }          from '../../../includes/guide/base/base';
+import { GuideFactory }   from '../../../includes/guide/factory/base';
+import { MenuGuide }      from '../../../includes/guide/menu/base';
+import { EditMenuGuide }  from '../../../includes/guide/menu/edit/base';
 
 suite('Kick Starter Test Suite', async () => {
 	test('Launcher and Edit', async () => {
-		const multiStepInputStub = sinon.stub(MultiStepInput,              'run');
-		const guideFactoryStub   = sinon.stub(GuideFactory,                'create');
-		const menuGuideStub1     = sinon.stub(MenuGuide.prototype,         'start');
-		const menuGuideStub2     = sinon.stub(MenuGuideWithEdit.prototype, 'start');
+		const multiStepInputStub = sinon.stub(MultiStepInput,          'run');
+		const guideFactoryStub   = sinon.stub(GuideFactory,            'create');
+		const menuGuideStub1     = sinon.stub(MenuGuide.prototype,     'start');
+		const menuGuideStub2     = sinon.stub(EditMenuGuide.prototype, 'start');
 		const windowMock         = sinon.mock(vscode.window);
-		const commandStub        = sinon.stub(vscode.commands,             'executeCommand');
+		const commandStub        = sinon.stub(vscode.commands,         'executeCommand');
 		const context            = {} as vscode.ExtensionContext;
 
 		multiStepInputStub.onFirstCall().throws(new Error('Stub Error'));

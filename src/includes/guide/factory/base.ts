@@ -1,14 +1,23 @@
-import { AbstractGuide  }            from '../base/abc';
-import { BaseInputGuide }            from '../base/input';
-import { BaseConfirmGuide }          from '../confirm';
-import { MenuGuide }                 from '../menu/base';
-import { MenuGuideWithEdit }         from '../menu/edit';
-import { SelectLabelGuide4Guidance } from '../label';
-import { NameInputGuide }            from '../name';
-import { AutoRunSettingGuide }       from '../autoRun';
+import { AbstractGuide  }             from '../base/abc';
+import { BaseInputGuide }             from '../base/input';
+import { BaseQuickPickGuide }         from '../base/pick';
+import { BaseConfirmGuide }           from '../confirm';
+import {
+	QuestionInputGuide,
+	SelectQuestionGuide,
+ }                                    from '../question';
+import { MenuGuide }                  from '../menu/base';
+import { EditMenuGuide }              from '../menu/edit/base';
+import { QuestionEditMenuGuide }      from '../menu/edit/question/base';
+import { SelectionItemEditMenuGuide } from '../menu/edit/question/selection';
+import { SelectLabelGuide4Guidance }  from '../label';
+import { NameInputGuide }             from '../name';
+import { AutoRunSettingGuide }        from '../autoRun';
 import {
 	CommandLastInputGuide,
 	FolderLastInputGuide,
+	TextQuestionLastInputGuide,
+	SelectionQuestionLastInputGuide,
 }                                    from '../last';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -35,15 +44,22 @@ export abstract class GuideFactory {
 	private static init(): void {
 		/* eslint-disable @typescript-eslint/naming-convention */
 		this.guides = {
-			MenuGuide:                 MenuGuide,
-			MenuGuideWithEdit:         MenuGuideWithEdit,
-			BaseInputGuide:            BaseInputGuide,
-			BaseConfirmGuide:          BaseConfirmGuide,
-			SelectLabelGuide4Guidance: SelectLabelGuide4Guidance,
-			NameInputGuide:            NameInputGuide,
-			AutoRunSettingGuide:       AutoRunSettingGuide,
-			CommandLastInputGuide:     CommandLastInputGuide,
-			FolderLastInputGuide:      FolderLastInputGuide,
+			MenuGuide:                       MenuGuide,
+			EditMenuGuide:                   EditMenuGuide,
+			BaseInputGuide:                  BaseInputGuide,
+			BaseQuickPickGuide:              BaseQuickPickGuide,
+			BaseConfirmGuide:                BaseConfirmGuide,
+			QuestionInputGuide:              QuestionInputGuide,
+			SelectQuestionGuide:             SelectQuestionGuide,
+			QuestionEditMenuGuide:           QuestionEditMenuGuide,
+			SelectLabelGuide4Guidance:       SelectLabelGuide4Guidance,
+			SelectionItemEditMenuGuide:      SelectionItemEditMenuGuide,
+			NameInputGuide:                  NameInputGuide,
+			AutoRunSettingGuide:             AutoRunSettingGuide,
+			CommandLastInputGuide:           CommandLastInputGuide,
+			FolderLastInputGuide:            FolderLastInputGuide,
+			TextQuestionLastInputGuide:      TextQuestionLastInputGuide,
+			SelectionQuestionLastInputGuide: SelectionQuestionLastInputGuide,
 		};
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}
