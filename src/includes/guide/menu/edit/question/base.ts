@@ -76,20 +76,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private get selectMenuItems(): Array<QuickPickItem> {
-		const questions = this.questions;
-		let   registerd = [] as Array<QuickPickItem>;
-
-		Object.keys(questions).forEach(
-			(key) => {
-				registerd.push(
-					VSCodePreset.create(
-						VSCodePreset.icons.symbolVariable,
-						key,
-						questions[key].description
-					)
-				);
-			}
-		);
+		let registerd = this.createItems(this.questions, VSCodePreset.icons.symbolVariable, this.settings.itemId.description);
 
 		registerd = registerd.length > 0 ? [items.delimiter1].concat(registerd) : registerd;
 
@@ -111,19 +98,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		}
 
 		if (QUESTION_TYPE.selection === question.type) {
-			const selection = question.selection;
-
-			Object.keys(selection).forEach(
-				(key) => {
-					registerd.push(VSCodePreset.create(
-						VSCodePreset.icons.note,
-						key,
-						selection[key].parameter,
-					));
-				}
-			);
-
-			registerd = [items.delimiter2].concat(registerd);
+			registerd = [items.delimiter2].concat(this.createItems(question.selection, VSCodePreset.icons.note, this.settings.itemId.parameter));
 		}
 
 		return [...settings, QuestionEditMenuGuide.items.delete, ...save, ...returnOrBack, ...registerd];
@@ -237,31 +212,17 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	}
 
 	private get defaultSettingBySelection() {
-		const question                          = this.question;
-		const defaultItem                       = Optional.ofNullable(question.default).orElseNonNullable('');
-		const selection                         = question.selection;
-		const items:       Array<QuickPickItem> = [];
-		const optionState: Partial<State>       = {};
+		const question                           = this.question;
+		const defaultItem                        = Optional.ofNullable(question.default).orElseNonNullable('');
+		const items:       Array<QuickPickItem>  = this.createItems(question.selection, VSCodePreset.icons.note, this.settings.itemId.parameter);
+		const optionState: Partial<State>        = {
+			items:       items,
+			placeholder: 'Please select the default item of variable.',
+		};
 
-		optionState['placeholder']              = 'Please select the default item of variable.';
-
-		Object.keys(selection).forEach(
-			(key) => {
-				const item = VSCodePreset.create(
-					VSCodePreset.icons.note,
-					key,
-					selection[key].parameter,
-				);
-
-				items.push(item);
-
-				if (defaultItem === key) {
-					optionState['activeItem'] = item;
-				}
-			}
-		);
-
-		optionState['items'] = items;
+		if (defaultItem.length > 0) {
+			optionState.activeItem = items.filter(item => `${VSCodePreset.icons.note.label} ${defaultItem}` === item.label)[0];
+		}
 
 		return {
 			key:         'BaseQuickPickGuide',

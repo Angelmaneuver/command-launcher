@@ -3,6 +3,7 @@ import { InputStep, MultiStepInput } from '../../utils/multiStepInput';
 import { AbstractBaseGuide, State }  from './base';
 import * as Constant                 from '../../constant';
 import { Optional }                  from '../../utils/base/optional';
+import { VSCodePreset }              from '../../utils/base/vscodePreset';
 
 export abstract class AbstractQuickPickGuide extends AbstractBaseGuide {
 	protected placeholder                           = '';
@@ -65,6 +66,14 @@ export abstract class AbstractQuickPickGuide extends AbstractBaseGuide {
 
 	protected getItemByLabelString(items: Array<QuickPickItem>, label: string): QuickPickItem | undefined {
 		return items.find((item) => { return item.label.replace(Constant.LABEL_STRING_MATCH, '') === label; });
+	}
+
+	protected createItems(
+		record:                  Record<string, unknown>,
+		icon:                    QuickPickItem,
+		descriptionPropertyName: string
+	): Array<QuickPickItem> {
+		return Object.keys(record).map(key => VSCodePreset.create(icon, key, (record[key] as Record<string, string>)[descriptionPropertyName]));
 	}
 
 	protected createBaseState(additionalTitle: string, guideGroupId: string, totalStep?: number, itemId?: string): Partial<State> {

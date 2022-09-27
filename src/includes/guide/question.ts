@@ -81,7 +81,6 @@ export const direct = VSCodePreset.create(VSCodePreset.icons.edit, 'Input', 'Dir
 export class SelectQuestionGuide extends BaseQuickPickGuide {
 	private commandSet: TerminalCommand;
 	private question:   Question;
-	private default:    string;
 
 	constructor(
 		state:      State,
@@ -93,33 +92,20 @@ export class SelectQuestionGuide extends BaseQuickPickGuide {
 
 		this.commandSet        = commandSet;
 		this.question          = question;
-		this.default           = Optional.ofNullable(question.default).orElseNonNullable('');
 		this.state.placeholder = question.description;
-		this.state.items       = [];
+		this.state.items       = this.createItems(question.selection, VSCodePreset.icons.note, this.settings.itemId.parameter).concat(direct);
 
-		Object.keys(question.selection).forEach(
-			(key) => {
-				this.pushMenuItems(key, question.selection[key].parameter);
-			}
-		);
+		const defaultItem      = Optional.ofNullable(question.default).orElseNonNullable('');
 
-		this.state.items.push(direct);
+		if (defaultItem.length > 0) {
+			this.state.activeItem = this.state.items.filter(item => `${VSCodePreset.icons.note.label} ${defaultItem}` === item.label)[0];
+		}
 	}
 
 	public init(): void {
 		this.initialFields.push('guides');
 
 		super.init();
-	}
-
-	private pushMenuItems(label: string, description: string): void {
-		const item = VSCodePreset.create(VSCodePreset.icons.note, label, description);
-
-		this.state.items?.push(item);
-
-		if (this.default === label) {
-			this.state.initialValue = item;
-		}
 	}
 
 	public async after(): Promise<void> {
