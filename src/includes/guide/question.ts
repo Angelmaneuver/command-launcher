@@ -25,6 +25,17 @@ function assembly(base: string, inputSet: Record<string, string>): string {
 	return command;
 }
 
+function setCommand(
+	state:    State,
+	base:     string,
+	inputSet: Record<string, string>,
+	autoRun:  boolean
+): void {
+	state.terminalCommand = assembly(base, inputSet);
+	state.autoRun         = autoRun;
+
+}
+
 export class QuestionInputGuide extends BaseInputGuide {
 	private commandSet: TerminalCommand;
 	private question:   Question;
@@ -71,8 +82,12 @@ export class QuestionInputGuide extends BaseInputGuide {
 	}
 
 	protected async lastInputStepExecute(): Promise<void> {
-		this.state.terminalCommand = assembly(this.commandSet.command, this.guideGroupResultSet as Record<string, string>);
-		this.state.autoRun         = Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true);
+		setCommand(
+			this.state,
+			this.commandSet.command,
+			this.guideGroupResultSet as Record<string, string>,
+			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true)
+		);
 	}
 }
 
@@ -125,7 +140,11 @@ export class SelectQuestionGuide extends BaseQuickPickGuide {
 	}
 
 	protected async lastInputStepExecute(): Promise<void> {
-		this.state.terminalCommand = assembly(this.commandSet.command, this.guideGroupResultSet as Record<string, string>);
-		this.state.autoRun         = Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true);
+		setCommand(
+			this.state,
+			this.commandSet.command,
+			this.guideGroupResultSet as Record<string, string>,
+			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true)
+		);
 	}
 }

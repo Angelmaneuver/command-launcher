@@ -120,10 +120,6 @@ export abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
 		};
 	}
 
-	protected uninstall(): Promise<void> {
-		return this.settings.uninstall();		
-	}
-
 	protected updateEnd(processType: ProcessType): void {
 		this.guideGroupResultSet[processType] = true;
 		this.state.back                       = true;
