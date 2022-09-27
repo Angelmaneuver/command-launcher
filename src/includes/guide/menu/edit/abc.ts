@@ -91,30 +91,36 @@ export abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
 	protected abstract delete(): Promise<void>;
 
 	private saveConfirm(): () => Promise<void> {
-		return async () => {
-			this.state.placeholder = this.saveConfrimText;
-			this.setNextSteps([{
-				key:   'BaseConfirmGuide',
-				state: { title: this.title },
-				args:  [
-					{ yes: 'Save.', no: 'Back to previous.' },
-					( async () => { return this.save(); } )
-				]
-			}]);
-		};
+		return this.confirm(
+			this.saveConfrimText,
+			{ yes: 'Save.' },
+			( async () => { return this.save(); } ),
+		);
 	}
 
 	protected abstract save(): Promise<void>;
 
 	private uninstallConfirm(): () => Promise<void> {
+		return this.confirm(
+			'Do you want to uninstall the all settings related to this extension?',
+			{ yes: 'Uninstall.' },
+			( async () => { return this.settings.uninstall(); } ),
+		);
+	}
+
+	private confirm(
+		placeholder: string,
+		description: { yes: string },
+		callback:     (...args: Array<unknown>) => Promise<void>,
+	): () => Promise<void> {
 		return async () => {
-			this.state.placeholder = 'Do you want to uninstall the all settings related to this extension?';
+			this.state.placeholder = placeholder;
 			this.setNextSteps([{
 				key:   'BaseConfirmGuide',
 				state: { title: this.title },
 				args:  [
-					{ yes: 'Uninstall.', no: 'Back to previous.' },
-					( async () => { return this.settings.uninstall(); } )
+					{ yes: description.yes, no: 'Back to previous.' },
+					callback,
 				]
 			}]);
 		};
