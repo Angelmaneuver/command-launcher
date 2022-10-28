@@ -41,10 +41,12 @@ export async function run(): Promise<void> {
 	});
 
 	// Backup of settings.json and clear
+	/**
 	const { ExtensionSetting } = require('../../includes/settings/extension');
 	const backup               = new ExtensionSetting();
 
 	await new ExtensionSetting().uninstall();
+	 */
 
 	return new Promise((c, e) => {
 		glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
@@ -58,7 +60,9 @@ export async function run(): Promise<void> {
 			try {
 				// Run the mocha test
 				mocha.run(async failures => {
+					/**
 					await backup.commit();
+					 */
 
 					if (failures > 0) {
 						e(new Error(`${failures} tests failed.`));
