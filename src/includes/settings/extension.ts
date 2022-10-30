@@ -19,6 +19,13 @@ const ITEM_ID            = {
 
 const ITEM_ID_VALUE_LIST = Object.values(ITEM_ID) as Array<string>;
 
+const CONFIG_ITEMS       = {
+	commands:          'commands',
+	enableHistory:     'enableHistory',
+	keepHistoryNumber: 'keepHistoryNumber',
+	history:           'history',
+} as const;
+
 const LOOKUP_MODE        = {
 	read:  'r',
 	write: 'w',
@@ -26,13 +33,21 @@ const LOOKUP_MODE        = {
 
 type LookupMode = typeof LOOKUP_MODE[keyof typeof LOOKUP_MODE];
 
+type History    = { type: number, name: string, command: string, autoRun: boolean };
+
 export class ExtensionSetting extends SettingBase {
-	private _commands: Record<string, unknown>;
+	private _commands:          Record<string, unknown>;
+	private _enableHistory:     boolean;
+	private _keepHistoryNumber: number;
+	private _history:           Array<History>;
 
 	constructor() {
 		super('command-launcher', ConfigurationTarget.Global);
 
-		this._commands = _.cloneDeep(this.get('commands')) as Record<string, unknown>;
+		this._commands          = _.cloneDeep(this.get(CONFIG_ITEMS.commands)) as Record<string, unknown>;
+		this._enableHistory     = this.get(CONFIG_ITEMS.enableHistory)         as boolean;
+		this._keepHistoryNumber = this.get(CONFIG_ITEMS.keepHistoryNumber)     as number;
+		this._history           = _.cloneDeep(this.get(CONFIG_ITEMS.history))  as Array<History>;
 	}
 
 	public get itemId() {
@@ -56,11 +71,61 @@ export class ExtensionSetting extends SettingBase {
 	}
 
 	public async commit(): Promise<void> {
-		return this.update('commands', this._commands);
+		return this.update(CONFIG_ITEMS.commands, this._commands);
+	}
+
+	public async updateEnableHistory(value: boolean): Promise<void> {
+		this._enableHistory = value;
+
+		if (!value) {
+			return this.remove(CONFIG_ITEMS.enableHistory);
+		} else {
+			return this.update(CONFIG_ITEMS.enableHistory, this.enableHistory);
+		}
+	}
+
+	public get enableHistory() {
+		return this._enableHistory;
+	}
+
+	public async updateKeepHistoryNumber(value: number): Promise<void> {
+		this._keepHistoryNumber = value;
+
+		if (10 === value) {
+			return this.remove(CONFIG_ITEMS.keepHistoryNumber);
+		} else {
+			return this.update(CONFIG_ITEMS.keepHistoryNumber, this.keepHistoryNumber);
+		}
+	}
+
+	public get keepHistoryNumber() {
+		return this._keepHistoryNumber;
+	}
+
+	public async updateHistory(history: History): Promise<void> {
+		if (!this.enableHistory) {
+			return;
+		}
+
+		this._history = this.history.filter(item => history.command !== item.command);
+
+		this._history.unshift(history);
+
+		if (0 !== this.keepHistoryNumber && this.history.length > this.keepHistoryNumber) {
+			this._history = this._history.slice(0, this.keepHistoryNumber);
+		}
+
+		return this.update(CONFIG_ITEMS.history, this.history);
+	}
+
+	public get history(): Array<History> {
+		return this._history;
 	}
 
 	public async uninstall(): Promise<void> {
-		return this.remove('commands');
+		for (const item in CONFIG_ITEMS) {
+			await this.remove(item);
+		}
 	}
 
 	public lookup(hierarchy: Array<string>, mode: LookupMode, allowEmpty: boolean = false): Record<string, unknown> {

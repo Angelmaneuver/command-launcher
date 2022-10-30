@@ -15,6 +15,7 @@ const items = {
 	add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',         'Add a command.'),
 	terminal:    VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',    'Add a terminal command.'),
 	create:      VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',      'Create a folder.'),
+	setting:     VSCodePreset.create(VSCodePreset.icons.settingsGear,        'Setting',     'Set the parameters for this extension.'),
 	name:        VSCodePreset.create(VSCodePreset.icons.fileText,            'Name',        'Set the item name.'),
 	label:       VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',       'Set the item label.'),
 	description: VSCodePreset.create(VSCodePreset.icons.note,                'Description', 'Set the command description.'),
@@ -42,6 +43,13 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 		this.state.hierarchy = this.hierarchy;
 
 		switch (label) {
+			case items.setting.label:
+				return async () => {
+					this.setNextSteps([{
+						key:   'SelectSettingGuide',
+						state: this.createBaseState(` - Setting`, 'setting'),
+					}]);
+				};
 			case items.add.label:
 			case items.terminal.label:
 			case items.create.label:
@@ -82,8 +90,8 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 
 	private setFolderCommands(settingItems: Array<QuickPickItem>, returnOrBack: Array<QuickPickItem>): void {
 		const commandItems = this.commandItems;
-		const operateItems = this.root ? [AbstractEditMenuGuide.items.uninstall] : settingItems;
-		const returnItem   = this.root ? [AbstractEditMenuGuide.items.exit]      : returnOrBack;
+		const operateItems = this.root ? [items.setting, AbstractEditMenuGuide.items.uninstall] : settingItems;
+		const returnItem   = this.root ? [AbstractEditMenuGuide.items.exit]                     : returnOrBack;
 
 		this.items         = [items.add, items.terminal, items.create].concat(
 			...operateItems,

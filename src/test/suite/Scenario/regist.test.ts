@@ -400,42 +400,46 @@ suite('Scenario - Command Regist', async () => {
 	};
 
 	const stateCreater = () => ({ title: "Test Suite", resultSet: {} } as State);
+	const sleep        = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); };
 	const context      = {} as ExtensionContext;
 	const items        = {
-		add:           VSCodePreset.create(VSCodePreset.icons.add,                 'Add',                                    'Add a command.'),
-		terminal:      VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',                               'Add a terminal command.'),
-		create:        VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',                                 'Create a folder.'),
-		delete:        VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',                                 'delete this item.'),
-		uninstall:     VSCodePreset.create(VSCodePreset.icons.trashcan,            'Uninstall',                              'Remove all parameters for this extension.'),
-		launcher:      VSCodePreset.create(VSCodePreset.icons.reply,               'Return Launcher',                        'Activate Launcher mode.'),
-		back:          VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Back to previous.'),
-		exit:          VSCodePreset.create(VSCodePreset.icons.signOut,             'Exit',                                   'Exit this extenion.'),
-		name:          VSCodePreset.create(VSCodePreset.icons.fileText,            'Name',                                   'Set the item name.'),
-		label:         VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',                                  'Set the item label.'),
-		description:   VSCodePreset.create(VSCodePreset.icons.note,                'Description',                            'Set the command description.'),
-		command:       VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',                                'Set the execute command.'),
-		order:         VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
-		autoRun:       VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',                               'Set the run automaticaly or not.'),
-		save:          VSCodePreset.create(VSCodePreset.icons.save,                'Save',                                   'Save changes.'),
-		return:        VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Return without saving any changes.'),
-		other:         VSCodePreset.create(VSCodePreset.icons.inbox,               'Other icons',                            'Select from other icons.'),
-		question:      VSCodePreset.create(VSCodePreset.icons.question,            'Question',                               'Set the question.'),
-		input:         VSCodePreset.create(VSCodePreset.icons.keyboard,            'Question with input',                    'Add a question with text input.'),
-		selection:     VSCodePreset.create(VSCodePreset.icons.selection,           'Question with selection list',           'Add a question with selection list.'),
-		f:             VSCodePreset.create(VSCodePreset.icons.file,                VSCodePreset.icons.file.name,             ''),
-		d:             VSCodePreset.create(VSCodePreset.icons.folder,              VSCodePreset.icons.folder.name,           ''),
-		n:             VSCodePreset.create(VSCodePreset.icons.notebook,            VSCodePreset.icons.notebook.name,         ''),
-		nt:            VSCodePreset.create(VSCodePreset.icons.notebookTemplate,    VSCodePreset.icons.notebookTemplate.name, ''),
-		t:             VSCodePreset.create(VSCodePreset.icons.tools,               VSCodePreset.icons.tools.name,            ''),
-		s:             VSCodePreset.create(VSCodePreset.icons.sync,                VSCodePreset.icons.sync.name,             ''),
-		terminalIcon:  VSCodePreset.create(VSCodePreset.icons.terminal,            VSCodePreset.icons.terminal.name,         ''),
-		q_name:        VSCodePreset.create(VSCodePreset.icons.symbolVariable,      'Variable Name',                          'Set the variable name.'),
-		q_description: VSCodePreset.create(VSCodePreset.icons.question,            'Description',                            'Set the question text.'),
-		q_default:     VSCodePreset.create(VSCodePreset.icons.symbolValue,         'Default',                                'Set the default value.'),
-		q_order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
-		s_name:        VSCodePreset.create(VSCodePreset.icons.symbolVariable,      'Item Name',                              'Set the item name.'),
-		s_parameter:   VSCodePreset.create(VSCodePreset.icons.symbolParameter,     'Parameter',                              'Set the parameter.'),
-		s_order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
+		add:               VSCodePreset.create(VSCodePreset.icons.add,                 'Add',                                    'Add a command.'),
+		terminal:          VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',                               'Add a terminal command.'),
+		create:            VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',                                 'Create a folder.'),
+		delete:            VSCodePreset.create(VSCodePreset.icons.trashcan,            'Delete',                                 'delete this item.'),
+		setting:           VSCodePreset.create(VSCodePreset.icons.settingsGear,        'Setting',                                'Set the parameters for this extension.'),
+		uninstall:         VSCodePreset.create(VSCodePreset.icons.trashcan,            'Uninstall',                              'Remove all parameters for this extension.'),
+		launcher:          VSCodePreset.create(VSCodePreset.icons.reply,               'Return Launcher',                        'Activate Launcher mode.'),
+		back:              VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Back to previous.'),
+		exit:              VSCodePreset.create(VSCodePreset.icons.signOut,             'Exit',                                   'Exit this extenion.'),
+		name:              VSCodePreset.create(VSCodePreset.icons.fileText,            'Name',                                   'Set the item name.'),
+		label:             VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',                                  'Set the item label.'),
+		description:       VSCodePreset.create(VSCodePreset.icons.note,                'Description',                            'Set the command description.'),
+		command:           VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',                                'Set the execute command.'),
+		order:             VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
+		autoRun:           VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',                               'Set the run automaticaly or not.'),
+		save:              VSCodePreset.create(VSCodePreset.icons.save,                'Save',                                   'Save changes.'),
+		return:            VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Return without saving any changes.'),
+		other:             VSCodePreset.create(VSCodePreset.icons.inbox,               'Other icons',                            'Select from other icons.'),
+		question:          VSCodePreset.create(VSCodePreset.icons.question,            'Question',                               'Set the question.'),
+		input:             VSCodePreset.create(VSCodePreset.icons.keyboard,            'Question with input',                    'Add a question with text input.'),
+		selection:         VSCodePreset.create(VSCodePreset.icons.selection,           'Question with selection list',           'Add a question with selection list.'),
+		enableHistory:     VSCodePreset.create(VSCodePreset.icons.check,               'History',                                'Keep a history of terminal commands executed.'),
+		keepHistoryNumber: VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Keep Number',                            'Maximum number of terminal command history.'),
+		f:                 VSCodePreset.create(VSCodePreset.icons.file,                VSCodePreset.icons.file.name,             ''),
+		d:                 VSCodePreset.create(VSCodePreset.icons.folder,              VSCodePreset.icons.folder.name,           ''),
+		n:                 VSCodePreset.create(VSCodePreset.icons.notebook,            VSCodePreset.icons.notebook.name,         ''),
+		nt:                VSCodePreset.create(VSCodePreset.icons.notebookTemplate,    VSCodePreset.icons.notebookTemplate.name, ''),
+		t:                 VSCodePreset.create(VSCodePreset.icons.tools,               VSCodePreset.icons.tools.name,            ''),
+		s:                 VSCodePreset.create(VSCodePreset.icons.sync,                VSCodePreset.icons.sync.name,             ''),
+		terminalIcon:      VSCodePreset.create(VSCodePreset.icons.terminal,            VSCodePreset.icons.terminal.name,         ''),
+		q_name:            VSCodePreset.create(VSCodePreset.icons.symbolVariable,      'Variable Name',                          'Set the variable name.'),
+		q_description:     VSCodePreset.create(VSCodePreset.icons.question,            'Description',                            'Set the question text.'),
+		q_default:         VSCodePreset.create(VSCodePreset.icons.symbolValue,         'Default',                                'Set the default value.'),
+		q_order:           VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
+		s_name:            VSCodePreset.create(VSCodePreset.icons.symbolVariable,      'Item Name',                              'Set the item name.'),
+		s_parameter:       VSCodePreset.create(VSCodePreset.icons.symbolParameter,     'Parameter',                              'Set the parameter.'),
+		s_order:           VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
 		"新しいノートを作成する。":      { label: "$(notebook) 新しいノートを作成する。",  description: "VSNotesで新しいノートを作成します。" } as QuickPickItem,
 		"VSNotes":                   { label: "$(notebook-template) VSNotes",      description: "VSNotes関連のコマンドセットです。" } as QuickPickItem,
 		"作成":                       { label: "$(edit) 作成",                      description: "VSNotesのノート作成関連のコマンドセットです。" } as QuickPickItem,
@@ -771,9 +775,58 @@ suite('Scenario - Command Regist', async () => {
 		pickStub.restore();
 	}).timeout(30 * 1000);
 
+	test('EditMenu -> Setting', async () => {
+		const state     = stateCreater();
+		const pickStub  = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+		const inputStub = sinon.stub(MultiStepInput.prototype, "showInputBox");
+
+		pickStub.onCall(0).resolves(items.setting);
+		pickStub.onCall(1).resolves(items.enableHistory);
+		pickStub.onCall(2).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(3).resolves(items.keepHistoryNumber);
+		inputStub.onCall(0).resolves('100');
+		pickStub.onCall(4).resolves(items.back);
+		pickStub.onCall(5).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.EditMenuGuide(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		await sleep(1000);
+
+		let setting = new ExtensionSetting();
+
+		assert.strictEqual(true, setting.enableHistory);
+		assert.strictEqual(100,  setting.keepHistoryNumber);
+
+		inputStub.reset();
+		pickStub.reset();
+
+		pickStub.onCall(0).resolves(items.setting);
+		pickStub.onCall(1).resolves(items.enableHistory);
+		pickStub.onCall(2).resolves({ label: '$(x) No', description: '' });
+		pickStub.onCall(3).resolves(items.keepHistoryNumber);
+		inputStub.onCall(0).resolves('10');
+		pickStub.onCall(4).resolves(items.back);
+		pickStub.onCall(5).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.EditMenuGuide(state, Constant.DATA_TYPE.folder, true, context).start(input));
+
+		await sleep(1000);
+
+		setting = new ExtensionSetting();
+
+		assert.strictEqual(false, setting.enableHistory);
+		assert.strictEqual(10,    setting.keepHistoryNumber);
+
+		inputStub.restore();
+		pickStub.restore();
+	}).timeout(30 * 1000);
+
 	test('EditMenu -> Uninstall', async () => {
 		const setup    = new ExtensionSetting();
 		setup.commands = _.cloneDeep(data);
+		setup.updateEnableHistory(true);
+		setup.updateKeepHistoryNumber(100);
+		setup.updateHistory({ type: 3, name: 'test', command: 'command', autoRun: true });
 
 		await setup.commit();
 
@@ -790,6 +843,9 @@ suite('Scenario - Command Regist', async () => {
 		const setttings = new ExtensionSetting();
 
 		assert.deepStrictEqual({}, setttings.commands);
+		assert.strictEqual(false,  setttings.enableHistory);
+		assert.strictEqual(10,     setttings.keepHistoryNumber);
+		assert.deepStrictEqual([], setttings.history);
 
 		pickStub.restore();
 	}).timeout(30 * 1000);

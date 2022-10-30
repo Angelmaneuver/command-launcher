@@ -18,6 +18,7 @@ export interface State extends AbstractState {
 	guides?:          Array<Guide>,
 	message?:         string                  | undefined,
 	reload?:          boolean,
+	name?:            string,
 	command?:         string,
 	terminalCommand?: string,
 	autoRun?:         boolean,

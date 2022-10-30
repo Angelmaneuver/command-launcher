@@ -1,3 +1,8 @@
+import { QuickPickItem }     from 'vscode';
+import {
+	InputStep,
+	MultiStepInput
+}                            from '../../utils/multiStepInput';
 import {
 	AbstractState,
 	Guide,
@@ -63,6 +68,7 @@ export class MenuGuide extends AbstractMenuGuide {
 	}
 
 	private terminalCommand(command: TerminalCommand): (() => Promise<void>) | undefined {
+		const name      = this.activeItem?.label;
 		const questions = Optional.ofNullable(command.questions).orElseNonNullable({});
 		const keys      = Object.keys(questions);
 
@@ -82,10 +88,11 @@ export class MenuGuide extends AbstractMenuGuide {
 					first,
 					command,
 					questions,
-					Object.assign(state, { guides: guides })
+					Object.assign(state, { guides: guides, name: name })
 				)]);
 			};
 		} else {
+			this.state.name            = name;
 			this.state.terminalCommand = command[this.settings.itemId.command];
 			this.state.autoRun         = Optional.ofNullable(command[this.settings.itemId.autoRun]).orElseNonNullable(true);
 
@@ -107,5 +114,39 @@ export class MenuGuide extends AbstractMenuGuide {
 		guide.args     = [command, question];
 
 		return guide;
+	}
+}
+
+export class HistoryGuide extends AbstractMenuGuide {
+	public init(): void {
+		super.init();
+
+		this.items = this.settings.history.map((item) => {
+			return { label: VSCodePreset.icons.terminal.label, description: item.command } as QuickPickItem;
+		}).concat(
+			[items.exit]
+		);
+	}
+
+	public async show(input: MultiStepInput):Promise<void | InputStep> {
+		if (!this.settings.enableHistory) {
+			this.state.message = 'The history function is disabled.';
+		} else if (this.settings.enableHistory && 0 === this.settings.history.length) {
+			this.state.message = 'No history.';
+		} else {
+			await super.show(input);
+		}
+	}
+
+	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
+		if (this.activeItem && items.exit.label !== label) {
+			const item = this.settings.history.find((item) => this.activeItem?.description === item.command);
+
+			this.state.name            = item?.name;
+			this.state.terminalCommand = item?.command;
+			this.state.autoRun         = item?.autoRun;
+		}
+
+		return undefined;
 	}
 }

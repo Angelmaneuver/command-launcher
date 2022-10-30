@@ -6,7 +6,10 @@ import {
 	QuestionInputGuide,
 	SelectQuestionGuide,
  }                                    from '../question';
-import { MenuGuide }                  from '../menu/base';
+import {
+	MenuGuide,
+	HistoryGuide,
+}                                     from '../menu/base';
 import { EditMenuGuide }              from '../menu/edit/base';
 import { QuestionEditMenuGuide }      from '../menu/edit/question/base';
 import { SelectionItemEditMenuGuide } from '../menu/edit/question/selection';
@@ -19,6 +22,9 @@ import {
 	TextQuestionLastInputGuide,
 	SelectionQuestionLastInputGuide,
 }                                    from '../last';
+import { SelectSettingGuide }        from '../setting/select/base';
+import { EnableHistoryGuide }        from '../setting/enableHistory';
+import { KeepHistoryNumberGuide }    from '../setting/keepHistoryNumber';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 interface Constructable<T> extends Function { new (...args: Array<any>): T; }
@@ -45,6 +51,7 @@ export abstract class GuideFactory {
 		/* eslint-disable @typescript-eslint/naming-convention */
 		this.guides = {
 			MenuGuide:                       MenuGuide,
+			HistoryGuide:                    HistoryGuide,
 			EditMenuGuide:                   EditMenuGuide,
 			BaseInputGuide:                  BaseInputGuide,
 			BaseQuickPickGuide:              BaseQuickPickGuide,
@@ -60,6 +67,9 @@ export abstract class GuideFactory {
 			FolderLastInputGuide:            FolderLastInputGuide,
 			TextQuestionLastInputGuide:      TextQuestionLastInputGuide,
 			SelectionQuestionLastInputGuide: SelectionQuestionLastInputGuide,
+			SelectSettingGuide:              SelectSettingGuide,
+			EnableHistoryGuide:              EnableHistoryGuide,
+			KeepHistoryNumberGuide:          KeepHistoryNumberGuide,
 		};
 		/* eslint-enable @typescript-eslint/naming-convention */
 	}

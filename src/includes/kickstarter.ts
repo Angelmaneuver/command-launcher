@@ -6,6 +6,7 @@ import {
 import { MultiStepInput }   from './utils/multiStepInput';
 import { State }            from './guide/base/base';
 import { GuideFactory }     from './guide/factory/base';
+import { ExtensionSetting } from './settings/extension';
 import * as Constant        from './constant';
 
 export async function start(
@@ -20,6 +21,15 @@ export async function start(
 		if (present(state.command)) {
 			commands.executeCommand(state.command as string);
 		} else if (present(state.terminalCommand)) {
+			const setting = new ExtensionSetting();
+
+			setting.updateHistory({
+				type:    Constant.DATA_TYPE.terminalCommand,
+				name:    state.name                             as string,
+				command: state.terminalCommand                  as string,
+				autoRun: state.autoRun ? state.autoRun : false,
+			});
+
 			executeTerminalCommand(state.terminalCommand as string, state.autoRun as boolean);
 		}
 	} catch (e) {
@@ -73,4 +83,11 @@ export async function launcher(context: ExtensionContext): Promise<void> {
 	const args  = [state, true, context];
 
 	start('MenuGuide', state, args);
+}
+
+export async function history(context: ExtensionContext): Promise<void> {
+	const state = getBaseState(' - History ');
+	const args  = [state, true, context];
+
+	start('HistoryGuide', state, args);
 }

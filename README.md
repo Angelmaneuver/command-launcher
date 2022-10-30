@@ -56,6 +56,18 @@ You can create folders to manage commands.
 
 ![Folder image](resource/readme/demo5.gif)
 
+### History
+Having trouble entering the same terminal commands?
+
+The history function eliminates that difficulty.
+
+#### Usage
+Press '⇧⌘P' to bring up the command pallete and enter 'Command Launcher - History'.
+
+\* The history function is disabled by default.
+
+![History image](resource/readme/demo8.png)
+
 ### Uninstall
 Didn't like this extension?
 

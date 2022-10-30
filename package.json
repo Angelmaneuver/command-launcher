@@ -3,7 +3,7 @@
 	"displayName": "Command Launcher",
 	"description": "A launcher extension that manages commands for the command palette and terminal command.",
 	"publisher": "Angelmaneuver",
-	"version": "0.0.7",
+	"version": "0.0.8",
 	"homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
 	"repository": {
 		"type": "git",
@@ -13,7 +13,7 @@
 		"url": "https://github.com/Angelmaneuver/command-launcher/issues"
 	},
 	"engines": {
-		"vscode": "^1.71.0"
+		"vscode": "^1.72.0"
 	},
 	"icon": "resource/AppIcon.png",
 	"categories": [
@@ -25,7 +25,8 @@
 	],
 	"activationEvents": [
 		"onCommand:command-launcher.launcher",
-		"onCommand:command-launcher.edit"
+		"onCommand:command-launcher.edit",
+		"onCommand:command-launcher.history"
 	],
 	"preview": false,
 	"main": "./dist/extension.js",
@@ -38,6 +39,10 @@
 			{
 				"command": "command-launcher.edit",
 				"title": "Command Launcher - Edit"
+			},
+			{
+				"command": "command-launcher.history",
+				"title": "Command Launcher - History"
 			}
 		],
 		"configuration": {
@@ -47,6 +52,23 @@
 					"type": "object",
 					"default": {},
 					"description": "Registered command set."
+				},
+				"command-launcher.enableHistory": {
+					"type": "boolean",
+					"default": false,
+					"description": "Keep a history of terminal commands executed."
+				},
+				"command-launcher.keepHistoryNumber": {
+					"type": "number",
+					"maximum": 65555,
+					"minimum": 0,
+					"default": 10,
+					"description": "Maximum number of terminal command history."
+				},
+				"command-launcher.history": {
+					"type": "array",
+					"default": [],
+					"description": "The most recent terminal command history."
 				}
 			}
 		}
@@ -66,21 +88,21 @@
 	"devDependencies": {
 		"@istanbuljs/nyc-config-typescript": "^1.0.2",
 		"@types/glob": "^8.0.0",
-		"@types/lodash": "^4.14.185",
-		"@types/mocha": "^9.1.1",
+		"@types/lodash": "^4.14.186",
+		"@types/mocha": "^10.0.0",
 		"@types/node": "18.x",
 		"@types/sinon": "^10.0.13",
-		"@types/vscode": "^1.71.0",
-		"@typescript-eslint/eslint-plugin": "^5.38.0",
-		"@typescript-eslint/parser": "^5.38.0",
-		"@vscode/test-electron": "^2.1.5",
-		"eslint": "^8.24.0",
+		"@types/vscode": "^1.72.0",
+		"@typescript-eslint/eslint-plugin": "^5.41.0",
+		"@typescript-eslint/parser": "^5.41.0",
+		"@vscode/test-electron": "^2.2.0",
+		"eslint": "^8.26.0",
 		"glob": "^8.0.3",
-		"mocha": "^10.0.0",
+		"mocha": "^10.1.0",
 		"nyc": "^15.1.0",
-		"sinon": "^14.0.0",
+		"sinon": "^14.0.1",
 		"ts-loader": "^9.4.1",
-		"typescript": "^4.8.3",
+		"typescript": "^4.8.4",
 		"webpack": "^5.74.0",
 		"webpack-cli": "^4.10.0"
 	},

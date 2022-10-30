@@ -177,6 +177,7 @@ suite('Scenario - Command Execute', async () => {
 	};
 
 	const stateCreater = () => ({ title: "Test Suite", resultSet: {} } as State);
+	const sleep        = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); };
 	const context      = {} as ExtensionContext;
 	const items        = {
 		back: VSCodePreset.create(VSCodePreset.icons.reply,   'Return', 'Back to previous.'),
@@ -317,6 +318,45 @@ suite('Scenario - Command Execute', async () => {
 		assert.strictEqual('pip command module', state.terminalCommand);
 
 		inputStub.restore();
+		pickStub.restore();
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('History -> TerminalCommand', async () => {
+		const setup    = new ExtensionSetting();
+		let   state    = stateCreater();
+		const pickStub = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+
+		pickStub.onCall(0).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+
+		assert.strictEqual('The history function is disabled.', state.message);
+
+		pickStub.reset();
+
+		await setup.updateEnableHistory(true);
+
+		pickStub.onCall(0).resolves(items.exit);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+
+		assert.strictEqual('No history.', state.message);
+
+		pickStub.reset();
+
+		await setup.updateHistory({ type: 1, name: 'test1', command: 'command1', autoRun: false });
+		await setup.updateHistory({ type: 2, name: 'test2', command: 'command2', autoRun: true });
+
+		pickStub.onCall(0).resolves({ label: `$(terminal)`, description: `command1` });
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+
+		assert.strictEqual('test1',    state.name);
+		assert.strictEqual('command1', state.terminalCommand);
+		assert.strictEqual(false,      state.autoRun);
+
 		pickStub.restore();
 
 		await setup.uninstall();

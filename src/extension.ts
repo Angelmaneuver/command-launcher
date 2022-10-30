@@ -13,6 +13,12 @@ export function activate(context: vscode.ExtensionContext) {
 			Kickstarter.edit(context);
 		})
 	);
+
+	context.subscriptions.push(
+		vscode.commands.registerCommand('command-launcher.history', () => {
+			Kickstarter.history(context);
+		})
+	);
 }
 
 export function deactivate() {}
