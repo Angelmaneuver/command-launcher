@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.0.8
+ - Added the "History" function (Reflects from issue [#3](https://github.com/Angelmaneuver/command-launcher/issues/3))
+
 ## 0.0.7
  - Added the "Question" function to assemble terminal commands interactively (Reflects from part of issue [#2](https://github.com/Angelmaneuver/command-launcher/issues/2))
 
