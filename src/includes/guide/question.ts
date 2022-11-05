@@ -26,14 +26,15 @@ function assembly(base: string, inputSet: Record<string, string>): string {
 }
 
 function setCommand(
-	state:    State,
-	base:     string,
-	inputSet: Record<string, string>,
-	autoRun:  boolean
+	state:     State,
+	base:      string,
+	inputSet:  Record<string, string>,
+	autoRun:   boolean,
+	singleton: boolean,
 ): void {
 	state.terminalCommand = assembly(base, inputSet);
 	state.autoRun         = autoRun;
-
+	state.singleton       = singleton;
 }
 
 export class QuestionInputGuide extends BaseInputGuide {
@@ -86,7 +87,8 @@ export class QuestionInputGuide extends BaseInputGuide {
 			this.state,
 			this.commandSet.command,
 			this.guideGroupResultSet as Record<string, string>,
-			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true)
+			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true),
+			Optional.ofNullable(this.commandSet.singleton).orElseNonNullable(false),
 		);
 	}
 }
@@ -144,7 +146,8 @@ export class SelectQuestionGuide extends BaseQuickPickGuide {
 			this.state,
 			this.commandSet.command,
 			this.guideGroupResultSet as Record<string, string>,
-			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true)
+			Optional.ofNullable(this.commandSet.autoRun).orElseNonNullable(true),
+			Optional.ofNullable(this.commandSet.singleton).orElseNonNullable(false),
 		);
 	}
 }

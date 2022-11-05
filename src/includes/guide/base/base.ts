@@ -22,6 +22,7 @@ export interface State extends AbstractState {
 	command?:         string,
 	terminalCommand?: string,
 	autoRun?:         boolean,
+	singleton?:       boolean,
 	prompt?:          string,
 	placeholder?:     string,
 	items?:           Array<QuickPickItem>,
@@ -111,6 +112,7 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		if (Constant.DATA_TYPE.terminalCommand === result[this.settings.itemId.type]) {
 			result[this.settings.itemId.questions] = Optional.ofNullable(commands[this.settings.itemId.questions]).orElseNonNullable({});
 			result[this.settings.itemId.autoRun]   = Optional.ofNullable(commands[this.settings.itemId.autoRun]).orElseNonNullable(true);
+			result[this.settings.itemId.singleton] = Optional.ofNullable(commands[this.settings.itemId.singleton]).orElseNonNullable(false);
 		}
 
 		return result;

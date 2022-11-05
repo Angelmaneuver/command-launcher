@@ -6,7 +6,10 @@ import {
 import { MultiStepInput }   from './utils/multiStepInput';
 import { State }            from './guide/base/base';
 import { GuideFactory }     from './guide/factory/base';
-import { ExtensionSetting } from './settings/extension';
+import {
+	History,
+	ExtensionSetting
+}                           from './settings/extension';
 import * as Constant        from './constant';
 
 export async function start(
@@ -22,15 +25,26 @@ export async function start(
 			commands.executeCommand(state.command as string);
 		} else if (present(state.terminalCommand)) {
 			const setting = new ExtensionSetting();
-
-			setting.updateHistory({
+			const history = {
 				type:    Constant.DATA_TYPE.terminalCommand,
 				name:    state.name                             as string,
 				command: state.terminalCommand                  as string,
 				autoRun: state.autoRun ? state.autoRun : false,
-			});
+			} as History;
 
-			executeTerminalCommand(state.terminalCommand as string, state.autoRun as boolean);
+			if (setting.itemId.singleton in state) {
+				history[setting.itemId.singleton] = state.singleton;
+			}
+
+			setting.updateHistory(history);
+
+			executeTerminalCommand(
+				state.name            as string,
+				state.terminalCommand as string,
+				state.autoRun         as boolean,
+				state.singleton       as boolean,
+				state,
+			);
 		}
 	} catch (e) {
 		errorHandling(e);
@@ -49,11 +63,38 @@ function present(value?: string): boolean {
 	return (value && value.length > 0) ? true : false;
 }
 
-function executeTerminalCommand(command: string, autoRun: boolean): void {
-	const terminal = window.activeTerminal ? window.activeTerminal : window.createTerminal();
+function executeTerminalCommand(
+	name:      string,
+	command:   string,
+	autoRun:   boolean,
+	singleton: boolean,
+	state:     Partial<State>,
+): void {
+	if (singleton) {
+		executeTerminalCommandWithSingleton(name, command, autoRun, state);
+	} else {
+		const terminal = window.activeTerminal ? window.activeTerminal : window.createTerminal();
 
-	terminal.show();
-	terminal.sendText(command, autoRun);
+		terminal.show();
+		terminal.sendText(command, autoRun);
+	}
+}
+
+function executeTerminalCommandWithSingleton(
+	name:    string,
+	command: string,
+	autoRun: boolean,
+	state:   Partial<State>,
+): void {
+	const already = window.terminals.find(terminal => name === terminal.name);
+
+	if (already) {
+		state.message = `'${name.replace(Constant.LABEL_STRING_MATCH, '')}' already executed.`;
+	} else {
+		const terminal = window.createTerminal(name);
+
+		terminal.sendText(command, autoRun);
+	}
 }
 
 function errorHandling(e: unknown) {

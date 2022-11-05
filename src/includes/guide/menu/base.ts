@@ -95,6 +95,7 @@ export class MenuGuide extends AbstractMenuGuide {
 			this.state.name            = name;
 			this.state.terminalCommand = command[this.settings.itemId.command];
 			this.state.autoRun         = Optional.ofNullable(command[this.settings.itemId.autoRun]).orElseNonNullable(true);
+			this.state.singleton       = Optional.ofNullable(command[this.settings.itemId.singleton]).orElseNonNullable(false);
 
 			return undefined;
 		}
@@ -145,6 +146,7 @@ export class HistoryGuide extends AbstractMenuGuide {
 			this.state.name            = item?.name;
 			this.state.terminalCommand = item?.command;
 			this.state.autoRun         = item?.autoRun;
+			this.state.singleton       = Optional.ofNullable(item?.singleton).orElseNonNullable(false);
 		}
 
 		return undefined;

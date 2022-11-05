@@ -23,6 +23,7 @@ const items = {
 	order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',       'Set the sort order.'),
 	question:    VSCodePreset.create(VSCodePreset.icons.question,            'Question',    'Set the question.'),
 	autoRun:     VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',    'Set the run automaticaly or not.'),
+	singleton:   VSCodePreset.create(VSCodePreset.icons.emptyWindow,         'Singleton',   'Set the terminal command be run as single or not.'),
 	delimiter:   { label: '-'.repeat(35) + ' Registered commands ' + '-'.repeat(35) } as QuickPickItem,
 };
 
@@ -61,6 +62,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 			case items.order.label:
 			case items.question.label:
 			case items.autoRun.label:
+			case items.singleton.label:
 				return this.setSettingGuide(label);
 			default:
 				return super.getExecute(label);
@@ -70,7 +72,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 	private setMenuItems(): void {
 		this.items         = [];
 		const settingItems = [items.name, items.label, items.description];
-		const terminal     = Constant.DATA_TYPE.terminalCommand === this.type ? [items.question, items.autoRun] : [];
+		const terminal     = Constant.DATA_TYPE.terminalCommand === this.type ? [items.question, items.autoRun, items.singleton] : [];
 		const save         = [];
 		const returnOrBack = [];
 
@@ -159,7 +161,12 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 							remover();
 						}
 						break;
-				}
+					case this.settings.itemId.singleton:
+						if (!this.guideGroupResultSet[key]) {
+							remover();
+						}
+						break;
+					}
 
 				if (regist) {
 					overwrite[key] = value;
@@ -243,7 +250,19 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 				break;
 			case items.autoRun.label:
 				key                         = 'AutoRunSettingGuide';
-				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.autoRun];
+				optionState['initialValue'] = (
+					this.guideGroupResultSet[this.settings.itemId.autoRun]
+						? this.guideGroupResultSet[this.settings.itemId.autoRun]
+						: this.currentCommandInfo[this.settings.itemId.autoRun]
+				);
+				break;
+			case items.singleton.label:
+				key                         = 'SingletonSettingGuide';
+				optionState['initialValue'] = (
+					this.guideGroupResultSet[this.settings.itemId.singleton]
+						? this.guideGroupResultSet[this.settings.itemId.singleton]
+						: this.currentCommandInfo[this.settings.itemId.singleton]
+				);
 				break;
 			case items.question.label:
 				key                         = 'QuestionEditMenuGuide';

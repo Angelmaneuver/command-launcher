@@ -232,7 +232,8 @@ suite('Scenario - Command Regist', async () => {
 				"type": 3,
 				"label": "$(sync)",
 				"description": "ライブラリをアップデートします。",
-				"autoRun": false
+				"autoRun": false,
+				"singleton": true
 			}
 		},
 		"VSNotes": {
@@ -418,6 +419,7 @@ suite('Scenario - Command Regist', async () => {
 		command:           VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',                                'Set the execute command.'),
 		order:             VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                                  'Set the sort order.'),
 		autoRun:           VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',                               'Set the run automaticaly or not.'),
+		singleton:         VSCodePreset.create(VSCodePreset.icons.emptyWindow,         'Singleton',                              'Set the terminal command be run as single or not.'),
 		save:              VSCodePreset.create(VSCodePreset.icons.save,                'Save',                                   'Save changes.'),
 		return:            VSCodePreset.create(VSCodePreset.icons.reply,               'Return',                                 'Return without saving any changes.'),
 		other:             VSCodePreset.create(VSCodePreset.icons.inbox,               'Other icons',                            'Select from other icons.'),
@@ -625,12 +627,14 @@ suite('Scenario - Command Regist', async () => {
 		pickStub.onCall(0).resolves(items.Python);
 		pickStub.onCall(1).resolves(items['ライブラリをアップデートする。']);
 		pickStub.onCall(2).resolves(items.autoRun);
-		pickStub.onCall(3).resolves({ label: '$(x) No', description: '' });
-		pickStub.onCall(4).resolves(items.save);
+		pickStub.onCall(3).resolves({ label: '$(x) No',      description: '' });
+		pickStub.onCall(4).resolves(items.singleton);
 		pickStub.onCall(5).resolves({ label: '$(check) Yes', description: '' });
-		pickStub.onCall(6).resolves(items.back);
-		pickStub.onCall(7).resolves(items.back);
-		pickStub.onCall(8).resolves(items.exit);
+		pickStub.onCall(6).resolves(items.save);
+		pickStub.onCall(7).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(8).resolves(items.back);
+		pickStub.onCall(9).resolves(items.back);
+		pickStub.onCall(10).resolves(items.exit);
 
 		await MultiStepInput.run((input: MultiStepInput) => new testTarget.EditMenuGuide(state, Constant.DATA_TYPE.folder, true, context).start(input));
 
@@ -645,11 +649,13 @@ suite('Scenario - Command Regist', async () => {
 		pickStub.onCall(1).resolves(items['ライブラリをアップデートする。']);
 		pickStub.onCall(2).resolves(items.autoRun);
 		pickStub.onCall(3).resolves({ label: '$(check) Yes', description: '' });
-		pickStub.onCall(4).resolves(items.save);
-		pickStub.onCall(5).resolves({ label: '$(check) Yes', description: '' });
-		pickStub.onCall(6).resolves(items.back);
-		pickStub.onCall(7).resolves(items.back);
-		pickStub.onCall(8).resolves(items.exit);
+		pickStub.onCall(4).resolves(items.singleton);
+		pickStub.onCall(5).resolves({ label: '$(x) No',      description: '' });
+		pickStub.onCall(6).resolves(items.save);
+		pickStub.onCall(7).resolves({ label: '$(check) Yes', description: '' });
+		pickStub.onCall(8).resolves(items.back);
+		pickStub.onCall(9).resolves(items.back);
+		pickStub.onCall(10).resolves(items.exit);
 
 		await MultiStepInput.run((input: MultiStepInput) => new testTarget.EditMenuGuide(state, Constant.DATA_TYPE.folder, true, context).start(input));
 

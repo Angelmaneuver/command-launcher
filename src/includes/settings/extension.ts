@@ -11,6 +11,7 @@ const ITEM_ID            = {
 	command:     'command',
 	orderNo:     'orderNo',
 	autoRun:     'autoRun',
+	singleton:   'singleton',
 	questions:   'questions',
 	selection:   'selection',
 	parameter:   'parameter',
@@ -33,7 +34,7 @@ const LOOKUP_MODE        = {
 
 type LookupMode = typeof LOOKUP_MODE[keyof typeof LOOKUP_MODE];
 
-type History    = { type: number, name: string, command: string, autoRun: boolean };
+export type History = { type: number, name: string, command: string, autoRun: boolean, singleton?: boolean };
 
 export class ExtensionSetting extends SettingBase {
 	private _commands:          Record<string, unknown>;

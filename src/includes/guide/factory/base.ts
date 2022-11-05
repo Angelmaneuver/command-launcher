@@ -16,6 +16,7 @@ import { SelectionItemEditMenuGuide } from '../menu/edit/question/selection';
 import { SelectLabelGuide4Guidance }  from '../label';
 import { NameInputGuide }             from '../name';
 import { AutoRunSettingGuide }        from '../autoRun';
+import { SingletonSettingGuide }      from '../singleton';
 import {
 	CommandLastInputGuide,
 	FolderLastInputGuide,
@@ -62,6 +63,7 @@ export abstract class GuideFactory {
 			SelectLabelGuide4Guidance:       SelectLabelGuide4Guidance,
 			SelectionItemEditMenuGuide:      SelectionItemEditMenuGuide,
 			NameInputGuide:                  NameInputGuide,
+			SingletonSettingGuide:           SingletonSettingGuide,
 			AutoRunSettingGuide:             AutoRunSettingGuide,
 			CommandLastInputGuide:           CommandLastInputGuide,
 			FolderLastInputGuide:            FolderLastInputGuide,

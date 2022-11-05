@@ -14,6 +14,7 @@ export type Command         = BaseCommandType & {
 
 export type TerminalCommand = Command & {
 	autoRun?:    boolean,
+	singleton?:  boolean,
 	questions?:  Record<string, Question>,
 };
 
