@@ -51,22 +51,31 @@ You can execute terminal commands from the menu.
 
 ![Execute terminal command image](resource/readme/demo7.gif)
 
-### Folder
-You can create folders to manage commands.
+#### Singleton
+Are there any terminal commands that keep working? (e.g, a command that detects file change and recompiles them etc...)
 
-![Folder image](resource/readme/demo5.gif)
+The singleton feature allows you to have only one process execute that commands.
 
-### History
+No more need to switch terminals!
+
+![Singleton image](resource/readme/demo9.gif)
+
+#### History
 Having trouble entering the same terminal commands?
 
 The history function eliminates that difficulty.
 
-#### Usage
+##### Usage
 Press '⇧⌘P' to bring up the command pallete and enter 'Command Launcher - History'.
 
 \* The history function is disabled by default.
 
 ![History image](resource/readme/demo8.png)
+
+### Folder
+You can create folders to manage commands.
+
+![Folder image](resource/readme/demo5.gif)
 
 ### Uninstall
 Didn't like this extension?

@@ -3,7 +3,7 @@
 	"displayName": "Command Launcher",
 	"description": "A launcher extension that manages commands for the command palette and terminal command.",
 	"publisher": "Angelmaneuver",
-	"version": "0.0.8",
+	"version": "0.0.9",
 	"homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
 	"repository": {
 		"type": "git",
