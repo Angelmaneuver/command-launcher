@@ -24,19 +24,7 @@ export async function start(
 		if (present(state.command)) {
 			commands.executeCommand(state.command as string);
 		} else if (present(state.terminalCommand)) {
-			const setting = new ExtensionSetting();
-			const history = {
-				type:    Constant.DATA_TYPE.terminalCommand,
-				name:    state.name                             as string,
-				command: state.terminalCommand                  as string,
-				autoRun: state.autoRun ? state.autoRun : false,
-			} as History;
-
-			if (setting.itemId.singleton in state) {
-				history[setting.itemId.singleton] = state.singleton;
-			}
-
-			setting.updateHistory(history);
+			updateHistory(state);
 
 			executeTerminalCommand(
 				state.name            as string,
@@ -62,6 +50,23 @@ export async function start(
 function present(value?: string): boolean {
 	return (value && value.length > 0) ? true : false;
 }
+
+function updateHistory(state: Partial<State>): void {
+	const setting = new ExtensionSetting();
+	const history = {
+		type:    Constant.DATA_TYPE.terminalCommand,
+		name:    state.name                             as string,
+		command: state.terminalCommand                  as string,
+		autoRun: state.autoRun ? state.autoRun : false,
+	} as History;
+
+	if (setting.itemId.singleton in state) {
+		history[setting.itemId.singleton] = state.singleton;
+	}
+
+	setting.updateHistory(history);
+}
+
 
 function executeTerminalCommand(
 	name:      string,
