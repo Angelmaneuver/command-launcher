@@ -26,7 +26,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	protected deleteConfirmText = 'Do you want to delete this question?';
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
-		this.items = this.root ? this.selectMenuItems : this.settingMenuItems;
+		this.items = this.isRoot ? this.selectMenuItems : this.settingMenuItems;
 
 		do {
 			await super.show(input);
@@ -51,16 +51,16 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		}
 	}
 
-	protected command(): (() => Promise<void>) | undefined {
+	protected item(): (() => Promise<void>) | undefined {
 		const name = this.getLabelStringByItem;
 
 		this.initialValue          = this.activeItem?.label;
-		this.state.hierarchy       = this.hierarchy.concat(this.root ? [this.settings.itemId.questions, name] : [this.settings.itemId.selection, name]);
+		this.state.hierarchy       = this.hierarchy.concat(this.isRoot ? [this.settings.itemId.questions, name] : [this.settings.itemId.selection, name]);
 		this.state.resultSet[name] = undefined;
 
 		return async () => {
 			this.setNextSteps([{
-				key:   this.root ? 'QuestionEditMenuGuide' : 'SelectionItemEditMenuGuide',
+				key:   this.isRoot ? 'QuestionEditMenuGuide' : 'SelectionItemEditMenuGuide',
 				state: this.createBaseState(`/${name}`, name),
 				args:  [this.type]
 			}]);
@@ -233,6 +233,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 	private get questions(): Record<string, Question> {
 		return this.settings.lookup(
 			this.hierarchy.concat(this.settings.itemId.questions),
+			this.location,
 			this.settings.lookupMode.read,
 			true,
 		) as Record<string, Question>;

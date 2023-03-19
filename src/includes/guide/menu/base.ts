@@ -29,7 +29,7 @@ export class MenuGuide extends AbstractMenuGuide {
 
 		this.items = this.items.concat(
 			this.commandItems,
-			this.root ? [items.exit] : [items.back]
+			this.isRoot ? [items.exit] : [items.back]
 		);
 	}
 
@@ -40,29 +40,27 @@ export class MenuGuide extends AbstractMenuGuide {
 			case items.exit.label:
 				return undefined;
 			default:
-				return this.command();
+				return this.item();
 		}
 	}
 
-	private command(): (() => Promise<void>) | undefined {
-		const data = this.getCommand(this.getLabelStringByItem);
+	private item(): (() => Promise<void>) | undefined {
+		const [data, key, location] = this.getCommand(this.getLabelStringByItem);
+		const type                  = data[this.settings.itemId.type];
 
-		if (Constant.DATA_TYPE.command === data[this.settings.itemId.type]) {
-			const command      = data as Command;
-
-			this.state.command = command[this.settings.itemId.command];
+		if (Constant.DATA_TYPE.command === type) {
+			this.state.command = (data as Command)[this.settings.itemId.command];
 
 			return undefined;
-		} else if (Constant.DATA_TYPE.terminalCommand === data[this.settings.itemId.type]) {
+		} else if (Constant.DATA_TYPE.terminalCommand === type) {
 			return this.terminalCommand(data as TerminalCommand);
 		} else {
-			const name           = this.getLabelStringByItem;
-
-			this.state.title     = `${this.title}/${name}`;
-			this.state.hierarchy = this.hierarchy.concat(name);
+			this.state.title     = `${this.title}/${this.getLabelStringByItem}`;
+			this.state.location  = location;
+			this.state.hierarchy = this.hierarchy.concat(key);
 
 			return async () => {
-				this.setNextSteps([{ key: 'MenuGuide', state: this.state }]);
+				this.setNextSteps([{ key: 'MenuGuide' }]);
 			};
 		}
 	}

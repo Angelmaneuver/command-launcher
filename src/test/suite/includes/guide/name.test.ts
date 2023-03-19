@@ -6,7 +6,7 @@ import * as Constant   from '../../../../includes/constant';
 suite('Name Guide Validator Test Suite', async () => {
 	test('validateName', async () => {
 		testTarget.NameInputGuide.keys = ['A', 'B', 'C'];
-		const instance                 = new testTarget.NameInputGuide({} as State, Constant.DATA_TYPE.command);
+		const instance                 = new testTarget.NameInputGuide({} as State, Constant.DATA_TYPE.command, ['A', 'B', 'C']);
 
 		assert.strictEqual(await instance.validateName('0'),  undefined);
 		assert.strictEqual(await instance.validateName('-'),  undefined);

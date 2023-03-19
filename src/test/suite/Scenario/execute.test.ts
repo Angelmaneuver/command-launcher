@@ -177,7 +177,6 @@ suite('Scenario - Command Execute', async () => {
 	};
 
 	const stateCreater = () => ({ title: "Test Suite", resultSet: {} } as State);
-	const sleep        = (ms: number) => { return new Promise(resolve => setTimeout(resolve, ms)); };
 	const context      = {} as ExtensionContext;
 	const items        = {
 		back: VSCodePreset.create(VSCodePreset.icons.reply,   'Return', 'Back to previous.'),
@@ -190,17 +189,46 @@ suite('Scenario - Command Execute', async () => {
 		"設定 (JSON) を開く。":         { label: "$(json) 設定 (JSON) を開く。",       description: "設定 (JSON) を開きます。" } as QuickPickItem,
 	};
 
+	test('Menu -> Common Command', async () => {
+		const setup          = new ExtensionSetting();
+		setup.commonCommands = data;
+		await setup.commit(setup.location.user);
+
+		let   state          = stateCreater();
+		const pickStub       = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+
+		pickStub.resolves(items['新しいノートを作成する。']);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual(data['新しいノートを作成する。']['command'], state.command);
+
+		pickStub.reset();
+
+		state                = stateCreater();
+
+		pickStub.resolves(items['WordPress開発環境を起動する。']);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual(data['WordPress開発環境を起動する。'].command, state.terminalCommand);
+
+		pickStub.restore();
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
 	test('Menu -> Command', async () => {
 		const setup    = new ExtensionSetting();
 		setup.commands = data;
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		let   state    = stateCreater();
 		const pickStub = sinon.stub(MultiStepInput.prototype, "showQuickPick");
 
 		pickStub.resolves(items['新しいノートを作成する。']);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual(data['新しいノートを作成する。']['command'], state.command);
 
@@ -210,7 +238,7 @@ suite('Scenario - Command Execute', async () => {
 
 		pickStub.resolves(items['WordPress開発環境を起動する。']);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual(data['WordPress開発環境を起動する。'].command, state.terminalCommand);
 
@@ -225,17 +253,41 @@ suite('Scenario - Command Execute', async () => {
 
 		pickStub.resolves(items.exit);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual(undefined, state.command);
 
 		pickStub.restore();
 	}).timeout(30 * 1000);
 
+	test('Menu -> Common Folder -> Command', async () => {
+		const setup          = new ExtensionSetting();
+		setup.commonCommands = data;
+		await setup.commit(setup.location.user);
+
+		const state          = stateCreater();
+		const pickStub       = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+
+		pickStub.onCall(0).resolves(items.VSNotes);
+		pickStub.onCall(1).resolves(items.作成);
+		pickStub.onCall(2).resolves(items.back);
+		pickStub.onCall(3).resolves(items.back);
+		pickStub.onCall(4).resolves(items.設定);
+		pickStub.onCall(5).resolves(items['設定 (JSON) を開く。']);
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual(data.設定['設定 (JSON) を開く。'].command, state.command);
+
+		pickStub.restore();
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
 	test('Menu -> Folder -> Command', async () => {
 		const setup    = new ExtensionSetting();
 		setup.commands = data;
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		const state    = stateCreater();
 		const pickStub = sinon.stub(MultiStepInput.prototype, "showQuickPick");
@@ -247,7 +299,7 @@ suite('Scenario - Command Execute', async () => {
 		pickStub.onCall(4).resolves(items.設定);
 		pickStub.onCall(5).resolves(items['設定 (JSON) を開く。']);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual(data.設定['設定 (JSON) を開く。'].command, state.command);
 
@@ -256,21 +308,21 @@ suite('Scenario - Command Execute', async () => {
 		await setup.uninstall();
 	}).timeout(30 * 1000);
 
-	test('Menu -> Folder -> TerminalCommand', async () => {
-		const setup    = new ExtensionSetting();
-		setup.commands = data;
-		await setup.commit();
+	test('Menu -> Common Folder -> TerminalCommand', async () => {
+		const setup          = new ExtensionSetting();
+		setup.commonCommands = data;
+		await setup.commit(setup.location.user);
 
-		let   state     = stateCreater();
-		const pickStub  = sinon.stub(MultiStepInput.prototype, "showQuickPick");
-		const inputStub = sinon.stub(MultiStepInput.prototype, "showInputBox");
+		let   state          = stateCreater();
+		const pickStub       = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+		const inputStub      = sinon.stub(MultiStepInput.prototype, "showInputBox");
 
 		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
 		pickStub.onCall(1).resolves({ label: `${data.Python.pip1.label} pip1`, description: data.Python.pip1.description });
 		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip1.questions.$command.selection.install.parameter}`});
 		inputStub.onCall(0).resolves('');
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual('pip install pip', state.terminalCommand);
 
@@ -284,7 +336,7 @@ suite('Scenario - Command Execute', async () => {
 		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} show`, description: `${data.Python.pip1.questions.$command.selection.show.parameter}`});
 		inputStub.onCall(0).resolves('module');
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual('pip show module', state.terminalCommand);
 
@@ -298,7 +350,7 @@ suite('Scenario - Command Execute', async () => {
 		inputStub.onCall(0).resolves('');
 		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip2.questions.$command.selection.install.parameter}`});
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual('pip install pip', state.terminalCommand);
 
@@ -313,7 +365,74 @@ suite('Scenario - Command Execute', async () => {
 		pickStub.onCall(2).resolves(direct);
 		inputStub.onCall(1).resolves('command');
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual('pip command module', state.terminalCommand);
+
+		inputStub.restore();
+		pickStub.restore();
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Menu -> Folder -> TerminalCommand', async () => {
+		const setup    = new ExtensionSetting();
+		setup.commands = data;
+		await setup.commit(setup.location.profile);
+
+		let   state     = stateCreater();
+		const pickStub  = sinon.stub(MultiStepInput.prototype, "showQuickPick");
+		const inputStub = sinon.stub(MultiStepInput.prototype, "showInputBox");
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip1.label} pip1`, description: data.Python.pip1.description });
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip1.questions.$command.selection.install.parameter}`});
+		inputStub.onCall(0).resolves('');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual('pip install pip', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip1.label} pip1`, description: data.Python.pip1.description });
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} show`, description: `${data.Python.pip1.questions.$command.selection.show.parameter}`});
+		inputStub.onCall(0).resolves('module');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual('pip show module', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip2.label} pip2`, description: data.Python.pip2.description });
+		inputStub.onCall(0).resolves('');
+		pickStub.onCall(2).resolves({ label: `${VSCodePreset.icons.note.label} install`, description: `${data.Python.pip2.questions.$command.selection.install.parameter}`});
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
+
+		assert.strictEqual('pip install pip', state.terminalCommand);
+
+		pickStub.reset();
+		inputStub.reset();
+
+		state = stateCreater();
+
+		pickStub.onCall(0).resolves({ label: `${data.Python.label} Python`, description: data.Python.description });
+		pickStub.onCall(1).resolves({ label: `${data.Python.pip2.label} pip2`, description: data.Python.pip2.description });
+		inputStub.onCall(0).resolves('module');
+		pickStub.onCall(2).resolves(direct);
+		inputStub.onCall(1).resolves('command');
+
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.MenuGuide(state, context).start(input));
 
 		assert.strictEqual('pip command module', state.terminalCommand);
 
@@ -330,7 +449,7 @@ suite('Scenario - Command Execute', async () => {
 
 		pickStub.onCall(0).resolves(items.exit);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, context).start(input));
 
 		assert.strictEqual('The history function is disabled.', state.message);
 
@@ -340,7 +459,7 @@ suite('Scenario - Command Execute', async () => {
 
 		pickStub.onCall(0).resolves(items.exit);
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, context).start(input));
 
 		assert.strictEqual('No history.', state.message);
 
@@ -351,7 +470,7 @@ suite('Scenario - Command Execute', async () => {
 
 		pickStub.onCall(0).resolves({ label: `$(terminal)`, description: `command1` });
 
-		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, true, context).start(input));
+		await MultiStepInput.run((input: MultiStepInput) => new testTarget.HistoryGuide(state, context).start(input));
 
 		assert.strictEqual('test1',    state.name);
 		assert.strictEqual('command1', state.terminalCommand);

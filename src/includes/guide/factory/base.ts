@@ -13,6 +13,7 @@ import {
 import { EditMenuGuide }              from '../menu/edit/base';
 import { QuestionEditMenuGuide }      from '../menu/edit/question/base';
 import { SelectionItemEditMenuGuide } from '../menu/edit/question/selection';
+import { SelectLocationGuide }        from '../location';
 import { SelectLabelGuide4Guidance }  from '../label';
 import { NameInputGuide }             from '../name';
 import { AutoRunSettingGuide }        from '../autoRun';
@@ -62,6 +63,7 @@ export abstract class GuideFactory {
 			QuestionEditMenuGuide:           QuestionEditMenuGuide,
 			SelectLabelGuide4Guidance:       SelectLabelGuide4Guidance,
 			SelectionItemEditMenuGuide:      SelectionItemEditMenuGuide,
+			SelectLocationGuide:             SelectLocationGuide,
 			NameInputGuide:                  NameInputGuide,
 			SingletonSettingGuide:           SingletonSettingGuide,
 			AutoRunSettingGuide:             AutoRunSettingGuide,

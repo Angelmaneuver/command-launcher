@@ -28,7 +28,7 @@ suite('Kick Starter Test Suite', async () => {
 		guideFactoryStub.onSecondCall().callsFake(
 			(className: string, state: State, context: vscode.ExtensionContext) => {
 				state.message = 'Stub Info';
-				return new MenuGuide(state, true, context);
+				return new MenuGuide(state, context);
 			}
 		);
 		windowMock.expects('showInformationMessage').withArgs('Stub Info').once();
@@ -37,7 +37,7 @@ suite('Kick Starter Test Suite', async () => {
 		guideFactoryStub.onThirdCall().callsFake(
 			(className: string, state: State, context: vscode.ExtensionContext) => {
 				state.reload = true;
-				return new MenuGuide(state, true, context);
+				return new MenuGuide(state, context);
 			}
 		);
 		await testTarget.launcher(context);
@@ -45,14 +45,14 @@ suite('Kick Starter Test Suite', async () => {
 		guideFactoryStub.onCall(3).callsFake(
 			(className: string, state: State, context: vscode.ExtensionContext) => {
 				state.command = 'Command';
-				return new MenuGuide(state, true, context);
+				return new MenuGuide(state, context);
 			}
 		);
 		await testTarget.launcher(context);
 
 		guideFactoryStub.onCall(4).callsFake(
 			(className: string, state: State, context: vscode.ExtensionContext) => {
-				return new HistoryGuide(state, true, context);
+				return new HistoryGuide(state, context);
 			}
 		);
 		await testTarget.history(context);

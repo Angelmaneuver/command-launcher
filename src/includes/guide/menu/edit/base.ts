@@ -12,19 +12,19 @@ import { VSCodePreset }          from '../../../utils/base/vscodePreset';
 import * as Constant             from '../../../constant';
 
 const items = {
-	add:         VSCodePreset.create(VSCodePreset.icons.add,                 'Add',         'Add a command.'),
-	terminal:    VSCodePreset.create(VSCodePreset.icons.terminal,            'Terminal',    'Add a terminal command.'),
-	create:      VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create',      'Create a folder.'),
-	setting:     VSCodePreset.create(VSCodePreset.icons.settingsGear,        'Setting',     'Set the parameters for this extension.'),
-	name:        VSCodePreset.create(VSCodePreset.icons.fileText,            'Name',        'Set the item name.'),
-	label:       VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',       'Set the item label.'),
-	description: VSCodePreset.create(VSCodePreset.icons.note,                'Description', 'Set the command description.'),
-	command:     VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Command',     'Set the execute command.'),
-	order:       VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',       'Set the sort order.'),
-	question:    VSCodePreset.create(VSCodePreset.icons.question,            'Question',    'Set the question.'),
-	autoRun:     VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',    'Set the run automaticaly or not.'),
-	singleton:   VSCodePreset.create(VSCodePreset.icons.emptyWindow,         'Singleton',   'Set the terminal command be run as single or not.'),
-	delimiter:   { label: '-'.repeat(35) + ' Registered commands ' + '-'.repeat(35) } as QuickPickItem,
+	command:         VSCodePreset.create(VSCodePreset.icons.extensions,          'Add Command',          'Add a vscode command.'),
+	terminal:        VSCodePreset.create(VSCodePreset.icons.terminal,            'Add Terminal Command', 'Add a terminal command.'),
+	folder:          VSCodePreset.create(VSCodePreset.icons.fileDirectoryCreate, 'Create Folder',        'Create folder'),
+	setting:         VSCodePreset.create(VSCodePreset.icons.settingsGear,        'Setting',              'Set the parameters for this extension.'),
+	name:            VSCodePreset.create(VSCodePreset.icons.fileText,            'Name',                 'Set the item name.'),
+	label:           VSCodePreset.create(VSCodePreset.icons.tag,                 'Label',                'Set the item label.'),
+	description:     VSCodePreset.create(VSCodePreset.icons.note,                'Description',          'Set the command description.'),
+	executeCommand:  VSCodePreset.create(VSCodePreset.icons.terminalPowershell,  'Execute Command',      'Set the execute command.'),
+	order:           VSCodePreset.create(VSCodePreset.icons.listOrdered,         'Order',                'Set the sort order.'),
+	question:        VSCodePreset.create(VSCodePreset.icons.question,            'Question',             'Set the question.'),
+	autoRun:         VSCodePreset.create(VSCodePreset.icons.run,                 'Auto Run',             'Set the run automaticaly or not.'),
+	singleton:       VSCodePreset.create(VSCodePreset.icons.emptyWindow,         'Singleton',            'Set the terminal command be run as single or not.'),
+	delimiter:       { label: '-'.repeat(35) + ' Registered commands ' + '-'.repeat(35) } as QuickPickItem,
 };
 
 export class EditMenuGuide extends AbstractEditMenuGuide {
@@ -40,8 +40,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
 		this.initialValue    = undefined;
-
-		this.state.hierarchy = this.hierarchy;
+		this.state.hierarchy = [...this.hierarchy];
 
 		switch (label) {
 			case items.setting.label:
@@ -51,14 +50,16 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 						state: this.createBaseState(` - Setting`, 'setting'),
 					}]);
 				};
-			case items.add.label:
+			case items.command.label:
+				return this.setGuidance('Command',  'command',  4, Constant.DATA_TYPE.command,         label);
 			case items.terminal.label:
-			case items.create.label:
-				return this.setGuidance(label);
+				return this.setGuidance('Terminal', 'terminal', 4, Constant.DATA_TYPE.terminalCommand, label);
+			case items.folder.label:
+				return this.setGuidance('Folder',   'folder',   3, Constant.DATA_TYPE.folder,          label);
 			case items.name.label:
 			case items.label.label:
 			case items.description.label:
-			case items.command.label:
+			case items.executeCommand.label:
 			case items.order.label:
 			case items.question.label:
 			case items.autoRun.label:
@@ -70,60 +71,116 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 	}
 
 	private setMenuItems(): void {
-		this.items         = [];
-		const settingItems = [items.name, items.label, items.description];
-		const terminal     = Constant.DATA_TYPE.terminalCommand === this.type ? [items.question, items.autoRun, items.singleton] : [];
-		const save         = [];
-		const returnOrBack = [];
-
-		if (Object.keys(this.guideGroupResultSet).length > 0) {
-			save.push(AbstractEditMenuGuide.items.save);
-			returnOrBack.push(AbstractEditMenuGuide.items.return);
+		if (this.isRoot) {
+			this.setRootItems();
 		} else {
-			returnOrBack.push(AbstractEditMenuGuide.items.back);
-		}
+			if (Constant.DATA_TYPE.folder === this.type) {
+				this.setFolderItems();
+			} else if (Constant.DATA_TYPE.command === this.type) {
+				this.setCommandItems();
+			} else {
+				this.setTerminalCommandItems();
+			}
 
-		if (Constant.DATA_TYPE.folder === this.type) {
-			this.setFolderCommands([...settingItems, items.order, AbstractEditMenuGuide.items.delete, ...save], returnOrBack);
-		} else {
-			this.items = [...settingItems, items.command, items.order, ...terminal, AbstractEditMenuGuide.items.delete, ...save, ...returnOrBack];
+			if (Object.keys(this.guideGroupResultSet).length > 0) {
+				this.items = this.items.concat([
+					AbstractEditMenuGuide.items.save,
+					AbstractEditMenuGuide.items.return,
+				]);
+			} else {
+				this.items = this.items.concat([
+					AbstractEditMenuGuide.items.back,
+				]);
+			}	
+
+			if (Constant.DATA_TYPE.folder === this.type) {
+				this.items = this.items.concat(
+					AbstractEditMenuGuide.items.launcher,
+				).concat(
+					this.commandItems.length > 0 ? [items.delimiter, ...this.commandItems] : []
+				);
+			}
 		}
 	}
 
-	private setFolderCommands(settingItems: Array<QuickPickItem>, returnOrBack: Array<QuickPickItem>): void {
-		const commandItems = this.commandItems;
-		const operateItems = this.root ? [items.setting, AbstractEditMenuGuide.items.uninstall] : settingItems;
-		const returnItem   = this.root ? [AbstractEditMenuGuide.items.exit]                     : returnOrBack;
-
-		this.items         = [items.add, items.terminal, items.create].concat(
-			...operateItems,
+	private setRootItems(): void {
+		this.items = [
+			items.command,
+			items.terminal,
+			items.folder,
+			items.setting,
+			AbstractEditMenuGuide.items.uninstall,
 			AbstractEditMenuGuide.items.launcher,
-			...returnItem,
-			commandItems.length > 0 ? [items.delimiter, ...commandItems] : [],
-		);
+			AbstractEditMenuGuide.items.exit,
+		].concat(this.commandItems.length > 0 ? [items.delimiter, ...this.commandItems] : []);
 	}
 
-	protected command(): (() => Promise<void>) | undefined {
-		const name = this.getLabelStringByItem;
-		const type = (this.getCommand(name))[this.settings.itemId.type];
+	private setFolderItems(): void {
+		this.items = [
+			items.command,
+			items.terminal,
+			items.folder,
+			items.name,
+			items.label,
+			items.description,
+			items.order,
+			AbstractEditMenuGuide.items.delete,
+		];
+	}
 
-		this.initialValue          = this.activeItem?.label;
-		this.state.hierarchy       = this.hierarchy.concat(name);
-		this.state.resultSet[name] = undefined;
+	private setCommandBaseItems(): void {
+		this.items = [
+			items.name,
+			items.label,
+			items.description,
+		];
+	}
+
+	private setCommandItems(): void {
+		this.setCommandBaseItems();
+
+		this.items = this.items.concat([
+			items.executeCommand,
+			items.order,
+			AbstractEditMenuGuide.items.delete,
+		]);
+	}
+
+	private setTerminalCommandItems(): void {
+		this.setCommandBaseItems();
+
+		this.items = this.items.concat([
+			items.executeCommand,
+			items.order,
+			items.question,
+			items.autoRun,
+			items.singleton,
+			AbstractEditMenuGuide.items.delete,
+		]);
+	}
+
+	protected item(): (() => Promise<void>) | undefined {
+		const [data, key, location] = this.getCommand(this.getLabelStringByItem);
+		const type                  = data[this.settings.itemId.type];
+
+		this.initialValue           = key;
+		this.state.location         = location;
+		this.state.hierarchy        = this.hierarchy.concat(key);
+		this.state.resultSet[key]   = undefined;
 
 		return async () => {
 			this.setNextSteps([{
 				key:   'EditMenuGuide',
-				state: this.createBaseState(`/${name}`, name),
+				state: this.createBaseState(`/${key}`, key),
 				args:  [type]
 			}]);
 		};
 	}
 
 	protected async delete(): Promise<void> {
-		this.settings.delete(this.hierarchy);
+		this.settings.delete(this.hierarchy, this.location);
 
-		await this.settings.commit();
+		await this.settings.commit(this.location);
 
 		this.updateEnd(this.processType.deleted);
 	}
@@ -132,7 +189,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 		const hierarchy                          = [...this.hierarchy];
 		const pre                                = Optional.ofNullable(hierarchy.pop()).orElseThrow(ReferenceError('Edit target not found...'));
 		const name                               = Optional.ofNullable(this.guideGroupResultSet[this.settings.itemId.name]).orElseNonNullable(pre) as string;
-		const original                           = this.settings.cloneDeep(this.hierarchy);
+		const original                           = this.settings.cloneDeep(this.hierarchy, this.location);
 		const overwrite: Record<string, unknown> = {};
 
 		Object.keys(this.guideGroupResultSet).forEach(
@@ -176,42 +233,35 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 
 		Object.assign(original, overwrite);
 
-		this.settings.delete(this.hierarchy);
+		this.settings.delete(this.hierarchy, this.location);
 
-		this.settings.lookup(hierarchy, this.settings.lookupMode.read)[name] = original;
+		this.settings.lookup(hierarchy, this.location, this.settings.lookupMode.read)[name] = original;
 
-		this.settings.sort(hierarchy);
+		this.settings.sort(hierarchy, this.location);
 
-		await this.settings.commit();
+		await this.settings.commit(this.location);
 
 		this.updateEnd(this.processType.updated);
 	}
 
-	private setGuidance(label: string): () => Promise<void> {
-		let [title, guideGroupId, totalStep, type] = ['', '', 0, 0];
-		this.state.resultSet[guideGroupId]         = undefined;
+	private setGuidance(
+		title:        string,
+		guideGroupId: string,
+		totalStep:    number,
+		type:         Constant.DataType,
+		label:        string
+	): () => Promise<void> {
+		this.state.resultSet[guideGroupId] = { type: type };
 
-		switch(label) {
-			case items.add.label:
-				[title, guideGroupId, totalStep, type] = ['Command',  'add',         4, Constant.DATA_TYPE.command];
-				break;
-			case items.terminal.label:
-				[title, guideGroupId, totalStep, type] = ['Terminal', 'addTerminal', 4, Constant.DATA_TYPE.terminalCommand];
-				break;
-			default:
-				[title, guideGroupId, totalStep, type] = ['Folder',   'create',      3, Constant.DATA_TYPE.folder];
-				break;
-		}
-
-		const temporary: Record<string, unknown> = {};
-		temporary[this.settings.itemId.type]     = type;
-		this.state.resultSet[guideGroupId]       = temporary;
+		const key:   string                = this.isRoot ? 'SelectLocationGuide' : 'SelectLabelGuide4Guidance';
+		const state: Partial<State>        = this.createBaseState(` - Add ${title}`, guideGroupId, this.isRoot ? totalStep + 1 : totalStep);
+		const args:  Array<unknown>        = [Constant.SELECTION_ITEM.base, type, Object.keys(this.currentCommandsWithAllowEmpty)];
 
 		return async () => {
 			this.setNextSteps([{
-				key:   'SelectLabelGuide4Guidance',
-				state: this.createBaseState(` - Add ${title}`, guideGroupId, totalStep),
-				args:  [Constant.SELECTION_ITEM.base, type]
+				key:   key,
+				state: state,
+				args:  args,
 			}]);
 		};
 	}
@@ -226,7 +276,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 			case items.name.label:
 				key                         = 'NameInputGuide';
 				optionState['initialValue'] = this.guideGroupId;
-				args                        = [this.type];
+				args                        = [this.type, Object.keys(this.parentCommands)];
 				break;
 			case items.label.label:
 				key                         = 'SelectLabelGuide4Guidance';
@@ -237,7 +287,7 @@ export class EditMenuGuide extends AbstractEditMenuGuide {
 				optionState['prompt']       = `Please enter the description of ${Constant.DATA_TYPE.folder === this.type ? 'folder' : 'command' }.`;
 				optionState['initialValue'] = this.currentCommandInfo[this.settings.itemId.description];
 				break;
-			case items.command.label:
+			case items.executeCommand.label:
 				itemId                      = this.settings.itemId.command;
 				optionState['prompt']       = 'Please enter the command you want to run.';
 				optionState['validate']     = BaseValidator.validateRequired;

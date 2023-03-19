@@ -1,6 +1,14 @@
-export type Nullable<T> = T | null | undefined;
+export type Nullable<T>     = T | null | undefined;
 
-type BaseCommandType = {
+export const LOCATION       = {
+	root:        'root',
+	user:        'user',
+	profile:     'Profile',
+} as const;
+
+export type Location        = typeof LOCATION[keyof typeof LOCATION];
+
+type BaseCommandType        = {
 	name:        string,
 	type:        number,
 	label:       string,
@@ -8,10 +16,10 @@ type BaseCommandType = {
 	orderNo?:    string,
 };
 
+export type Folder          = BaseCommandType;
 export type Command         = BaseCommandType & {
-	command:     string,
+	command:     string
 };
-
 export type TerminalCommand = Command & {
 	autoRun?:    boolean,
 	singleton?:  boolean,
@@ -37,5 +45,3 @@ export type Question        = {
 	default?:    string,
 	orderNo?:    string,
 };
-
-export type Folder          = BaseCommandType;

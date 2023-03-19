@@ -21,10 +21,17 @@ const BASE_ITEMS = [
 
 export abstract class AbstractSelectLabelGuide extends AbstractQuickPickSelectGuide {
 	private   selection: Constant.SelectionItem;
-	private   className: string         = '';
+	private   className: string;
 	protected type:      Constant.DataType;
+	protected keys:      Array<string>;
 
-	constructor(state: State, selection: Constant.SelectionItem, className: string, type?: Constant.DataType) {
+	constructor(
+		state:     State,
+		selection: Constant.SelectionItem,
+		className: string                  = '',
+		type?:     Constant.DataType,
+		keys:      Array<string>           = [],
+	) {
 		super(state);
 
 		this.itemId      = this.settings.itemId.lable;
@@ -32,6 +39,7 @@ export abstract class AbstractSelectLabelGuide extends AbstractQuickPickSelectGu
 		this.selection   = selection;
 		this.className   = className;
 		this.type        = type ? type : Constant.DATA_TYPE.command;
+		this.keys        = keys;
 	}
 
 	public init(): void {
@@ -60,8 +68,13 @@ export abstract class AbstractSelectLabelGuide extends AbstractQuickPickSelectGu
 }
 
 export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
-	constructor(state: State, selection: Constant.SelectionItem, type: Constant.DataType) {
-		super(state, selection, 'SelectLabelGuide4Guidance', type);
+	constructor(
+		state:     State,
+		selection: Constant.SelectionItem,
+		type:      Constant.DataType,
+		keys:      Array<string>
+	) {
+		super(state, selection, 'SelectLabelGuide4Guidance', type, keys);
 	}
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
@@ -90,7 +103,7 @@ export class SelectLabelGuide4Guidance extends AbstractSelectLabelGuide {
 		const steps:Array<Guide> = [{
 			key:   'NameInputGuide',
 			state: { step: this.step } as Partial<State>,
-			args:  [this.type]
+			args:  [this.type, this.keys]
 		}];
 
 		if (Constant.DATA_TYPE.folder === this.type) {

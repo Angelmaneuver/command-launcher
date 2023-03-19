@@ -27,12 +27,12 @@ export class BaseLastInputGuide extends BaseInputGuide {
 		)[0];
 		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
 
-		const registeredAt = this.settings.lookup(this.hierarchy, this.settings.lookupMode.write);
+		const registeredAt = this.settings.lookup(this.hierarchy, this.location, this.settings.lookupMode.write);
 
 		registeredAt[this.registName] = this.registData;
 
-		this.settings.sort(this.hierarchy);
-		await this.settings.commit();
+		this.settings.sort(this.hierarchy, this.location);
+		await this.settings.commit(this.location);
 
 		this.state.back = true;
 		this.prev();
@@ -77,11 +77,11 @@ export class TextQuestionLastInputGuide extends BaseLastInputGuide {
 		this.registData[this.settings.itemId.type]        = QUESTION_TYPE.text;
 		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
 
-		const registeredAt = this.settings.lookup(this.hierarchy, this.settings.lookupMode.write);
+		const registeredAt = this.settings.lookup(this.hierarchy, this.location, this.settings.lookupMode.write);
 
 		registeredAt[this.registName] = this.registData;
 
-		await this.settings.commit();
+		await this.settings.commit(this.location);
 
 		this.state.back = true;
 		this.prev();
@@ -96,11 +96,11 @@ export const items = [
 export class SelectionQuestionLastInputGuide extends BaseLastInputGuide {
 	private nameInputGuide: NameInputGuide;
 
-	constructor(state: State) {
+	constructor(state: State, keys: Array<string>) {
 		super(state);
 
 		this.itemId         = this.settings.itemId.selection;
-		this.nameInputGuide = new NameInputGuide(this.state, DATA_TYPE.terminalCommand);
+		this.nameInputGuide = new NameInputGuide(this.state, DATA_TYPE.terminalCommand, keys);
 	}
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
@@ -161,11 +161,11 @@ export class SelectionQuestionLastInputGuide extends BaseLastInputGuide {
 		this.registData[this.settings.itemId.description] = this.guideGroupResultSet[this.settings.itemId.description];
 		this.registData[this.settings.itemId.selection]   = this.guideGroupResultSet[this.settings.itemId.selection];
 
-		const registeredAt = this.settings.lookup(this.hierarchy, this.settings.lookupMode.write);
+		const registeredAt = this.settings.lookup(this.hierarchy, this.location, this.settings.lookupMode.write);
 
 		registeredAt[this.registName] = this.registData;
 
-		await this.settings.commit();
+		await this.settings.commit(this.location);
 
 		this.state.back = true;
 		this.prev();

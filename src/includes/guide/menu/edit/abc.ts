@@ -28,10 +28,9 @@ export abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
 
 	protected type: Constant.DataType;
 
-	constructor(state: State, type: Constant.DataType, root?: boolean, context?: ExtensionContext) {
-		super(state, root, context);
+	constructor(state: State, type: Constant.DataType, context?: ExtensionContext) {
+		super(state, context);
 
-		this.root = root ? true : false;
 		this.type = type;
 	}
 
@@ -51,7 +50,7 @@ export abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
 	}
 
 	protected getExecute(label: string | undefined): (() => Promise<void>) | undefined {
-		this.state.hierarchy = this.hierarchy;
+		this.state.hierarchy = [...this.hierarchy];
 
 		switch (label) {
 			case AbstractEditMenuGuide.items.delete.label:
@@ -68,11 +67,11 @@ export abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
 			case AbstractEditMenuGuide.items.exit.label:
 				return undefined;
 			default:
-				return this.command();
+				return this.item();
 		}
 	}
 
-	protected abstract command(): (() => Promise<void>) | undefined;
+	protected abstract item(): (() => Promise<void>) | undefined;
 
 	private deleteConfirm(): () => Promise<void> {
 		return async () => {

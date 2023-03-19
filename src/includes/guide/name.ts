@@ -1,7 +1,3 @@
-import {
-	InputStep,
-	MultiStepInput,
-}                         from '../utils/multiStepInput';
 import { State }          from './base/base';
 import { BaseInputGuide } from './base/input';
 import * as Constant      from '../constant';
@@ -11,19 +7,15 @@ export class NameInputGuide extends BaseInputGuide {
 
 	protected type: Constant.DataType;
 
-	constructor(state: State, type:Constant.DataType) {
+	constructor(state: State, type:Constant.DataType, keys: Array<string>) {
 		super(state);
 
-		this.type     = type;
-		this.itemId   = this.settings.itemId.name;
-		this.prompt   = `Please enter the name of ${Constant.DATA_TYPE.folder === this.type ? 'folder' : 'command' }.`;
-		this.validate = this.validateName;
-	}
+		NameInputGuide.keys = keys;
 
-	public async show(input: MultiStepInput):Promise<void | InputStep> {
-		NameInputGuide.keys = this.totalSteps > 0 ? Object.keys(this.currentCommandsWithAllowEmpty) : Object.keys(this.parentCommands);
-
-		await super.show(input);
+		this.type           = type;
+		this.itemId         = this.settings.itemId.name;
+		this.prompt         = `Please enter the name of ${Constant.DATA_TYPE.folder === this.type ? 'folder' : 'command' }.`;
+		this.validate       = this.validateName;
 	}
 
 	public async validateName(value: string): Promise<string | undefined> {

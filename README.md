@@ -1,12 +1,20 @@
-# Command Launcher
-
-![GitHub package.json dynamic](https://img.shields.io/github/package-json/categories/angelmaneuver/command-launcher?color=green) ![Visual Studio Marketplace Last Updated](https://img.shields.io/visual-studio-marketplace/last-updated/angelmaneuver.command-launcher) ![Visual Studio Marketplace Installs](https://img.shields.io/visual-studio-marketplace/i/Angelmaneuver.command-launcher) ![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/angelmaneuver/command-launcher/ci.yml?branch=main) [![Maintainability](https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/maintainability)](https://codeclimate.com/github/Angelmaneuver/command-launcher/maintainability) [![Test Coverage](https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/test_coverage)](https://codeclimate.com/github/Angelmaneuver/command-launcher/test_coverage) [![License](https://img.shields.io/github/license/Angelmaneuver/command-launcher)](LICENSE)
-
-A launcher extension that manages commands for the command palette and terminal command.
+<div align="center" style="text-align:center;">
+	<h1>Command Launcher</h1>
+	<p>A launcher extension that manages commands for the command palette and terminal command.</p>
+	<div>
+		<img alt="Version" src="https://img.shields.io/github/package-json/version/angelmaneuver/command-launcher?color=blue" />
+		<img alt="Installs" src="https://img.shields.io/visual-studio-marketplace/i/Angelmaneuver.command-launcher" />
+		<a href="https://codeclimate.com/github/Angelmaneuver/command-launcher/maintainability"><img src="https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/maintainability" /></a>
+		<a href="https://codeclimate.com/github/Angelmaneuver/command-launcher/test_coverage"><img src="https://api.codeclimate.com/v1/badges/423732b5edf0ced05786/test_coverage" /></a>
+		<a href="https://github.com/Angelmaneuver/wallpaper-setting/issues">
+			<img alt="Issues" src="https://img.shields.io/github/issues/Angelmaneuver/command-launcher?color=#86D492" />
+		</a>
+	</div>
+</div>
 
 ## Usage
 ### Step1.
-Press '`⇧⌘P`' to bring up the command pallete and enter '`Command Launcher - Edit`'.
+Press `⇧⌘P` to bring up the command pallete and enter '`Command Launcher - Edit`'.
 
 ![Usage Step1. image](resource/readme/usage1.png)
 
@@ -16,7 +24,7 @@ Customize the menu as you like.
 ![Usage Step2. image](resource/readme/usage2.png)
 
 ### Step3.
-Press '`⇧⌘P`' to bring up the command pallete and enter '`Command Launcher`'.
+Press `⇧⌘P` to bring up the command pallete and enter '`Command Launcher`'.
 
 ![Usage Step3-1. image](resource/readme/usage3-1.png)
 
@@ -31,14 +39,14 @@ Just follow the guide to easily set the menu.
 ![Easy Setup image](resource/readme/demo1.gif)
 
 ### Command - Calling other extension
-Check the "`Feature Contributions`" -> "`Commands`" -> "`Name`" of the extension you wish to call.
+Check the `Feature Contributions` -> `Commands` -> `Name` of the extension you wish to call.
 
 Set its value as a command.
 
 ![Checkout1 image](resource/readme/demo2.png)
 
 ### Command - Calling VSCode's command
-First, "`Command Pallete`" -> "`Gear`" in that order.
+First, `Command Pallete` -> `Gear` in that order.
 
 ![Checkout2-1 image](resource/readme/demo3.png)
 
@@ -46,7 +54,7 @@ The value entered in the filter is the value of the command you wish to call.
 
 ![Checkout2-2 image](resource/readme/demo4.png)
 
-### Command - Execute Terminal's command
+### Terminal Command - Execute Terminal's command
 You can execute terminal commands from the menu.
 
 ![Execute terminal command image](resource/readme/demo7.gif)
@@ -93,6 +101,3 @@ It won't pollute your environment.
 This extension will make changes to the following file.
 
 1. settings.json
-
-## Support
-<a href="https://www.buymeacoffee.com/Angelmaneuver"> <img align="left" src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" height="50" width="210" alt="Angelmaneuver" /></a>

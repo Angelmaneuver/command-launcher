@@ -39,7 +39,7 @@ export class SelectionItemEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		}
 	}
 
-	protected command(): (() => Promise<void>) | undefined {
+	protected item(): (() => Promise<void>) | undefined {
 		return;
 	}
 

@@ -84,36 +84,73 @@ suite('Extension Setting Test Suite', async () => {
 	test('Default Value', async () => {
 		const instance = new testTarget.ExtensionSetting();
 
+		assert.deepStrictEqual({}, instance.commonCommands);
 		assert.deepStrictEqual({}, instance.commands);
 	});
 
-	test('lookup', async () => {
-		const setup    = new testTarget.ExtensionSetting();
-		setup.commands = testData1;
+	test('lookup - Common Commands', async () => {
+		const setup          = new testTarget.ExtensionSetting();
+		setup.commonCommands = testData1;
 
-		await setup.commit();
+		await setup.commit(setup.location.user);
 
 		let   instance = new testTarget.ExtensionSetting();
 
-		let   data     = instance.lookup([], instance.lookupMode.read);
+		let   data     = instance.lookup([], setup.location.user, instance.lookupMode.read);
 		assert.deepStrictEqual(testData1, data);
 
-		data           = instance.lookup(['nest1 (test)'], instance.lookupMode.read);
+		data           = instance.lookup(['nest1 (test)'], setup.location.user, instance.lookupMode.read);
 		assert.deepStrictEqual(testData1['nest1 (test)'], data);
 
 		try {
-			instance.lookup(['nest1 (test)', 'nest3'], instance.lookupMode.read);
+			instance.lookup(['nest1 (test)', 'nest3'], setup.location.user, instance.lookupMode.read);
 		} catch (e) {
 			if (e instanceof Error) {
 				assert.strictEqual('/nest1 (test)/nest3 is not found...', e.message);				
 			}
 		}
 
-		data           = instance.lookup(['nest1 (test)', 'nest3'], instance.lookupMode.write);
+		data           = instance.lookup(['nest1 (test)', 'nest3'], setup.location.user, instance.lookupMode.write);
 		assert.deepStrictEqual({}, data);
 
 		data['data']  = 'CCC';
-		await instance.commit();
+		await instance.commit(setup.location.user);
+
+		data           = _.cloneDeep(testData1) as Record<string, unknown>;
+		(data['nest1 (test)'] as Record<string, unknown>)['nest3'] = { 'data': 'CCC' };
+		instance       = new testTarget.ExtensionSetting();
+		assert.deepStrictEqual(data, instance.commonCommands);
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('lookup - Commands', async () => {
+		const setup    = new testTarget.ExtensionSetting();
+		setup.commands = testData1;
+
+		await setup.commit(setup.location.profile);
+
+		let   instance = new testTarget.ExtensionSetting();
+
+		let   data     = instance.lookup([], setup.location.profile, instance.lookupMode.read);
+		assert.deepStrictEqual(testData1, data);
+
+		data           = instance.lookup(['nest1 (test)'], setup.location.profile, instance.lookupMode.read);
+		assert.deepStrictEqual(testData1['nest1 (test)'], data);
+
+		try {
+			instance.lookup(['nest1 (test)', 'nest3'], setup.location.profile, instance.lookupMode.read);
+		} catch (e) {
+			if (e instanceof Error) {
+				assert.strictEqual('/nest1 (test)/nest3 is not found...', e.message);				
+			}
+		}
+
+		data           = instance.lookup(['nest1 (test)', 'nest3'], setup.location.profile, instance.lookupMode.write);
+		assert.deepStrictEqual({}, data);
+
+		data['data']  = 'CCC';
+		await instance.commit(setup.location.profile);
 
 		data           = _.cloneDeep(testData1) as Record<string, unknown>;
 		(data['nest1 (test)'] as Record<string, unknown>)['nest3'] = { 'data': 'CCC' };
@@ -123,38 +160,78 @@ suite('Extension Setting Test Suite', async () => {
 		await setup.uninstall();
 	}).timeout(30 * 1000);
 
-	test('Clone Deep', async () => {
+	test('Clone Deep - Common Commands', async () => {
 		const setup    = new testTarget.ExtensionSetting();
-		setup.commands = testData1;
+		setup.commonCommands = testData1;
 
-		await setup.commit();
+		await setup.commit(setup.location.user);
 
 		let   instance = new testTarget.ExtensionSetting();
 
-		assert.notStrictEqual(instance.commands, instance.cloneDeep([]));
-		assert.deepStrictEqual(instance.commands, instance.cloneDeep([]));
+		assert.notStrictEqual (instance.commonCommands, instance.cloneDeep([], setup.location.user));
+		assert.deepStrictEqual(instance.commonCommands, instance.cloneDeep([], setup.location.user));
 
 		await setup.uninstall();
 	}).timeout(30 * 1000);
 
-	test('Delete', async () => {
+	test('Clone Deep - Commands', async () => {
 		const setup    = new testTarget.ExtensionSetting();
 		setup.commands = testData1;
 
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		let   instance = new testTarget.ExtensionSetting();
 
-		instance.delete(['nest1 (test)']);
-		await instance.commit();
+		assert.notStrictEqual (instance.commands, instance.cloneDeep([], setup.location.profile));
+		assert.deepStrictEqual(instance.commands, instance.cloneDeep([], setup.location.profile));
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Delete - Common Commands', async () => {
+		const setup          = new testTarget.ExtensionSetting();
+		setup.commonCommands = testData1;
+
+		await setup.commit(setup.location.user);
+
+		let   instance = new testTarget.ExtensionSetting();
+
+		instance.delete(['nest1 (test)'], setup.location.user);
+		await instance.commit(setup.location.user);
+		instance       = new testTarget.ExtensionSetting();
+		assert.deepStrictEqual({ 'nest5': {}}, instance.commonCommands);
+
+		await setup.commit(setup.location.user);
+
+		instance       = new testTarget.ExtensionSetting();
+		instance.delete(['nest1 (test)', 'nest4'], setup.location.user);
+		await instance.commit(setup.location.user);
+		instance       = new testTarget.ExtensionSetting();
+		const data     = _.cloneDeep(testData1);
+		delete (data['nest1 (test)'] as Record<string, unknown>)['nest4'];
+		assert.deepStrictEqual(data, instance.commonCommands);
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Delete - Commands', async () => {
+		const setup    = new testTarget.ExtensionSetting();
+		setup.commands = testData1;
+
+		await setup.commit(setup.location.profile);
+
+		let   instance = new testTarget.ExtensionSetting();
+
+		instance.delete(['nest1 (test)'], setup.location.profile);
+		await instance.commit(setup.location.profile);
 		instance       = new testTarget.ExtensionSetting();
 		assert.deepStrictEqual({ 'nest5': {}}, instance.commands);
 
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		instance       = new testTarget.ExtensionSetting();
-		instance.delete(['nest1 (test)', 'nest4']);
-		await instance.commit();
+		instance.delete(['nest1 (test)', 'nest4'], setup.location.profile);
+		await instance.commit(setup.location.profile);
 		instance       = new testTarget.ExtensionSetting();
 		const data     = _.cloneDeep(testData1);
 		delete (data['nest1 (test)'] as Record<string, unknown>)['nest4'];
@@ -163,40 +240,78 @@ suite('Extension Setting Test Suite', async () => {
 		await setup.uninstall();
 	}).timeout(30 * 1000);
 
-	test('Sort 1', async () => {
-		const setup    = new testTarget.ExtensionSetting();
-		setup.commands = testData1;
+	test('Sort 1 - Common Commands', async () => {
+		const setup          = new testTarget.ExtensionSetting();
+		setup.commonCommands = testData1;
 
-		await setup.commit();
+		await setup.commit(setup.location.user);
 
 		let   instance = new testTarget.ExtensionSetting();
-		instance.sort([]);
-		assert.deepStrictEqual(sorted1, instance.lookup([], instance.lookupMode.read));
+		instance.sort([], setup.location.user);
+		assert.deepStrictEqual(sorted1, instance.lookup([], setup.location.user, instance.lookupMode.read));
 
-		await setup.commit();
+		await setup.commit(setup.location.user);
 
 		instance       = new testTarget.ExtensionSetting();
-		instance.sort(['nest1 (test)']);
-		assert.deepStrictEqual(sorted2, instance.lookup([], instance.lookupMode.read));
+		instance.sort(['nest1 (test)'], setup.location.user);
+		assert.deepStrictEqual(sorted2, instance.lookup([], setup.location.user, instance.lookupMode.read));
 
 		await setup.uninstall();
 	}).timeout(30 * 1000);
 
-	test('Sort 2', async () => {
+	test('Sort 1 - Commands', async () => {
+		const setup    = new testTarget.ExtensionSetting();
+		setup.commands = testData1;
+
+		await setup.commit(setup.location.profile);
+
+		let   instance = new testTarget.ExtensionSetting();
+		instance.sort([], setup.location.profile);
+		assert.deepStrictEqual(sorted1, instance.lookup([], setup.location.profile, instance.lookupMode.read));
+
+		await setup.commit(setup.location.profile);
+
+		instance       = new testTarget.ExtensionSetting();
+		instance.sort(['nest1 (test)'], setup.location.profile);
+		assert.deepStrictEqual(sorted2, instance.lookup([], setup.location.profile, instance.lookupMode.read));
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Sort 2 - Common Commands', async () => {
+		const setup          = new testTarget.ExtensionSetting();
+		setup.commonCommands = testData2;
+
+		await setup.commit(setup.location.user);
+
+		let   instance = new testTarget.ExtensionSetting();
+		instance.sort([], setup.location.user);
+		assert.deepStrictEqual(testData2, instance.lookup([], setup.location.user, instance.lookupMode.read));
+
+		await setup.commit(setup.location.user);
+
+		instance       = new testTarget.ExtensionSetting();
+		instance.sort(['nest1 (test)'], setup.location.user);
+		assert.deepStrictEqual(sorted3, instance.lookup([], setup.location.user, instance.lookupMode.read));
+
+		await setup.uninstall();
+	}).timeout(30 * 1000);
+
+	test('Sort 2 - Commands', async () => {
 		const setup    = new testTarget.ExtensionSetting();
 		setup.commands = testData2;
 
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		let   instance = new testTarget.ExtensionSetting();
-		instance.sort([]);
-		assert.deepStrictEqual(testData2, instance.lookup([], instance.lookupMode.read));
+		instance.sort([], setup.location.profile);
+		assert.deepStrictEqual(testData2, instance.lookup([], setup.location.profile, instance.lookupMode.read));
 
-		await setup.commit();
+		await setup.commit(setup.location.profile);
 
 		instance       = new testTarget.ExtensionSetting();
-		instance.sort(['nest1 (test)']);
-		assert.deepStrictEqual(sorted3, instance.lookup([], instance.lookupMode.read));
+		instance.sort(['nest1 (test)'], setup.location.profile);
+		assert.deepStrictEqual(sorted3, instance.lookup([], setup.location.profile, instance.lookupMode.read));
 
 		await setup.uninstall();
 	}).timeout(30 * 1000);

@@ -8,12 +8,15 @@ import {
 	Guide
 }                           from './abc';
 import { ExtensionSetting } from '../../settings/extension';
-import { Optional }         from '../../utils/base/optional';
-import * as Constant        from '../../constant';
+import {
+	LOCATION,
+	Location
+}                           from '../../utils/base/type';
 
 export interface State extends AbstractState {
 	context:          ExtensionContext,
 	settings:         ExtensionSetting,
+	location:         Location,
 	hierarchy:        Array<string>,
 	guides?:          Array<Guide>,
 	message?:         string                  | undefined,
@@ -30,6 +33,7 @@ export interface State extends AbstractState {
 }
 
 export abstract class AbstractBaseGuide extends AbstractGuide {
+	protected location:  Location      = LOCATION.root;
 	protected hierarchy: Array<string> = [];
 	protected guides:    Array<Guide>  = [];
 
@@ -45,7 +49,7 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 	}
 
 	public init(): void {
-		this.initialFields.push('hierarchy');
+		this.initialFields = this.initialFields.concat(['hierarchy', 'location']);
 		this.init2DeepCopy.push('hierarchy');
 
 		super.init();
@@ -80,44 +84,6 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 		return this.state.settings;
 	}
 
-	protected get parentCommands(): Record<string, unknown> {
-		const temporary = [...this.hierarchy];
-
-		temporary.pop();
-
-		return this.getCommands(temporary);
-	}
-
-	protected get currentCommands(): Record<string, unknown> {
-		return this.getCommands(this.hierarchy);
-	}
-
-	protected get currentCommandsWithAllowEmpty(): Record<string, unknown> {
-		return this.getCommands(this.hierarchy, true);
-	}
-
-	protected get currentCommandInfo(): Record<string, unknown> {
-		const commands                        = this.settings.lookup(this.hierarchy, this.settings.lookupMode.read);
-		const result: Record<string ,unknown> = {};
-
-		result[this.settings.itemId.lable]       = commands[this.settings.itemId.lable];
-		result[this.settings.itemId.type]        = commands[this.settings.itemId.type];
-		result[this.settings.itemId.description] = commands[this.settings.itemId.description];
-		result[this.settings.itemId.orderNo]     = Optional.ofNullable(commands[this.settings.itemId.orderNo]).orElseNonNullable('');
-
-		if (Constant.DATA_TYPE.folder !== result[this.settings.itemId.type]) {
-			result[this.settings.itemId.command] = commands[this.settings.itemId.command];
-		}
-
-		if (Constant.DATA_TYPE.terminalCommand === result[this.settings.itemId.type]) {
-			result[this.settings.itemId.questions] = Optional.ofNullable(commands[this.settings.itemId.questions]).orElseNonNullable({});
-			result[this.settings.itemId.autoRun]   = Optional.ofNullable(commands[this.settings.itemId.autoRun]).orElseNonNullable(true);
-			result[this.settings.itemId.singleton] = Optional.ofNullable(commands[this.settings.itemId.singleton]).orElseNonNullable(false);
-		}
-
-		return result;
-	}
-
 	protected async inputStepAfter(): Promise<void> {
 		if (this.totalSteps === 0) {
 			this.prev();
@@ -132,19 +98,4 @@ export abstract class AbstractBaseGuide extends AbstractGuide {
 	}
 
 	protected async lastInputStepExecute(): Promise<void> {}
-
-	private getCommands(hierarchy: Array<string>, allowEmpty: boolean = false): Record<string, unknown> {
-		const temporary                         = this.settings.lookup(hierarchy, this.settings.lookupMode.read, allowEmpty);
-		const commands: Record<string, unknown> = {};
-
-		Object.keys(temporary).forEach(
-			(key) => {
-				if (!this.settings.itemIdValues.includes(key)) {
-					commands[key] = temporary[key];
-				}
-			}
-		);
-
-		return commands;
-	}
 }
