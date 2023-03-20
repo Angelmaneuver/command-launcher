@@ -6,7 +6,7 @@ import {
 import { Guide }                         from '../../../base/abc';
 import { State }                         from '../../../base/base';
 import { AbstractQuestionEditMenuGuide } from './abc';
-import { Question, QUESTION_TYPE }       from '../../../../utils/base/type';
+import { QUESTION_TYPE }                 from '../../../../utils/base/type';
 import { Optional }                      from '../../../../utils/base/optional';
 import { VSCodePreset }                  from '../../../../utils/base/vscodePreset';
 import * as Constant                     from '../../../../constant';
@@ -110,7 +110,7 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		const guides                                 = [{
 			key:   'NameInputGuide',
 			state: Object.assign(this.createBaseState(` - Add ${title}`, guideGroupId, totalStep), { prompt: `Please enter the name of variable.` }),
-			args:  [type],
+			args:  [type, Object.keys(this.questions)],
 		}] as Array<Guide>;
 
 		switch (label) {
@@ -122,8 +122,8 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 				optionState.prompt = 'Please enter the description of question.';
 
 				guides.push(
-					{ key: 'BaseInputGuide',                 state: optionState },
-					{ key: 'SelectionQuestionLastInputGuide' },
+					{ key: 'BaseInputGuide',                  state: optionState },
+					{ key: 'SelectionQuestionLastInputGuide', args:  [[]]},
 				);
 				break;
 		}
@@ -167,12 +167,12 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		};
 	}
 
-	private getNameSetting(): [string, string, string, Array<number>] {
+	private getNameSetting(): [string, string, string, Array<unknown>] {
 		return [
 			'NameInputGuide',
 			`Please enter the name of variable.`,
 			this.guideGroupId,
-			[this.type],
+			[this.type, Object.keys(this.questionsFromSetting)],
 		];
 	}
 
@@ -228,18 +228,5 @@ export class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
 			key:         'BaseQuickPickGuide',
 			optionState: optionState,
 		};
-	}
-
-	private get questions(): Record<string, Question> {
-		return this.settings.lookup(
-			this.hierarchy.concat(this.settings.itemId.questions),
-			this.location,
-			this.settings.lookupMode.read,
-			true,
-		) as Record<string, Question>;
-	}
-
-	protected get question(): Question {
-		return super.currentHierarchy as Question;
 	}
 }

@@ -1,5 +1,6 @@
 import { State }                 from '../../../base/base';
 import { AbstractEditMenuGuide } from '../abc';
+import { Question }              from '../../../../utils/base/type';
 import { Optional }              from '../../../../utils/base/optional';
 import * as Constant             from '../../../../constant';
 
@@ -73,5 +74,30 @@ export abstract class AbstractQuestionEditMenuGuide extends AbstractEditMenuGuid
 			this.location,
 			this.settings.lookupMode.read
 		);
+	}
+
+	protected get questions(): Record<string, Question> {
+		return this.lookup(this.hierarchy.concat(this.settings.itemId.questions));
+	}
+
+	protected get questionsFromSetting(): Record<string,Question> {
+		const hierarchy = [...this.hierarchy];
+
+		hierarchy.pop();
+
+		return this.lookup(hierarchy);
+	}
+
+	private lookup(hierarchy: Array<string>): Record<string, Question> {
+		return this.settings.lookup(
+			hierarchy,
+			this.location,
+			this.settings.lookupMode.read,
+			true,
+		) as Record<string, Question>;
+	}
+
+	protected get question(): Question {
+		return this.currentHierarchy as Question;
 	}
 }

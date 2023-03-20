@@ -86,12 +86,12 @@ export class SelectionItemEditMenuGuide extends AbstractQuestionEditMenuGuide {
 		};
 	}
 
-	private getNameSetting(): [string, string, string, Array<number>] {
+	private getNameSetting(): [string, string, string, Array<unknown>] {
 		return [
 			'NameInputGuide',
 			`Please enter the name of item.`,
 			this.guideGroupId,
-			[this.type]
+			[this.type, Object.keys(this.questionsFromSetting)]
 		];
 	}
 

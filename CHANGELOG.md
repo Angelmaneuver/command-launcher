@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.10.2
+ - Fixed a bug related to a Question
+
 ## 0.10.1
  - Added the "Clear History" function
 

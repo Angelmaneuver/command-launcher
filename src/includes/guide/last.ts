@@ -1,16 +1,16 @@
 import {
 	InputStep,
 	MultiStepInput
-}                           from '../utils/multiStepInput';
-import { State }            from './base/base';
-import { BaseInputGuide }   from './base/input';
-import { BaseValidator }    from './validator/base';
-import { NameInputGuide }   from './name';
-import { DATA_TYPE }        from '../constant';
-import { QUESTION_TYPE }    from '../utils/base/type';
-import * as Constant        from '../constant';
-import { Optional }         from '../utils/base/optional';
-import { VSCodePreset }     from '../utils/base/vscodePreset';
+}                                       from '../utils/multiStepInput';
+import { State }                        from './base/base';
+import { BaseInputGuide }               from './base/input';
+import { BaseValidator }                from './validator/base';
+import { NameInputGuide4SQLInputGuide } from './name';
+import { DATA_TYPE }                    from '../constant';
+import { QUESTION_TYPE }                from '../utils/base/type';
+import * as Constant                    from '../constant';
+import { Optional }                     from '../utils/base/optional';
+import { VSCodePreset }                 from '../utils/base/vscodePreset';
 
 export class BaseLastInputGuide extends BaseInputGuide {
 	protected registName: string                  = '';
@@ -94,13 +94,13 @@ export const items = [
 ];
 
 export class SelectionQuestionLastInputGuide extends BaseLastInputGuide {
-	private nameInputGuide: NameInputGuide;
+	private nameInputGuide: NameInputGuide4SQLInputGuide;
 
 	constructor(state: State, keys: Array<string>) {
 		super(state);
 
 		this.itemId         = this.settings.itemId.selection;
-		this.nameInputGuide = new NameInputGuide(this.state, DATA_TYPE.terminalCommand, keys);
+		this.nameInputGuide = new NameInputGuide4SQLInputGuide(this.state, DATA_TYPE.terminalCommand, keys);
 	}
 
 	public async show(input: MultiStepInput):Promise<void | InputStep> {
@@ -130,7 +130,11 @@ export class SelectionQuestionLastInputGuide extends BaseLastInputGuide {
 
 		this.validate = defaultValidator;
 
-		return this._inputValue as string;
+		const value   = this._inputValue as string;
+
+		NameInputGuide4SQLInputGuide.keys.push(value);
+
+		return value;
 	}
 
 	private async inputParameter(input: MultiStepInput): Promise<string> {
