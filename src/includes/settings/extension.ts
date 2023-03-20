@@ -5,7 +5,7 @@ import { Optional }            from '../utils/base/optional';
 import { LOCATION, Location }  from '../utils/base/type';
 import { DATA_TYPE }           from '../constant';
 
-const ITEM_ID            = {
+const ITEM_ID             = {
 	name:        'name',
 	type:        'type',
 	lable:       'label',
@@ -21,9 +21,9 @@ const ITEM_ID            = {
 	from:        'from',
 } as const;
 
-const ITEM_ID_VALUE_LIST = Object.values(ITEM_ID) as Array<string>;
+const ITEM_ID_VALUE_LIST  = Object.values(ITEM_ID) as Array<string>;
 
-const CONFIG_ITEMS       = {
+export const CONFIG_ITEMS = {
 	commonCommands:    'commonCommands',
 	commands:          'commands',
 	enableHistory:     'enableHistory',
@@ -31,8 +31,7 @@ const CONFIG_ITEMS       = {
 	history:           'history',
 } as const;
 
-
-const LOOKUP_MODE        = {
+const LOOKUP_MODE         = {
 	read:  'r',
 	write: 'w',
 } as const;

@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.10.1
+ - Added the "Clear History" function
+
 ## 0.10.0
  - Commands can now be managed in both user settings and profiles
  - Run in VSCode's local extension host (Installation is no longer required with devContainer etc)
