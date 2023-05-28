@@ -15,7 +15,7 @@ function assembly(base: string, inputSet: Record<string, string>): string {
 
 	keys.forEach(
 		(key) => {
-			command = command.replace(
+			command = command.replaceAll(
 				key,
 				Optional.ofNullable(inputSet[key]).orElseNonNullable('') as string
 			);
