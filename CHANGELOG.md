@@ -1,5 +1,8 @@
 # Change Log
 
+# 0.10.3
+ - Fixed to replace multiple question variable
+
 ## 0.10.2
  - Fixed a bug related to a Question
 
