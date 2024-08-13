@@ -104,7 +104,7 @@
     "compile-tests": "tspc -p . --outDir out",
     "watch-tests": "tspc -p . -w --outDir out",
     "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
-    "test": "vscode-test",
+    "test": "node ./out/test/runTest.js",
     "coverage": "yarn run test --coverage"
   },
   "dependencies": {
