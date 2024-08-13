@@ -10,36 +10,36 @@ jobs:
         os: [macos-latest, ubuntu-latest, windows-latest]
     runs-on: ${{ matrix.os }}
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
-    - name: Install Node.js
-      uses: actions/setup-node@master
-      with:
-        node-version: 17
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn compile
-    - run: xvfb-run -a yarn test
-      if: runner.os == 'Linux'
-    - run: yarn test
-      if: runner.os != 'Linux'
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: 20
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: yarn compile
+      - run: xvfb-run -a yarn test
+        if: runner.os == 'Linux'
+      - run: yarn test
+        if: runner.os != 'Linux'
   coverage:
-    needs: [ test ]
+    needs: [test]
     name: coverage
     runs-on: macos-latest
     steps:
-    - name: Checkout
-      uses: actions/checkout@master
-    - name: Install Node.js
-      uses: actions/setup-node@master
-      with:
-        node-version: 17
-    - run: npm install -g yarn
-    - run: yarn install
-    - run: yarn compile
-    - uses: paambaati/codeclimate-action@v3.2.0
-      env:
-        CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
-      with:
-        coverageCommand: yarn coverage
-        coverageLocations: ${{ github.workspace }}/coverage/lcov.info:lcov
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: Install Node.js
+        uses: actions/setup-node@master
+        with:
+          node-version: 20
+      - run: npm install -g yarn
+      - run: yarn install
+      - run: yarn compile
+      - uses: paambaati/codeclimate-action@master
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: yarn coverage
+          coverageLocations: ${{ github.workspace }}/coverage/lcov.info:lcov
