@@ -554,7 +554,7 @@
   "Set the command description.": "コマンドの説明を設定する。",
   "Execute Command": "実行コマンド",
   "Set the execute command.": "実行コマンドを設定する。",
-  "Order": "その他",
+  "Order": "並び順",
   "Set the sort order.": "並び順を設定する。",
   "Set the question.": "質問を設定する。",
   "Auto Run": "自動実行",
