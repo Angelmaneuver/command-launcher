@@ -1,134 +1,146 @@
 {
-	"name": "command-launcher",
-	"displayName": "Command Launcher",
-	"description": "A launcher extension that manages commands for the command palette and terminal command.",
-	"publisher": "Angelmaneuver",
-	"version": "0.10.3",
-	"homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/Angelmaneuver/command-launcher.git"
-	},
-	"bugs": {
-		"url": "https://github.com/Angelmaneuver/command-launcher/issues"
-	},
-	"sponsor": {
-		"url": "https://github.com/sponsors/Angelmaneuver"
-	},
-	"engines": {
-		"vscode": "^1.78.0"
-	},
-	"icon": "resource/AppIcon.png",
-	"categories": [
-		"Other"
-	],
-	"keywords": [
-		"Command Launcher",
-		"Mac"
-	],
-	"activationEvents": [
-		"onStartupFinished"
-	],
-	"preview": false,
-	"extensionKind": ["ui", "workspace"],
-	"main": "./dist/extension.js",
-	"contributes": {
-		"commands": [
-			{
-				"command": "command-launcher.launcher",
-				"title": "Command Launcher"
-			},
-			{
-				"command": "command-launcher.edit",
-				"title": "Command Launcher - Edit"
-			},
-			{
-				"command": "command-launcher.history",
-				"title": "Command Launcher - History"
-			},
-			{
-				"command": "command-launcher.clear-history",
-				"title": "Command Launcher - Clear History"
-			}
-		],
-		"configuration": {
-			"title": "Command Launcher",
-			"properties": {
-				"command-launcher.commonCommands": {
-					"type": "object",
-					"scope": "application",
-					"default": {},
-					"description": "Registered command set in all profile."
-				},
-				"command-launcher.commands": {
-					"type": "object",
-					"scope": "window",
-					"default": {},
-					"description": "Registered command set in profile."
-				},
-				"command-launcher.enableHistory": {
-					"type": "boolean",
-					"scope": "window",
-					"default": false,
-					"description": "Keep a history of terminal commands executed."
-				},
-				"command-launcher.keepHistoryNumber": {
-					"type": "number",
-					"scope": "window",
-					"maximum": 65555,
-					"minimum": 0,
-					"default": 10,
-					"description": "Maximum number of terminal command history."
-				},
-				"command-launcher.history": {
-					"type": "array",
-					"scope": "window",
-					"default": [],
-					"description": "The most recent terminal command history."
-				}
-			}
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "yarn run package",
-		"compile": "webpack",
-		"watch": "webpack --watch",
-		"package": "webpack --mode production --devtool hidden-source-map",
-		"compile-tests": "tsc -p . --outDir out",
-		"watch-tests": "tsc -p . -w --outDir out",
-		"pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
-		"lint": "eslint src --ext ts",
-		"test": "node ./out/test/runTest.js",
-		"coverage": "yarn run test --coverage"
-	},
-	"devDependencies": {
-		"@istanbuljs/nyc-config-typescript": "^1.0.2",
-		"@types/glob": "^8.1.0",
-		"@types/lodash": "^4.14.195",
-		"@types/mocha": "^10.0.1",
-		"@types/node": "20.x",
-		"@types/sinon": "^10.0.15",
-		"@types/vscode": "^1.78.1",
-		"@typescript-eslint/eslint-plugin": "^5.59.7",
-		"@typescript-eslint/parser": "^5.59.7",
-		"@vscode/test-electron": "^2.3.2",
-		"eslint": "^8.41.0",
-		"glob": "^8.1.0",
-		"mocha": "^10.2.0",
-		"nyc": "^15.1.0",
-		"sinon": "^15.1.0",
-		"ts-loader": "^9.4.3",
-		"typescript": "^5.0.4",
-		"webpack": "^5.84.1",
-		"webpack-cli": "^5.1.1"
-	},
-	"dependencies": {
-		"lodash": "^4.17.21"
-	},
-	"__metadata": {
-		"id": "7a269449-1520-4a92-84b9-ee9dd6d22671",
-		"publisherDisplayName": "Angelmaneuver",
-		"publisherId": "e8f5d386-bbd6-4ab2-9d9e-1347ed62aca5",
-		"isPreReleaseVersion": false
-	}
+  "name": "command-launcher",
+  "displayName": "Command Launcher",
+  "description": "A launcher extension that manages commands for the command palette and terminal command.",
+  "publisher": "Angelmaneuver",
+  "version": "1.0.0",
+  "homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Angelmaneuver/command-launcher.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Angelmaneuver/command-launcher/issues"
+  },
+  "sponsor": {
+    "url": "https://github.com/sponsors/Angelmaneuver"
+  },
+  "engines": {
+    "vscode": "^1.91.0"
+  },
+  "icon": "resource/AppIcon.png",
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "Command Launcher",
+    "Mac"
+  ],
+  "activationEvents": [],
+  "extensionKind": [
+    "ui",
+    "workspace"
+  ],
+  "main": "./dist/extension.js",
+  "l10n": "./l10n",
+  "contributes": {
+    "commands": [
+      {
+        "command": "command-launcher.launcher",
+        "title": "Command Launcher"
+      },
+      {
+        "command": "command-launcher.edit",
+        "title": "Command Launcher - Edit"
+      },
+      {
+        "command": "command-launcher.history",
+        "title": "Command Launcher - History"
+      },
+      {
+        "command": "command-launcher.clear-history",
+        "title": "Command Launcher - Clear History"
+      }
+    ],
+    "configuration": {
+      "title": "Command Launcher",
+      "properties": {
+        "command-launcher.commonCommands": {
+          "order": 0,
+          "type": "object",
+          "scope": "application",
+          "default": {},
+          "markdownDescription": "%command-launcher.commonCommands%"
+        },
+        "command-launcher.commands": {
+          "order": 1,
+          "type": "object",
+          "scope": "window",
+          "default": {},
+          "markdownDescription": "%command-launcher.commands%"
+        },
+        "command-launcher.enableHistory": {
+          "order": 2,
+          "type": "boolean",
+          "scope": "window",
+          "default": false,
+          "markdownDescription": "%command-launcher.enableHistory%"
+        },
+        "command-launcher.keepHistoryNumber": {
+          "order": 3,
+          "type": "number",
+          "scope": "window",
+          "maximum": 65555,
+          "minimum": 0,
+          "default": 10,
+          "markdownDescription": "%command-launcher.keepHistoryNumber%"
+        },
+        "command-launcher.history": {
+          "order": 4,
+          "type": "array",
+          "scope": "window",
+          "default": [],
+          "markdownDescription": "%command-launcher.history%"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "yarn run package",
+    "package": "webpack --mode production --devtool hidden-source-map",
+    "compile": "webpack",
+    "watch": "webpack --watch",
+    "lint": "eslint src",
+    "compile-tests": "tspc -p . --outDir out",
+    "watch-tests": "tspc -p . -w --outDir out",
+    "pretest": "yarn run compile-tests && yarn run compile && yarn run lint",
+    "test": "vscode-test",
+    "coverage": "yarn run test --coverage"
+  },
+  "dependencies": {
+    "@vscode/l10n": "^0.0.18",
+    "lodash": "^4.17.21"
+  },
+  "devDependencies": {
+    "@eslint/compat": "^1.1.1",
+    "@eslint/eslintrc": "^3.1.0",
+    "@eslint/js": "^9.9.0",
+    "@istanbuljs/nyc-config-typescript": "^1.0.2",
+    "@types/glob": "^8.1.0",
+    "@types/lodash": "^4.17.7",
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/sinon": "^17.0.3",
+    "@types/vscode": "^1.91.0",
+    "@typescript-eslint/eslint-plugin": "^7.17.0",
+    "@typescript-eslint/parser": "^7.17.0",
+    "@vscode/l10n-dev": "^0.0.35",
+    "@vscode/test-electron": "^2.4.1",
+    "dependency-cruiser": "^16.3.10",
+    "eslint": "^9.8.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-unused-imports": "^4.1.2",
+    "glob": "^8.1.0",
+    "globals": "^15.9.0",
+    "mocha": "^10.7.0",
+    "nyc": "^17.0.0",
+    "sinon": "^18.0.0",
+    "ts-loader": "^9.5.1",
+    "ts-patch": "^3.2.1",
+    "typescript": "^5.5.4",
+    "typescript-transform-paths": "^3.4.10",
+    "webpack": "^5.93.0",
+    "webpack-cli": "^5.1.4"
+  }
 }

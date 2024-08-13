@@ -1,0 +1,7 @@
+{
+  "command-launcher.commonCommands": "全てのプロファイルで使用可能なコマンド。",
+  "command-launcher.commands": "現在のプロファイルでのみ使用可能なコマンド。",
+  "command-launcher.enableHistory": "実行した端末コマンドの履歴を保持する。",
+  "command-launcher.keepHistoryNumber": "端末コマンド履歴の最大数。",
+  "command-launcher.history": "端末コマンドの履歴。"
+}

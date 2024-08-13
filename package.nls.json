@@ -1,0 +1,7 @@
+{
+  "command-launcher.commonCommands": "Commands available for all profiles.",
+  "command-launcher.commands": "Commands available only in current profile.",
+  "command-launcher.enableHistory": "Keep a history of terminal commands executed.",
+  "command-launcher.keepHistoryNumber": "Maximum number of terminal command history.",
+  "command-launcher.history": "The terminal command history."
+}

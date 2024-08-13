@@ -1,139 +1,138 @@
-import {
-	window,
-	commands,
-	ExtensionContext
-}                           from 'vscode';
-import { MultiStepInput }   from './utils/multiStepInput';
-import { State }            from './guide/base/base';
-import { GuideFactory }     from './guide/factory/base';
-import {
-	History,
-	ExtensionSetting
-}                           from './settings/extension';
-import * as Constant        from './constant';
+import { window, commands, ExtensionContext, Terminal } from 'vscode';
 
-export async function start(
-	className: string,
-	state:     Partial<State>,
-	args:      Array<unknown>
+import * as Constant from '@/constant';
+import MultiStepInput from '@/guide/abc/multiStepInput';
+import { State } from '@/guide/base/type';
+import GuideFactory from '@/guide/factory';
+import ExtensionSetting, { DATA_TYPE } from '@/settings/extension';
+
+async function start(
+  className: string,
+  state: Partial<State>,
+  args: Array<unknown>
 ): Promise<void> {
-	try {
-		const menu = GuideFactory.create(className, ...args);
-		await MultiStepInput.run((input: MultiStepInput) => menu.start(input));
+  try {
+    const menu = GuideFactory.create(className, ...args);
+    await MultiStepInput.run((input: MultiStepInput) => menu.start(input));
 
-		if (present(state.command)) {
-			commands.executeCommand(state.command as string);
-		} else if (present(state.terminalCommand)) {
-			updateHistory(state);
+    if (present(state.command)) {
+      commands.executeCommand(state.command!);
+    } else if (present(state.terminalCommand)) {
+      executeTerminalCommand(state);
+    }
+  } catch (e) {
+    errorHandling(e);
+  }
 
-			executeTerminalCommand(
-				state.name            as string,
-				state.terminalCommand as string,
-				state.autoRun         as boolean,
-				state.singleton       as boolean,
-				state,
-			);
-		}
-	} catch (e) {
-		errorHandling(e);
-	}
+  if (present(state.message)) {
+    window.showInformationMessage(state.message!);
+  }
 
-	if (present(state.message)) {
-		window.showInformationMessage(state.message as string);
-	}
-
-	if (state.reload) {
-		commands.executeCommand('workbench.action.reloadWindow');
-	}
+  if (state.reload) {
+    commands.executeCommand('workbench.action.reloadWindow');
+  }
 }
 
 function present(value?: string): boolean {
-	return (value && value.length > 0) ? true : false;
+  return value && value.length > 0 ? true : false;
 }
 
-function updateHistory(state: Partial<State>): void {
-	const setting = new ExtensionSetting();
-	const history = {
-		type:    Constant.DATA_TYPE.terminalCommand,
-		name:    state.name                             as string,
-		command: state.terminalCommand                  as string,
-		autoRun: state.autoRun ? state.autoRun : false,
-	} as History;
+function executeTerminalCommand(state: Partial<State>): void {
+  const setting = new ExtensionSetting();
 
-	if (setting.itemId.singleton in state) {
-		history[setting.itemId.singleton] = state.singleton;
-	}
+  setting.updateHistory({
+    type: setting.dataType.terminalCommand,
+    name: state.name!,
+    command: state.terminalCommand!,
+    autoRun: state.autoRun!,
+    singleton: state.singleton!,
+  });
 
-	setting.updateHistory(history);
+  const terminal = getTerminal(state.name!, state.singleton!);
+
+  terminal.show();
+  terminal.sendText(state.terminalCommand!, state.autoRun!);
 }
 
+const SINGLETON_KEYWORD = ' - Singleton';
 
-function executeTerminalCommand(
-	name:      string,
-	command:   string,
-	autoRun:   boolean,
-	singleton: boolean,
-	state:     Partial<State>,
-): void {
-	if (singleton) {
-		executeTerminalCommandWithSingleton(name, command, autoRun, state);
-	} else {
-		const terminal = window.activeTerminal ? window.activeTerminal : window.createTerminal();
+function getTerminal(_name: string, singleton: boolean): Terminal {
+  const name = singleton ? `${_name} ${SINGLETON_KEYWORD}` : _name;
 
-		terminal.show();
-		terminal.sendText(command, autoRun);
-	}
+  if (singleton) {
+    isStarted(name, _name);
+
+    return window.createTerminal(name);
+  }
+
+  let terminal: Terminal | undefined = window.activeTerminal;
+
+  if (terminal?.name.includes(SINGLETON_KEYWORD)) {
+    terminal = undefined;
+  }
+
+  if (!terminal) {
+    terminal = window.terminals.find(
+      (terminal) => !terminal.name.includes(SINGLETON_KEYWORD)
+    );
+  }
+
+  return terminal ? terminal : window.createTerminal();
 }
 
-function executeTerminalCommandWithSingleton(
-	name:    string,
-	command: string,
-	autoRun: boolean,
-	state:   Partial<State>,
-): void {
-	const already = window.terminals.find(terminal => name === terminal.name);
+function isStarted(name: string, displayName: string) {
+  if (isExist(name)) {
+    throw new Error(
+      Constant.message.showInformationMessage.error.singleton(
+        displayName.replace(Constant.matcher.label_string, '')
+      )
+    );
+  }
+}
 
-	if (already) {
-		state.message = `'${name.replace(Constant.LABEL_STRING_MATCH, '')}' already executed.`;
-	} else {
-		const terminal = window.createTerminal(name);
+function isExist(name: string): boolean {
+  const terminal = window.terminals.find((terminal) => terminal.name === name);
 
-		terminal.sendText(command, autoRun);
-	}
+  return terminal ? true : false;
 }
 
 function errorHandling(e: unknown) {
-	if (e instanceof Error) {
-		window.showWarningMessage(e.message);
-		console.debug(e);
-	}
+  if (e instanceof Error) {
+    window.showWarningMessage(e.message);
+    console.debug(e);
+  }
 }
 
-export function getBaseState(additionalTitle: string): Partial<State> {
-	return {
-		title:            `Command Launcher${additionalTitle}`,
-		workingDirectory: [],
-		resultSet:        {},
-	} as Partial<State>;
+function getBaseState(additionalTitle: string = ''): Partial<State> {
+  const title = `${Constant.message.headline.app}${additionalTitle}`;
+
+  return {
+    mainTitle: title,
+    title: title,
+    workingDirectory: [],
+    resultSet: {},
+  } as Partial<State>;
 }
 
-export async function edit(context: ExtensionContext): Promise<void> {
-	const state = getBaseState(' - Edit mode ');
-	const args  = [state, Constant.DATA_TYPE.folder, true, context];
+async function launcher(context: ExtensionContext): Promise<void> {
+  const state = getBaseState();
+  const args = [state, true, context];
 
-	start('EditMenuGuide', state, args);
+  start('MenuGuide', state, args);
 }
 
-export async function launcher(context: ExtensionContext): Promise<void> {
-	const state = getBaseState(' ');
-	const args  = [state, true, context];
+async function edit(context: ExtensionContext): Promise<void> {
+  const state = getBaseState(Constant.message.headline.mode.edit);
+  const args = [state, DATA_TYPE.folder, true, context];
 
-	start('MenuGuide', state, args);
+  start('EditMenuGuide', state, args);
 }
 
-export async function history(context: ExtensionContext): Promise<void> {
-	const state = getBaseState(' - History ');
-	const args  = [state, true, context];
+async function history(context: ExtensionContext): Promise<void> {
+  const state = getBaseState(Constant.message.headline.mode.history);
+  const args = [state, true, context];
 
-	start('HistoryGuide', state, args);
+  start('HistoryGuide', state, args);
 }
+
+export { launcher, edit, history };

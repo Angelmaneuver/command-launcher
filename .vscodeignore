@@ -6,12 +6,16 @@ coverage/**
 node_modules/**
 out/**
 src/**
+.dependency-cruiser.js
 **/.editorconfig
-**/.eslintrc.json
 .gitignore
+.prettierignore
+.prettierrc.yml
 .vscodeignore
 .yarnrc
+eslint.config.mjs
 **/tsconfig.json
+**/*.lock
 **/*.code-workspace
 webpack.config.js
 vsc-extension-quickstart.md

@@ -1,0 +1,36 @@
+import { l10n } from 'vscode';
+
+const icons = {
+	unfold:                               { name: l10n.t('Unfold'),              label: '$(unfold)',                                  },
+	ungroupByRefType:                     { name: l10n.t('Ungroup By Ref Type'), label: '$(ungroup-by-ref-type)',                     },
+	unlock:                               { name: l10n.t('Unlock'),              label: '$(unlock)',                                  },
+	unmute:                               { name: l10n.t('Unmute'),              label: '$(unmute)',                                  },
+	unverified:                           { name: l10n.t('Unverified'),          label: '$(unverified)',                              },
+	variable:                             { name: l10n.t('Variable'),            label: '$(variable)',                                },
+	verifiedFilled:                       { name: l10n.t('Verified Filled'),     label: '$(verified-filled)',                         },
+	verified:                             { name: l10n.t('Verified'),            label: '$(verified)',                                },
+	versions:                             { name: l10n.t('Versions'),            label: '$(versions)',                                },
+	vm:                                   { name: l10n.t('VM'),                  label: '$(vm)',                                      },
+	vmActive:                             { name: l10n.t('VM Active'),           label: '$(vm-active)',                               },
+	vmConnect:                            { name: l10n.t('VM Connect'),          label: '$(vm-connect)',                              },
+	vmOutline:                            { name: l10n.t('VM Outline'),          label: '$(vm-outline)',                              },
+	vmRunning:                            { name: l10n.t('VM Running'),          label: '$(vm-running)',                              },
+  vr:                                   { name: l10n.t('VR'),                  label: '$(vr)',                                      },
+	warning:                              { name: l10n.t('Warning'),             label: '$(warning)',                                 },
+	watch:                                { name: l10n.t('Watch'),               label: '$(watch)',                                   },
+	whitespace:                           { name: l10n.t('Whitespace'),          label: '$(whitespace)',                              },
+	wholeWord:                            { name: l10n.t('Wholeword'),           label: '$(whole-word)',                              },
+	window:                               { name: l10n.t('Window'),              label: '$(window)',                                  },
+	wordWrap:                             { name: l10n.t('Word Wrap'),           label: '$(word-wrap)',                               },
+  workspaceTrusted:                     { name: l10n.t('Workspace Trusted'),   label: '$(workspace-trusted)',                       },
+  workspaceUnknown:                     { name: l10n.t('Workspace Unknown'),   label: '$(workspace-unknown)',                       },
+  workspaceUntrusted:                   { name: l10n.t('Workspace Untrusted'), label: '$(workspace-untrusted)',                     },
+	wrench:                               { name: l10n.t('Wrench'),              label: '$(wrench)',                                  },
+	wrenchSubaction:                      { name: l10n.t('Wrench Subaction'),    label: '$(wrench-subaction)',                        },
+	x:                                    { name: l10n.t('X'),                   label: '$(x)',                                       },
+	zap:                                  { name: l10n.t('Zap'),                 label: '$(zap)',                                     },
+	zoomIn:                               { name: l10n.t('Zoom In'),             label: '$(zoom-in)',                                 },
+	zoomOut:                              { name: l10n.t('Zoom Out'),            label: '$(zoom-out)',                                },
+} as const;
+
+export default icons;
