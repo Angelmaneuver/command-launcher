@@ -35,6 +35,13 @@ class BaseConfirmGuide extends AbstractQuickPickSelectGuide {
     this.state.activeItem = this.state.items[1];
   }
 
+  public init(): void {
+    super.init();
+
+    this.totalSteps = 0;
+    this.step = 0;
+  }
+
   public getExecute(label: string | undefined): () => Promise<void> {
     switch (label) {
       case this.items[0].label:

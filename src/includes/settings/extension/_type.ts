@@ -26,6 +26,7 @@ type Command = BaseCommandType & {
 };
 
 type TerminalCommand = Command & {
+  confirm?: boolean;
   autoRun?: boolean;
   singleton?: boolean;
   questions?: Record<string, Question>;

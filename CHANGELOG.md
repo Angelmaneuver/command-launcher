@@ -6,6 +6,7 @@
 - Added Japanese as supported language
 - Activation event changed from immediately after VSCode start-up to when it is invoked from the command palette
 - Review control of terminal commands (Fixed to not send commands to terminals executing singleton commands)
+- Added the feature to confirm run of terminal commands
 
 # 0.10.3
 

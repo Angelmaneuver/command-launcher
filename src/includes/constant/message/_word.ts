@@ -11,6 +11,10 @@ const word = {
   Yes: l10n.t('Yes'),
   No: l10n.t('No'),
   parts: {
+    confirm: {
+      yes: l10n.t('Confirm before run.'),
+      no: l10n.t('Does not confirm before run.'),
+    },
     autoRun: {
       yes: l10n.t('Run automaticaly.'),
       no: l10n.t('Does not run automaticaly.'),

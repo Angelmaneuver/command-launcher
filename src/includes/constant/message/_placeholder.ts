@@ -3,6 +3,7 @@ import { l10n } from 'vscode';
 const placeholder = {
   menu: {
     select: l10n.t('Select the item you want to do.'),
+    confirm: l10n.t('Do you want to run the command.'),
     edit: {
       save: l10n.t('Do you want to reflect the changes?'),
       remove: l10n.t('Do you want to delete this item?'),
@@ -46,6 +47,7 @@ const placeholder = {
     location: l10n.t('Select the scope of use.'),
     label: l10n.t('Select the label you wish to use.'),
     name: (type: string) => l10n.t('Please enter the name of {0}.', type),
+    confirm: l10n.t('Do you want to confirm before run this command?'),
     autoRun: l10n.t('Do you want to this command to run automaticaly?'),
     singleton: l10n.t('Do you want to this command to run as single process?'),
     question: {

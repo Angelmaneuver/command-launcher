@@ -2,6 +2,7 @@ import { ExtensionContext } from 'vscode';
 
 import { State } from './type';
 
+import * as Constant from '@/constant';
 import AbstractGuide from '@/guide/abc/AbstractGuide';
 import { Guide } from '@/guide/abc/type';
 import ExtensionSetting, { LOCATION, Location } from '@/settings/extension';
@@ -69,6 +70,29 @@ abstract class AbstractBaseGuide extends AbstractGuide {
   }
 
   protected async lastInputStepExecute(): Promise<void> {}
+
+  protected confirm(
+    placeholder: string,
+    description: { yes: string; no?: string },
+    callback: (...args: Array<unknown>) => Promise<void>
+  ): () => Promise<void> {
+    return async () => {
+      this.state.placeholder = placeholder;
+      this.setNextSteps([
+        {
+          key: 'BaseConfirmGuide',
+          state: { title: this.title },
+          args: [
+            {
+              yes: description.yes,
+              no: description.no ?? Constant.quickpick.confirm.description.no,
+            },
+            callback,
+          ],
+        },
+      ]);
+    };
+  }
 }
 
 export default AbstractBaseGuide;

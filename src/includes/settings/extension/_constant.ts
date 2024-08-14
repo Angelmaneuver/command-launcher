@@ -5,6 +5,7 @@ const ITEM_ID = {
   description: 'description',
   command: 'command',
   orderNo: 'orderNo',
+  confirm: 'confirm',
   autoRun: 'autoRun',
   singleton: 'singleton',
   questions: 'questions',

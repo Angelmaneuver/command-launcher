@@ -61,13 +61,29 @@ class QuestionInputGuide extends BaseInputGuide {
   }
 
   protected async lastInputStepExecute(): Promise<void> {
-    setCommand(
-      this.state,
-      this.commandSet.command,
-      this.guideGroupResultSet as Record<string, string>,
-      this.commandSet.autoRun ?? true,
-      this.commandSet.singleton ?? false
-    );
+    if (this.commandSet.confirm ?? false) {
+      await this.confirm(
+        Constant.message.placeholder.menu.confirm,
+        { yes: Constant.quickpick.confirm.description.yes.run },
+        async () => {
+          setCommand(
+            this.state,
+            this.commandSet.command,
+            this.guideGroupResultSet as Record<string, string>,
+            this.commandSet.autoRun ?? true,
+            this.commandSet.singleton ?? false
+          );
+        }
+      )();
+    } else {
+      setCommand(
+        this.state,
+        this.commandSet.command,
+        this.guideGroupResultSet as Record<string, string>,
+        this.commandSet.autoRun ?? true,
+        this.commandSet.singleton ?? false
+      );
+    }
   }
 }
 

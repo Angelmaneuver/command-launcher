@@ -88,8 +88,8 @@ abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
           state: { title: this.title },
           args: [
             {
-              yes: Constant.quickpick.edit.abc.confirm.description.remove,
-              no: Constant.quickpick.edit.abc.confirm.description.back,
+              yes: Constant.quickpick.confirm.description.yes.remove,
+              no: Constant.quickpick.confirm.description.no,
             },
             async () => {
               return this.delete();
@@ -105,7 +105,7 @@ abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
   private saveConfirm(): () => Promise<void> {
     return this.confirm(
       this.saveConfrimText,
-      { yes: Constant.quickpick.edit.abc.confirm.description.save },
+      { yes: Constant.quickpick.confirm.description.yes.save },
       async () => {
         return this.save();
       }
@@ -117,34 +117,11 @@ abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
   private uninstallConfirm(): () => Promise<void> {
     return this.confirm(
       Constant.message.placeholder.menu.edit.uninstall,
-      { yes: Constant.quickpick.edit.abc.confirm.description.uninstall },
+      { yes: Constant.quickpick.confirm.description.yes.uninstall },
       async () => {
         return this.settings.uninstall();
       }
     );
-  }
-
-  private confirm(
-    placeholder: string,
-    description: { yes: string },
-    callback: (...args: Array<unknown>) => Promise<void>
-  ): () => Promise<void> {
-    return async () => {
-      this.state.placeholder = placeholder;
-      this.setNextSteps([
-        {
-          key: 'BaseConfirmGuide',
-          state: { title: this.title },
-          args: [
-            {
-              yes: description.yes,
-              no: Constant.quickpick.edit.abc.confirm.description.back,
-            },
-            callback,
-          ],
-        },
-      ]);
-    };
   }
 
   protected updateEnd(processType: ProcessType): void {

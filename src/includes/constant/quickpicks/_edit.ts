@@ -31,14 +31,6 @@ const edit = {
       l10n.t('Return'),
       l10n.t('Return without saving any changes.')
     ),
-    confirm: {
-      description: {
-        save: l10n.t('Save.'),
-        remove: l10n.t('Delete.'),
-        uninstall: l10n.t('Uninstall.'),
-        back: l10n.t('Back to previous.'),
-      },
-    },
   },
   base: {
     command: VSCodePreset.create(
@@ -90,6 +82,11 @@ const edit = {
       VSCodePreset.icons.question,
       l10n.t('Question'),
       l10n.t('Set the question.')
+    ),
+    confirm: VSCodePreset.create(
+      VSCodePreset.icons.feedback,
+      l10n.t('Confirm'),
+      l10n.t('Set the confirm before run or not.')
     ),
     autoRun: VSCodePreset.create(
       VSCodePreset.icons.run,

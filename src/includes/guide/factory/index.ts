@@ -9,6 +9,7 @@ import QuestionEditMenuGuide from '@/guide/menu/base/QuestionEditMenuGuide';
 import SelectionItemEditMenuGuide from '@/guide/menu/base/SelectionItemEditMenuGuide';
 import SelectSettingGuide from '@/guide/menu/base/SelectSettingGuide';
 import AutoRunSettingGuide from '@/guide/parts/AutoRunSettingGuide';
+import ConfirmSettingGuide from '@/guide/parts/ConfirmSettingGuide';
 import EnableHistoryGuide from '@/guide/parts/EnableHistory';
 import KeepHistoryNumberGuide from '@/guide/parts/KeepHistoryNumber';
 import SelectLabelGuide4Guidance from '@/guide/parts/label/SelectLabelGuide4Guidance';
@@ -44,8 +45,9 @@ abstract class GuideFactory {
     SelectLocationGuide: SelectLocationGuide,
     NameInputGuide: NameInputGuide,
     NameInputGuide4SQLInputGuide: NameInputGuide4SQLInputGuide,
-    SingletonSettingGuide: SingletonSettingGuide,
+    ConfirmSettingGuide: ConfirmSettingGuide,
     AutoRunSettingGuide: AutoRunSettingGuide,
+    SingletonSettingGuide: SingletonSettingGuide,
     CommandLastInputGuide: CommandLastInputGuide,
     FolderLastInputGuide: FolderLastInputGuide,
     TextQuestionLastInputGuide: TextQuestionLastInputGuide,

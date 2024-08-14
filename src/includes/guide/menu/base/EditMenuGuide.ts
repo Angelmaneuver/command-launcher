@@ -21,6 +21,7 @@ const items = {
   executeCommand: Constant.quickpick.edit.base.executeCommand,
   order: Constant.quickpick.edit.base.order,
   question: Constant.quickpick.edit.base.question,
+  confirm: Constant.quickpick.edit.base.confirm,
   autoRun: Constant.quickpick.edit.base.autoRun,
   singleton: Constant.quickpick.edit.base.singleton,
   separator: Constant.quickpick.edit.base.separator.registerd,
@@ -81,6 +82,7 @@ class EditMenuGuide extends AbstractEditMenuGuide {
       case items.executeCommand.label:
       case items.order.label:
       case items.question.label:
+      case items.confirm.label:
       case items.autoRun.label:
       case items.singleton.label:
         return this.setSettingGuide(label);
@@ -177,6 +179,7 @@ class EditMenuGuide extends AbstractEditMenuGuide {
       items.executeCommand,
       items.order,
       items.question,
+      items.confirm,
       items.autoRun,
       items.singleton,
       AbstractEditMenuGuide.items.delete,
@@ -255,6 +258,7 @@ class EditMenuGuide extends AbstractEditMenuGuide {
             remover();
           }
           break;
+        case this.settings.itemId.confirm:
         case this.settings.itemId.singleton:
           if (!this.guideGroupResultSet[key]) {
             remover();
@@ -347,6 +351,9 @@ class EditMenuGuide extends AbstractEditMenuGuide {
         itemId = this.settings.itemId.orderNo;
         [key, state, args] = this.getOrderParameter();
         break;
+      case items.confirm.label:
+        [key, state, args] = this.getConfirmParameter();
+        break;
       case items.autoRun.label:
         [key, state, args] = this.getAutoRunParameter();
         break;
@@ -435,6 +442,25 @@ class EditMenuGuide extends AbstractEditMenuGuide {
     ];
   }
 
+  private getConfirmParameter(): Parameter {
+    let isConfirm =
+      this.getCurrentCommandInfo<TerminalCommand>().confirm ?? false;
+
+    if (this.settings.itemId.confirm in this.guideGroupResultSet) {
+      const value = this.guideGroupResultSet[this.settings.itemId.confirm];
+
+      isConfirm = typeof value === 'boolean' ? value : isConfirm;
+    }
+
+    return [
+      'ConfirmSettingGuide',
+      {
+        initialValue: isConfirm,
+      },
+      [],
+    ];
+  }
+
   private getAutoRunParameter(): Parameter {
     const type = this.getCurrentCommandInfo().type;
     let isAutoRun = true;
@@ -484,7 +510,7 @@ class EditMenuGuide extends AbstractEditMenuGuide {
   }
 
   private getQuestionParameter(): Parameter {
-    return ['QuestionEditMenuGuide', {}, [this.type, true]];
+    return ['QuestionEditMenuGuide', { title: this.title }, [this.type, true]];
   }
 }
 

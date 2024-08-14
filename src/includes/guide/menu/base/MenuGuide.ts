@@ -66,6 +66,19 @@ class MenuGuide extends AbstractMenuGuide {
 
     if (Object.keys(questions).length > 0) {
       return this.Questions(name!, command, questions);
+    }
+
+    if (command.confirm ?? false) {
+      return this.confirm(
+        Constant.message.placeholder.menu.confirm,
+        { yes: Constant.quickpick.confirm.description.yes.run },
+        async () => {
+          this.state.name = name;
+          this.state.terminalCommand = command.command;
+          this.state.autoRun = command.autoRun ?? true;
+          this.state.singleton = command.singleton ?? false;
+        }
+      );
     } else {
       this.state.name = name;
       this.state.terminalCommand = command.command;
@@ -88,7 +101,7 @@ class MenuGuide extends AbstractMenuGuide {
     );
 
     const state = this.createBaseState(
-      '',
+      name.replace(Constant.matcher.label_string_only, ''),
       this.settings.itemId.questions,
       Object.keys(questions).length,
       first

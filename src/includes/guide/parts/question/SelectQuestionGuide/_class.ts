@@ -4,6 +4,7 @@ import setCommand from '../setCommand';
 
 import { ITEM } from './_constant';
 
+import * as Constant from '@/constant';
 import BaseQuickPickGuide from '@/guide/base/BaseQuickPickGuide';
 import { State } from '@/guide/base/type';
 import { TerminalCommand, Question } from '@/settings/extension';
@@ -12,6 +13,7 @@ import VSCodePreset from '@/utils/VSCodePreset';
 class SelectQuestionGuide extends BaseQuickPickGuide {
   private commandSet: TerminalCommand;
   private question: Question;
+  private isContinue: boolean = false;
 
   constructor(
     state: State,
@@ -47,7 +49,11 @@ class SelectQuestionGuide extends BaseQuickPickGuide {
   }
 
   public async after(): Promise<void> {
+    this.isContinue = false;
+
     if (this.activeItem === ITEM) {
+      this.isContinue = true;
+
       this.guideGroupResultSet[this.itemId] = undefined;
 
       this.setNextSteps([
@@ -66,13 +72,31 @@ class SelectQuestionGuide extends BaseQuickPickGuide {
   }
 
   protected async lastInputStepExecute(): Promise<void> {
-    setCommand(
-      this.state,
-      this.commandSet.command,
-      this.guideGroupResultSet as Record<string, string>,
-      this.commandSet.autoRun ?? true,
-      this.commandSet.singleton ?? false
-    );
+    if (this.isContinue) {
+      return;
+    } else if (this.commandSet.confirm ?? false) {
+      await this.confirm(
+        Constant.message.placeholder.menu.confirm,
+        { yes: Constant.quickpick.confirm.description.yes.run },
+        async () => {
+          setCommand(
+            this.state,
+            this.commandSet.command,
+            this.guideGroupResultSet as Record<string, string>,
+            this.commandSet.autoRun ?? true,
+            this.commandSet.singleton ?? false
+          );
+        }
+      )();
+    } else {
+      setCommand(
+        this.state,
+        this.commandSet.command,
+        this.guideGroupResultSet as Record<string, string>,
+        this.commandSet.autoRun ?? true,
+        this.commandSet.singleton ?? false
+      );
+    }
   }
 }
 
