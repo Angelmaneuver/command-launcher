@@ -1,7 +1,7 @@
 {
   "name": "command-launcher",
   "displayName": "Command Launcher",
-  "description": "A launcher extension that manages commands for the command palette and terminal command.",
+  "description": "Toolbox to manage your extensions and terminal commands.",
   "publisher": "Angelmaneuver",
   "version": "1.0.0",
   "homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
