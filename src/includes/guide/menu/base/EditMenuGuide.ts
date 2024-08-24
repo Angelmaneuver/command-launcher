@@ -443,8 +443,8 @@ class EditMenuGuide extends AbstractEditMenuGuide {
   }
 
   private getConfirmParameter(): Parameter {
-    let isConfirm =
-      this.getCurrentCommandInfo<TerminalCommand>().confirm ?? false;
+    let isConfirm = (this.getCurrentCommandInfo<TerminalCommand>().confirm ??=
+      false);
 
     if (this.settings.itemId.confirm in this.guideGroupResultSet) {
       const value = this.guideGroupResultSet[this.settings.itemId.confirm];
@@ -462,13 +462,8 @@ class EditMenuGuide extends AbstractEditMenuGuide {
   }
 
   private getAutoRunParameter(): Parameter {
-    const type = this.getCurrentCommandInfo().type;
-    let isAutoRun = true;
-
-    if (type === this.settings.dataType.command) {
-      isAutoRun =
-        this.getCurrentCommandInfo<TerminalCommand>().autoRun ?? isAutoRun;
-    }
+    let isAutoRun = (this.getCurrentCommandInfo<TerminalCommand>().autoRun ??=
+      true);
 
     if (this.settings.itemId.autoRun in this.guideGroupResultSet) {
       const value = this.guideGroupResultSet[this.settings.itemId.autoRun];
@@ -486,15 +481,10 @@ class EditMenuGuide extends AbstractEditMenuGuide {
   }
 
   private getSingletonParameter(): Parameter {
-    const type = this.getCurrentCommandInfo().type;
-    let isSingleton = false;
+    let isSingleton =
+      (this.getCurrentCommandInfo<TerminalCommand>().singleton ??= false);
 
-    if (type === this.settings.dataType.command) {
-      isSingleton =
-        this.getCurrentCommandInfo<TerminalCommand>().singleton ?? isSingleton;
-    }
-
-    if (this.settings.itemId.autoRun in this.guideGroupResultSet) {
+    if (this.settings.itemId.singleton in this.guideGroupResultSet) {
       const value = this.guideGroupResultSet[this.settings.itemId.singleton];
 
       isSingleton = typeof value === 'boolean' ? value : isSingleton;
