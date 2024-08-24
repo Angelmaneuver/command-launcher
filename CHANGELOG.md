@@ -1,6 +1,10 @@
 # Change Log
 
-# 1.0.0
+## 1.0.1
+
+- Fixed incorrect initial value for confirmation, autoRun and singleton when editing terminal commands
+
+## 1.0.0
 
 - Refactoring in anticipation of feature additions
 - Added Japanese as supported language
@@ -8,7 +12,7 @@
 - Review control of terminal commands (Fixed to not send commands to terminals executing singleton commands)
 - Added the feature to confirm run of terminal commands
 
-# 0.10.3
+## 0.10.3
 
 - Fixed to replace multiple question variable
 
