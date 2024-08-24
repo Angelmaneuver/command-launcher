@@ -67,7 +67,7 @@ abstract class AbstractSelectLabelGuide extends AbstractQuickPickSelectGuide {
       ? {
           key: this.className,
           state: { step: this.step },
-          args: [SELECTION_ITEM.all, this.type],
+          args: [SELECTION_ITEM.all, this.type, this.keys],
         }
       : undefined;
   }

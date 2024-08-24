@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.0.2
+
+- Fixed a bug that sometimes prevented a name exist check from working
+
 ## 1.0.1
 
 - Fixed incorrect initial value for confirmation, autoRun and singleton when editing terminal commands
