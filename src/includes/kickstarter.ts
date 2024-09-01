@@ -176,7 +176,13 @@ async function terminalCommand(
     start(guide.key, state, [state, ...(guide.args ??= [])]);
   } else {
     try {
-      executeTerminalCommand({ ...state, ...command });
+      executeTerminalCommand({
+        ...state,
+        name: command.name,
+        terminalCommand: command.command,
+        autoRun: (command.autoRun ??= true),
+        singleton: (command.singleton ??= false),
+      });
     } catch (e) {
       errorHandling(e);
     }
