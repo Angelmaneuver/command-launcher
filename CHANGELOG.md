@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.1.0
+
+- Added the feature for command list tree view
+
 ## 1.0.2
 
 - Fixed a bug that sometimes prevented a name exist check from working

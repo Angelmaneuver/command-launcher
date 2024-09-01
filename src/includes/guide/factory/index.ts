@@ -1,3 +1,5 @@
+import ExecutionConfirmGuide from '../parts/ExecutionConfirmGuide';
+
 import AbstractGuide from '@/guide/abc/AbstractGuide';
 import BaseConfirmGuide from '@/guide/base/BaseConfirmGuide';
 import BaseInputGuide from '@/guide/base/BaseInputGuid';
@@ -55,6 +57,7 @@ abstract class GuideFactory {
     SelectSettingGuide: SelectSettingGuide,
     EnableHistoryGuide: EnableHistoryGuide,
     KeepHistoryNumberGuide: KeepHistoryNumberGuide,
+    ExecutionConfirmGuide: ExecutionConfirmGuide,
   } as const;
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

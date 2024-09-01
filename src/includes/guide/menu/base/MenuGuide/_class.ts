@@ -1,9 +1,9 @@
-import AbstractMenuGuide from '../abc/AbstractMenuGuide';
+import AbstractMenuGuide from '../../abc/AbstractMenuGuide';
+
+import getQuestions from './getQuestions';
 
 import * as Constant from '@/constant';
-import { AbstractState, Guide } from '@/guide/abc/type';
-import { Command, TerminalCommand, Question } from '@/settings/extension';
-import Optional from '@/utils/optional';
+import { Command, TerminalCommand } from '@/settings/extension';
 
 const items = {
   return: Constant.quickpick.common.return,
@@ -58,14 +58,24 @@ class MenuGuide extends AbstractMenuGuide {
     return undefined;
   }
 
-  private terminalCommand(
+  protected terminalCommand(
     command: TerminalCommand
   ): (() => Promise<void>) | undefined {
     const name = this.activeItem?.label;
     const questions = command.questions ?? {};
 
     if (Object.keys(questions).length > 0) {
-      return this.Questions(name!, command, questions);
+      const state = this.createBaseState(
+        name!.replace(Constant.matcher.label_string_only, ''),
+        this.settings.itemId.questions,
+        Object.keys(questions).length
+      );
+
+      const guides = getQuestions(name!, command, questions, state);
+
+      return async () => {
+        this.setNextSteps(guides);
+      };
     }
 
     if (command.confirm ?? false) {
@@ -87,61 +97,6 @@ class MenuGuide extends AbstractMenuGuide {
 
       return undefined;
     }
-  }
-
-  private Questions(
-    name: string,
-    command: TerminalCommand,
-    questions: Record<string, Question>
-  ): () => Promise<void> {
-    const keys = Object.keys(questions);
-
-    const first = Optional.ofNullable(keys.shift()).orElseThrow(
-      ReferenceError('Question not found...')
-    );
-
-    const state = this.createBaseState(
-      name.replace(Constant.matcher.label_string_only, ''),
-      this.settings.itemId.questions,
-      Object.keys(questions).length,
-      first
-    );
-
-    const guides = [] as Array<Guide>;
-
-    keys.forEach((key) => {
-      guides.push(this.getGuide(key, command, questions));
-    });
-
-    return async () => {
-      this.setNextSteps([
-        this.getGuide(
-          first,
-          command,
-          questions,
-          Object.assign(state, { guides: guides, name: name })
-        ),
-      ]);
-    };
-  }
-
-  private getGuide(
-    name: string,
-    command: TerminalCommand,
-    questions: Record<string, Question>,
-    state?: Partial<AbstractState>
-  ): Guide {
-    const guide = {} as Guide;
-    const question = questions[name];
-
-    guide.key =
-      question.type === this.settings.questionType.text
-        ? 'QuestionInputGuide'
-        : 'SelectQuestionGuide';
-    guide.state = state ? state : { itemId: name };
-    guide.args = [command, question];
-
-    return guide;
   }
 }
 

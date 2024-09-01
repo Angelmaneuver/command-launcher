@@ -4,7 +4,12 @@ import * as Constant from '@/constant';
 import MultiStepInput from '@/guide/abc/multiStepInput';
 import { State } from '@/guide/base/type';
 import GuideFactory from '@/guide/factory';
-import ExtensionSetting, { DATA_TYPE } from '@/settings/extension';
+import getQuestions from '@/guide/menu/base/MenuGuide/getQuestions';
+import ExtensionSetting, {
+  ITEM_ID,
+  DATA_TYPE,
+  TerminalCommand,
+} from '@/settings/extension';
 
 async function start(
   className: string,
@@ -121,8 +126,14 @@ async function launcher(context: ExtensionContext): Promise<void> {
   start('MenuGuide', state, args);
 }
 
-async function edit(context: ExtensionContext): Promise<void> {
+async function edit(
+  context: ExtensionContext,
+  refresh: () => void
+): Promise<void> {
   const state = getBaseState(Constant.message.headline.mode.edit);
+
+  state.view = { refresh };
+
   const args = [state, DATA_TYPE.folder, true, context];
 
   start('EditMenuGuide', state, args);
@@ -135,4 +146,41 @@ async function history(context: ExtensionContext): Promise<void> {
   start('HistoryGuide', state, args);
 }
 
-export { launcher, edit, history };
+async function terminalCommand(
+  context: ExtensionContext,
+  command: TerminalCommand
+): Promise<void> {
+  const confirm = (command.confirm ??= false);
+  const hasQuestions = Object.keys((command.questions ??= {})).length > 0;
+  const state = getBaseState(
+    ` ${command.name.replace(Constant.matcher.label_string_only, '')}`
+  );
+
+  if (confirm && !hasQuestions) {
+    state.context = context;
+
+    const args = [state, command];
+
+    start('ExecutionConfirmGuide', state, args);
+  } else if (hasQuestions) {
+    state.itemId = ITEM_ID.questions;
+    state.totalSteps = Object.keys(command.questions).length;
+
+    const guide = getQuestions(
+      command.name,
+      command,
+      command.questions,
+      state
+    )[0];
+
+    start(guide.key, state, [state, ...(guide.args ??= [])]);
+  } else {
+    try {
+      executeTerminalCommand({ ...state, ...command });
+    } catch (e) {
+      errorHandling(e);
+    }
+  }
+}
+
+export { launcher, edit, history, terminalCommand };

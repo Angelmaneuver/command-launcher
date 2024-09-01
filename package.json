@@ -3,7 +3,7 @@
   "displayName": "Command Launcher",
   "description": "Toolbox to manage your extensions and terminal commands.",
   "publisher": "Angelmaneuver",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "homepage": "https://github.com/Angelmaneuver/command-launcher/blob/main/README.md#command-launcher",
   "repository": {
     "type": "git",
@@ -37,21 +37,57 @@
     "commands": [
       {
         "command": "command-launcher.launcher",
-        "title": "Command Launcher"
+        "title": "%Launch%",
+        "category": "Command Launcher"
       },
       {
         "command": "command-launcher.edit",
-        "title": "Command Launcher - Edit"
+        "title": "%Edit%",
+        "category": "Command Launcher"
       },
       {
         "command": "command-launcher.history",
-        "title": "Command Launcher - History"
+        "title": "%History%",
+        "category": "Command Launcher"
       },
       {
         "command": "command-launcher.clear-history",
-        "title": "Command Launcher - Clear History"
+        "title": "%Clear History%",
+        "category": "Command Launcher"
+      },
+      {
+        "command": "command-launcher.refresh",
+        "title": "%Refresh%",
+        "category": "Command Launcher",
+        "icon": "$(refresh)"
       }
     ],
+    "views": {
+      "command-launcher": [
+        {
+          "id": "command-launcher.view",
+          "name": "%Command Launcher%"
+        }
+      ]
+    },
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "command-launcher",
+          "title": "%Command Launcher%",
+          "icon": "./resource/icon.svg"
+        }
+      ]
+    },
+    "menus": {
+      "view/title": [
+        {
+          "command": "command-launcher.refresh",
+          "when": "view == command-launcher.view",
+          "group": "navigation"
+        }
+      ]
+    },
     "configuration": {
       "title": "Command Launcher",
       "properties": {

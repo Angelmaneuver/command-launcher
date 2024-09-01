@@ -89,7 +89,7 @@ abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
           args: [
             {
               yes: Constant.quickpick.confirm.description.yes.remove,
-              no: Constant.quickpick.confirm.description.no,
+              no: Constant.quickpick.confirm.description.no.back,
             },
             async () => {
               return this.delete();
@@ -125,6 +125,10 @@ abstract class AbstractEditMenuGuide extends AbstractMenuGuide {
   }
 
   protected updateEnd(processType: ProcessType): void {
+    if (this.state.view) {
+      this.state.view.refresh();
+    }
+
     this.guideGroupResultSet[processType] = true;
     this.state.back = true;
     this.prev();

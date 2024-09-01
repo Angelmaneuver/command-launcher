@@ -1,5 +1,5 @@
 import { ExtensionSetting } from './_class';
-import { LOCATION, DATA_TYPE } from './_constant';
+import { ITEM_ID, LOCATION, DATA_TYPE, QUESTION_TYPE } from './_constant';
 import {
   BaseCommandType,
   Folder,
@@ -15,7 +15,7 @@ import {
 
 export default ExtensionSetting;
 
-export { LOCATION, DATA_TYPE };
+export { ITEM_ID, LOCATION, DATA_TYPE, QUESTION_TYPE };
 
 export type {
   BaseCommandType,

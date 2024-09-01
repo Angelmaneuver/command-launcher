@@ -225,7 +225,7 @@ class QuestionEditMenuGuide extends AbstractQuestionEditMenuGuide {
         prompt: Constant.message.placeholder.edit.question.name,
         initialValue: this.guideGroupId,
       },
-      [(this.type, Object.keys(this.questionsFromSetting))],
+      [this.type, Object.keys(this.questionsFromSetting)],
     ];
   }
 

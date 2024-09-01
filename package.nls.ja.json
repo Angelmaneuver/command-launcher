@@ -1,4 +1,10 @@
 {
+  "Command Launcher": "Command Launcher",
+  "Launch": "起動",
+  "Edit": "編集",
+  "History": "履歴",
+  "Clear History": "履歴を消去",
+  "Refresh": "最新の情報に更新",
   "command-launcher.commonCommands": "全てのプロファイルで使用可能なコマンド。",
   "command-launcher.commands": "現在のプロファイルでのみ使用可能なコマンド。",
   "command-launcher.enableHistory": "実行した端末コマンドの履歴を保持する。",

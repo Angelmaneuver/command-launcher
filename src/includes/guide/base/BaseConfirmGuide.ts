@@ -5,8 +5,8 @@ import * as Constant from '@/constant';
 import VSCodePreset from '@/utils/VSCodePreset';
 
 class BaseConfirmGuide extends AbstractQuickPickSelectGuide {
-  private callback: (...args: Array<unknown>) => Promise<void>;
-  private args: Array<unknown>;
+  protected callback: (...args: Array<unknown>) => Promise<void>;
+  protected args: Array<unknown>;
 
   constructor(
     state: State,

@@ -11,6 +11,9 @@ interface State extends AbstractState {
   guides?: Array<Guide>;
   message?: string | undefined;
   reload?: boolean;
+  view?: {
+    refresh: () => void;
+  };
   name?: string;
   command?: string;
   terminalCommand?: string;

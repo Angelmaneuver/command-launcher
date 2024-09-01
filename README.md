@@ -97,6 +97,10 @@ The singleton feature allows you to have only one process execute that commands.
 
 No more need to switch terminals!
 
+#### Tree View
+
+You can executed commands from the Activitybar.
+
 #### History
 
 Having trouble entering the same terminal commands?

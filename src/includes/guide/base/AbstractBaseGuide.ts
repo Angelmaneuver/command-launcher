@@ -85,7 +85,9 @@ abstract class AbstractBaseGuide extends AbstractGuide {
           args: [
             {
               yes: description.yes,
-              no: description.no ?? Constant.quickpick.confirm.description.no,
+              no:
+                description.no ??
+                Constant.quickpick.confirm.description.no.back,
             },
             callback,
           ],

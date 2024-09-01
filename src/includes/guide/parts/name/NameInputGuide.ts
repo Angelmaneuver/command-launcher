@@ -9,7 +9,7 @@ class NameInputGuide extends BaseNameInputGuide {
   constructor(state: State, type: DataType, keys: Array<string>) {
     super(state, type);
 
-    NameInputGuide.keys = keys;
+    NameInputGuide.keys = [...this.settings.itemIdValues, ...keys];
     this.validate = this.validateName;
   }
 

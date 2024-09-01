@@ -1,4 +1,10 @@
 {
+  "Command Launcher": "Command Launcher",
+  "Launch": "Launch",
+  "Edit": "Edit",
+  "History": "History",
+  "Clear History": "Clear History",
+  "Refresh": "Refresh",
   "command-launcher.commonCommands": "Commands available for all profiles.",
   "command-launcher.commands": "Commands available only in current profile.",
   "command-launcher.enableHistory": "Keep a history of terminal commands executed.",

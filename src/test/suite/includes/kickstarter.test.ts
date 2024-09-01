@@ -78,7 +78,7 @@ suite('Kick Starter Test Suite', async () => {
     multiStepInputStub.restore();
 
     await testTarget.launcher(context);
-    await testTarget.edit(context);
+    await testTarget.edit(context, () => {});
 
     menuGuideStub1.restore();
     menuGuideStub2.restore();

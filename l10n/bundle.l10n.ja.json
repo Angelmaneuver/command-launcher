@@ -582,6 +582,7 @@
   "Delete.": "削除する。",
   "Uninstall.": "アンインストールする。",
   "Back to previous.": "前に戻る。",
+  "Exit with not run command.": "コマンドを実行しないで終了する。",
   "Exit": "終了",
   "Exit this extenion.": "この拡張機能を終了する。",
   "Root": "ルート",

@@ -34,6 +34,10 @@ class BaseLastInputGuide extends BaseInputGuide {
     this.settings.sort(this.hierarchy, this.location);
     await this.settings.commit(this.location);
 
+    if (this.state.view) {
+      this.state.view.refresh();
+    }
+
     this.state.back = true;
     this.prev();
   }

@@ -8,7 +8,10 @@ const confirm = {
       remove: l10n.t('Delete.'),
       uninstall: l10n.t('Uninstall.'),
     },
-    no: l10n.t('Back to previous.'),
+    no: {
+      back: l10n.t('Back to previous.'),
+      exit: l10n.t('Exit with not run command.'),
+    },
   },
 };
 
